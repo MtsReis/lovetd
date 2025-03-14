@@ -19,7 +19,7 @@ end
 function lovelyMoon.keypressed(key, scancode, isrepeat)
   for _, state in pairs(_slotState.states) do
     if state and state._enabled and state.keypressed then
-      state:keypressed(key, scancode, isrepeat)
+      state.keypressed(key, scancode, isrepeat)
     end
   end
 end
@@ -27,7 +27,15 @@ end
 function lovelyMoon.keyreleased(key, scancode)
   for _, state in pairs(_slotState.states) do
     if state and state._enabled and state.keyreleased then
-      state:keyreleased(key, scancode)
+      state.keyreleased(key, scancode)
+    end
+  end
+end
+
+function lovelyMoon.keyhold(command)
+  for _, state in pairs(_slotState.states) do
+    if state and state._enabled and state.keyhold then
+      state.keyhold(command)
     end
   end
 end

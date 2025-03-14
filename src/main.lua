@@ -1,6 +1,9 @@
 Persistence = require 'system.persistence'
+
 amora = require 'system.amora'
 amora.debugMode = pl.tablex.find(arg, "-debug") -- Whether '-debug' is present as an arg
+
+input = require 'system.input'
 
 local lovelyMoon = require 'lib.lovelyMoon'
 
@@ -11,6 +14,7 @@ function love.load()
 end
 
 function love.update(dt)
+  input:update(dt)
   lovelyMoon.update(dt)
 end
 
@@ -19,11 +23,11 @@ function love.draw()
 end
 
 function love.keypressed(key, scancode)
-  lovelyMoon.keypressed(key, scancode)
+  input:keypressed(key, scancode)
 end
 
 function love.keyreleased(key, scancode)
-  lovelyMoon.keyreleased(key, scancode)
+  input:keyreleased(key, scancode)
 end
 
 function love.textinput(text)
