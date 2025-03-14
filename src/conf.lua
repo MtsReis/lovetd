@@ -12,10 +12,10 @@ pl.stringx.import() -- Bring the stringx methods into the standard string table
 log.level = "warn"
 
 function love.conf(t)
-  t.identity = "rtslovejam"
+  t.identity = "lovetd"
   t.version = "11.5"
 
-  t.window.title = "RTS Love"
+  t.window.title = "LoveTD"
   t.window.resizable = true
 
   t.externalstorage = true
