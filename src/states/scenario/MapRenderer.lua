@@ -2,12 +2,14 @@ local I_TILESET_NAME = 3
 
 local MapRenderer = class("MapRenderer")
 local gameTileSets, gameTiles = unpack(require("scenarios.maps"))
+local loadedTiles = {}
+local map = { layers = {}, w = 0, gridW = 0, gridY = 0 }
 
-function MapRenderer.load(map)
+function MapRenderer.load(layers, mapW, tileSize)
 	local precache = { tiles = {}, tilesets = {} }
 	local hash = { tiles = {}, tilesets = {} }
 
-	for _, layer in ipairs(map) do
+	for _, layer in ipairs(layers) do
 		for _, v in ipairs(layer) do
 			if v ~= 0 then
 				if not gameTiles[v] then
@@ -38,11 +40,72 @@ function MapRenderer.load(map)
 
 	log.debug("Required tiles for scenario: %(tl)s" % { tl = pw(precache.tiles) })
 	log.info("Precaching %(ts)s" % { ts = pw(precache.tilesets) })
+
+	local tileQuads = {}
+	local tilesetImages = {}
+
+	-- Load all quads from the tilesets in the tileQuads
+	for _, t in ipairs(precache.tilesets) do
+		tileQuads[t] = {}
+		tilesetImages[t] = Persistence.loadTileset(t)
+
+		local currTileset = gameTileSets[t]
+
+		-- Number of tiles
+		local tilesetWidth = tilesetImages[t]:getWidth() / currTileset.tileW
+		local tilesetHeight = tilesetImages[t]:getHeight() / currTileset.tileH
+
+		-- Create Quads for each tile
+		for y = 0, tilesetHeight - 1 do
+			for x = 0, tilesetWidth - 1 do
+				local quad = love.graphics.newQuad(
+					x * currTileset.tileW,
+					y * currTileset.tileH,
+					currTileset.tileW,
+					currTileset.tileH,
+					tilesetImages[t]:getDimensions()
+				)
+				table.insert(tileQuads[t], quad)
+			end
+		end
+	end
+
+	map.layers = layers
+	map.w = mapW
+	map.gridW = tileSize[1]
+	map.gridY = tileSize[2]
+
+	print("MAP INFO: "..pw(loadedTiles))
+
+	loadedTiles.quads = tileQuads
+	loadedTiles.tilesetImages = tilesetImages
 end
 
 function MapRenderer.enable() end
 
 function MapRenderer.update() end
+
+function MapRenderer.draw()
+	for _, layer in ipairs(map.layers) do
+		for i, tile in ipairs(layer) do
+			if tile ~= 0 then
+				local currTile = gameTiles[tile]
+				local currTilePosId = currTile[2]
+				local currTileset = currTile[3]
+
+				local yg = (math.ceil(i / map.w) - 1)
+				local xg = (i - 1) - yg * map.w
+
+				love.graphics.draw(
+					loadedTiles.tilesetImages[currTileset],
+					loadedTiles.quads[currTileset][currTilePosId],
+					xg * map.gridW,
+					yg * map.gridY
+				)
+			end
+		end
+	end
+end
 
 function MapRenderer.disable() end
 

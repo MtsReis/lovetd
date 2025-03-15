@@ -4,7 +4,14 @@ function PlayScenario.load(scenarioName)
 	scenarioName = scenarioName or "proto"
 
 	PlayScenario.scenario = Persistence.loadScenario(scenarioName)
-	state.add(require "states.scenario.MapRenderer", "MapRenderer", 2, PlayScenario.scenario.layers)
+	state.add(
+		require("states.scenario.MapRenderer"),
+		"MapRenderer",
+		2,
+		PlayScenario.scenario.layers,
+		PlayScenario.scenario.width,
+		{ PlayScenario.scenario.gridW, PlayScenario.scenario.gridY }
+	)
 end
 
 function PlayScenario.enable()
