@@ -91,7 +91,7 @@ setmetatable(states, {
   end
 })
 
-function StateManager.add(class, id, index)
+function StateManager.add(class, id, index, ...)
   index = index == nil and "auto" or index
 
   _slotState.states[index] = class
@@ -100,7 +100,7 @@ function StateManager.add(class, id, index)
   class._id = id
 
   log.trace(string.format("Loading state '%s'", id))
-  local _ = class.load and class:load() -- Run if exists
+  local _ = class.load and class.load(...) -- Run if exists
 
    return latestIndex
 end
