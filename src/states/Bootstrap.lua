@@ -33,6 +33,8 @@ function Bootstrap.load()
   --                  wrappers
   -----------------------------------------------
   --
+  pd = pl.pretty.dump
+  pw = pl.pretty.write
 
   -----------------------------------------------
   --                    utils
