@@ -11,6 +11,7 @@ local tile_source = {
 	geometric = { tileH = 20, tileW = 20 },
     proto = { tileH = 32, tileW = 32 },
     proto2 = { tileH = 32, tileW = 32 },
+    bigsingletile = { tileH = 512, tileW = 512 },
 }
 
 --[[
@@ -25,8 +26,10 @@ local tile_source = {
 ]]
 local game_tile = {
 	{ "TEXT_1", 1, "proto2" }, -- 1
-    { "TEXT_2", 4, "proto2" },
+    { "TEXT_2", 2, "proto2" },
     { "TEXT_3", 3, "proto2" },
+    { "NAME", 1, "bigsingletile" }, -- 4
+    { "SMALL", 2, "geometric"}
 }
 
 return { tile_source, game_tile }
