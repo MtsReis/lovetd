@@ -5,6 +5,8 @@ lip = require 'lib.LIP'
 log = require 'lib.log'
 i18n = require 'lib.i18n'
 state = require 'lib.stateManager'
+tiny = require 'lib.tiny'
+vec2 = require 'lib.vector'
 
 pl.stringx.import() -- Bring the stringx methods into the standard string table
 
