@@ -2,17 +2,14 @@
 local Root = class('Root')
 
 function Root.load()
-    if pl.tablex.find(arg, "-editor") then
-        state.add(require 'states.scenario.PlayScenario', "ScenarioEditor", 2)
-    else
-        state.add(require 'states.editor.ScenarioEditor', "PlayScenario", 2)
-    end
 end
 
 function Root.enable()
     if pl.tablex.find(arg, "-editor") then
+        state.add(require 'states.editor.ScenarioEditor', "ScenarioEditor", 3)
         state.enable("ScenarioEditor")
     else
+        state.add(require 'states.scenario.PlayScenario', "PlayScenario", 3)
         state.enable("PlayScenario")
     end
 end
