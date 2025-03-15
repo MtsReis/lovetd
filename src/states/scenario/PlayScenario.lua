@@ -1,18 +1,25 @@
-local ScenarioEditor = class('ScenarioEditor')
+local PlayScenario = class("PlayScenario")
 
-function ScenarioEditor.load()
+function PlayScenario.load(scenarioName)
+	scenarioName = scenarioName or "proto"
+
+	PlayScenario.scenario = Persistence.loadScenario(scenarioName)
+	state.add(require "states.scenario.MapRenderer", "MapRenderer", 2, PlayScenario.scenario.layers)
 end
 
-function ScenarioEditor.enable()
+function PlayScenario.enable()
+	state.enable("MapRenderer")
 end
 
-function ScenarioEditor.update()
+function PlayScenario.update() end
+
+function PlayScenario.disable()
+	state.disable("MapRenderer")
+	PlayScenario.scenario = nil
 end
 
-function ScenarioEditor.disable()
+function PlayScenario.unload()
+	state.destroy("MapRenderer")
 end
 
-function ScenarioEditor.unload()
-end
-
-return ScenarioEditor
+return PlayScenario
