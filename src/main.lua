@@ -9,7 +9,7 @@ local lovelyMoon = require 'lib.lovelyMoon'
 
 function love.load()
   -- Load and enable the bootstrapper
-  state.add(require 'states.Bootstrap', "Bootstrap", 3)
+  state.add(require 'states.Bootstrap', "Bootstrap", 50)
   state.enable("Bootstrap")
 end
 
