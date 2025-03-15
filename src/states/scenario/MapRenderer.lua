@@ -1,9 +1,11 @@
 local I_TILESET_NAME = 3
 
+local mapCanvas = love.graphics.newCanvas()
+
 local MapRenderer = class("MapRenderer")
 local gameTileSets, gameTiles = unpack(require("scenarios.maps"))
 local loadedTiles = {}
-local map = { layers = {}, w = 0, gridW = 0, gridY = 0 }
+local map = { layers = {}, w = 0, gridW = 0, gridH = 0 }
 
 function MapRenderer.load(layers, mapW, tileSize)
 	local precache = { tiles = {}, tilesets = {} }
@@ -73,9 +75,9 @@ function MapRenderer.load(layers, mapW, tileSize)
 	map.layers = layers
 	map.w = mapW
 	map.gridW = tileSize[1]
-	map.gridY = tileSize[2]
+	map.gridH = tileSize[2]
 
-	print("MAP INFO: "..pw(loadedTiles))
+	--print("MAP INFO: "..pw(loadedTiles))
 
 	loadedTiles.quads = tileQuads
 	loadedTiles.tilesetImages = tilesetImages
@@ -83,9 +85,8 @@ end
 
 function MapRenderer.enable() end
 
-function MapRenderer.update() end
-
-function MapRenderer.draw()
+function MapRenderer.update()
+	love.graphics.setCanvas(mapCanvas)
 	for _, layer in ipairs(map.layers) do
 		for i, tile in ipairs(layer) do
 			if tile ~= 0 then
@@ -100,11 +101,17 @@ function MapRenderer.draw()
 					loadedTiles.tilesetImages[currTileset],
 					loadedTiles.quads[currTileset][currTilePosId],
 					xg * map.gridW,
-					yg * map.gridY
+					yg * map.gridH
 				)
 			end
 		end
 	end
+	love.graphics.setCanvas()
+	love.graphics.setColor(1, 1, 1)
+end
+
+function MapRenderer.draw()
+	love.graphics.draw(mapCanvas, 0, 0)
 end
 
 function MapRenderer.disable() end

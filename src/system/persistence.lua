@@ -70,7 +70,7 @@ function Persistence.loadScenario(fileName)
 	end
 
 	local data = { layers = {} }
-	local validKeys = { name = true, bgm = true, width = true, gridW = true, gridY = true }
+	local validKeys = { name = true, bgm = true, width = true, gridW = true, gridH = true }
 	local section = 0
 
 	for line in love.filesystem.lines(path) do
