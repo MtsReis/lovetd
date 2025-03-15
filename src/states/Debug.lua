@@ -6,8 +6,6 @@ function DebugMode.load() end
 function DebugMode.enable()
 	-- Settings for Debug Mode
 	log.level = "trace"
-
-	pl.pretty.dump(Persistence.loadScenario("proto.tds"))
 end
 
 function DebugMode.update()

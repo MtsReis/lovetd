@@ -44,6 +44,8 @@ Load and return .tds files
 name:<name>
 bgm:<musicfilename>
 width:<number>
+tileW:<number>
+tileY:<number>
 ;
 0 0 0 0 0 0 9 8 90 78 9 78
 0 2 8 0 3 0 9 8 90 78 9 78
@@ -55,11 +57,15 @@ width:<number>
 0 0 0 0 0 0 9 8 90 78 9 78
 3 5 4 0 0 0 9 8 90 78 9 78
 ]]
-function Persistence.loadScenario(filename)
-	local path = "scenarios/"
+function Persistence.loadScenario(fileName)
+	local dir = "scenarios/"
+	local fileExt = ".tds"
+	local path = dir .. fileName .. fileExt
 
-	if (type(filename) ~= "string") or (love.filesystem.getInfo(path .. filename) == nil) then
-		log.error("Unable to load scenario '%(name)s'" % { name = filename })
+	log.info("Attempting to load scenario '%(name)s'" % { name = fileName })
+
+	if (type(fileName) ~= "string") or (love.filesystem.getInfo(path) == nil) then
+		log.error("Unable to load scenario '%(name)s'" % { name = fileName })
 
 		return false
 	end
@@ -68,11 +74,11 @@ function Persistence.loadScenario(filename)
 	local validKeys = { name = true, bgm = true, width = true }
 	local section = 0
 
-	for line in love.filesystem.lines(path .. filename) do
+	for line in love.filesystem.lines(path) do
 		if line == ";" then
 			section = section + 1
 		else
-			log.info("[Persistence.loadScenario] Reading section %(sec)d" % { sec = section })
+			log.debug("Reading section %(sec)d" % { sec = section })
 
 			if section == 0 then
 				k, v = line:match("(%w+):(%w+)")
@@ -82,14 +88,14 @@ function Persistence.loadScenario(filename)
 				end
 			else
 				data.layers[section] = data.layers[section] or {}
-				for code in line:gmatch("%w+") do
-					table.insert(data.layers[section], code)
+				for code in line:gmatch("%d+") do
+					table.insert(data.layers[section], tonumber(code))
 				end
 			end
 		end
 	end
 
-	log.info("Scenario %(filename)s loaded successfully" % { filename = filename })
+	log.info("Scenario %(fileName)s loaded successfully" % { fileName = fileName })
 
 	return data
 end
