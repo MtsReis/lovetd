@@ -37,7 +37,6 @@ function Persistence.loadSettings(dir)
 	end
 end
 
-
 --[[
 Load and return .tds files
 
@@ -71,7 +70,7 @@ function Persistence.loadScenario(fileName)
 	end
 
 	local data = { layers = {} }
-	local validKeys = { name = true, bgm = true, width = true }
+	local validKeys = { name = true, bgm = true, width = true, gridW = true, gridY = true }
 	local section = 0
 
 	for line in love.filesystem.lines(path) do
@@ -98,6 +97,10 @@ function Persistence.loadScenario(fileName)
 	log.info("Scenario %(fileName)s loaded successfully" % { fileName = fileName })
 
 	return data
+end
+
+function Persistence.loadTileset(fileName)
+	return love.graphics.newImage("assets/tilesets/" .. fileName .. ".png")
 end
 
 return Persistence
