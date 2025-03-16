@@ -25,11 +25,10 @@ local tile_source = {
     - tileset_name: which of the tilesets above this tile is part of
 ]]
 local game_tile = {
-	{ "TEXT_1", 1, "proto2" }, -- 1
-    { "TEXT_2", 2, "proto2" },
-    { "TEXT_3", 3, "proto2" },
-    { "NAME", 1, "bigsingletile" }, -- 4
-    { "SMALL", 2, "geometric"}
+	{ "GRASS", 1, "proto2" }, -- 1
+    { "GRASS_FLOWER", 2, "proto2" },
+    { "BROKEN_TILE", 3, "proto2" },
+    { "TILE_BIT", 4, "proto2" }
 }
 
 return { tile_source, game_tile }
