@@ -1,14 +1,17 @@
 --[[
-    <tileset_name> = { gridW = <width in pixels>, gridH = <height in pixels> }
+    <tileset_name> = { tileW = <width in pixels>, tileH = <height in pixels> }
 
     Where
     - tileset_name: the image file name without the file extension (.png).
     Only letters, numbers and underscores are allowed
 
-    - gridW and gridH: The size in pixel for every separate tile in this tileset
+    - tileW and tileH: The size in pixel for every separate tile in this tileset
 ]]
 local tile_source = {
-	geometric = { gridH = 32, gridW = 32 },
+	geometric = { tileH = 20, tileW = 20 },
+    proto = { tileH = 32, tileW = 32 },
+    proto2 = { tileH = 32, tileW = 32 },
+    bigsingletile = { tileH = 512, tileW = 512 },
 }
 
 --[[
@@ -22,9 +25,10 @@ local tile_source = {
     - tileset_name: which of the tilesets above this tile is part of
 ]]
 local game_tile = {
-	{ "WHITE_SQUARE", 1, "geometric" }, -- 1
-    { "RED_SQUARE", 2, "geometric" },
-    { "GREEN_SQUARE", 3, "geometric" },
+	{ "GRASS", 1, "proto2" }, -- 1
+    { "GRASS_FLOWER", 2, "proto2" },
+    { "BROKEN_TILE", 3, "proto2" },
+    { "TILE_BIT", 4, "proto2" }
 }
 
 return { tile_source, game_tile }

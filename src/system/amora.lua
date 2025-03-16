@@ -56,7 +56,7 @@ function amora:setLocale(newLocale, ...)
   i18n.setLocale(newLocale, ...)
 end
 
-function amora:ouch()
+function amora.ouch()
   log.warn("Trying to forcefully terminate execution. Unsaved modifications might be lost D:")
   os.exit()
 end
