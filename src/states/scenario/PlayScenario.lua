@@ -1,48 +1,11 @@
 local PlayScenario = class("PlayScenario")
 
-local drawQueue = {}
 local canvas = love.graphics.newCanvas()
-
--- Systems
-local drawObjectSystem = tiny.processingSystem()
-drawObjectSystem.filter = tiny.requireAll("geometry")
-function drawObjectSystem:process(e, dt)
-	love.graphics.setCanvas(canvas)
-	love.graphics.setColor(e.geometry.colour.r, e.geometry.colour.g, e.geometry.colour.b, e.geometry.colour.a)
-
-	local posx = e.pos.x - e.geometry.w / 2
-	local posy = e.pos.y - e.geometry.h / 2
-
-	if e.geometry.type and e.geometry.type == "circ" then
-		love.graphics.circle("line", posx, posy, e.geometry.w)
-	else
-		love.graphics.rectangle("fill", posx, posy, e.geometry.w, e.geometry.w)
-	end
-
-	love.graphics.setCanvas()
-	love.graphics.setColor(1, 1, 1)
-end
-
-local towerSystem = tiny.processingSystem()
-towerSystem.filter = tiny.requireAll("pos", "tower")
-function towerSystem:process(e, dt)
-	local foes = tiny.requireAll("position", "velocity", "size")
-
-	love.graphics.setCanvas(canvas)
-	love.graphics.setColor(0, 0, 1, 1)
-
-	love.graphics.circle("line", e.pos.x, e.pos.y, e.tower.range)
-
-	love.graphics.setCanvas()
-	love.graphics.setColor(1, 1, 1)
-end
-
-local world = tiny.world(
-	drawObjectSystem,
-	towerSystem,
-	require("world.entities.tower")(love.graphics.getWidth() / 2, 400),
-	require("world.entities.unit")(0, 300)
-)
+local world = tiny.world()
+world.space = {
+	bump = HC.new(),
+	hit = HC.new(),
+}
 
 function PlayScenario.load(scenarioName)
 	scenarioName = scenarioName or "proto"
@@ -56,6 +19,32 @@ function PlayScenario.load(scenarioName)
 		PlayScenario.scenario.width,
 		{ PlayScenario.scenario.gridW, PlayScenario.scenario.gridH }
 	)
+
+	-- World building
+	-- Systems
+	local entitiesClasses = {
+		tower = require("world.entities.tower"),
+		unit = require("world.entities.unit"),
+	}
+	local precachedSystems = {
+		require("world/systems/rendering").drawObj,
+		require("world/systems/attack").attack,
+		require("world/systems/movement").movement,
+		require("world/systems/collision").collision,
+	}
+
+	world.properties = {
+		width = PlayScenario.scenario.width * PlayScenario.scenario.gridW,
+	}
+
+	world:add(table.unpack(precachedSystems))
+	world:add(
+		entitiesClasses.tower(love.graphics.getWidth() / 2, 400, world.space, "archer", canvas),
+		entitiesClasses.unit(0, 300, world.space, "orc", canvas),
+		entitiesClasses.unit(30, 300, world.space, "human", canvas),
+		entitiesClasses.unit(50, 330, world.space, "somethingElse", canvas),
+		entitiesClasses.unit(44, 350, world.space, "orc", canvas)
+	)
 end
 
 function PlayScenario.enable()
@@ -63,7 +52,10 @@ function PlayScenario.enable()
 end
 
 function PlayScenario:update(dt)
+	love.graphics.setCanvas(canvas)
+	love.graphics.clear()
 	world:update(dt)
+	love.graphics.setCanvas()
 end
 
 function PlayScenario:draw()
