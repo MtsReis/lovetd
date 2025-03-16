@@ -80,7 +80,7 @@ function Persistence.loadScenario(fileName)
 			log.debug("Reading section %(sec)d" % { sec = section })
 
 			if section == 0 then
-				k, v = line:match("(%w+):(%w+)")
+				local k, v = line:match("(%w+):(%w+)")
 
 				if k and validKeys[k] then
 					data[k] = v

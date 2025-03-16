@@ -51,14 +51,14 @@ function PlayScenario.enable()
 	state.enable("MapRenderer")
 end
 
-function PlayScenario:update(dt)
+function PlayScenario.update(_, dt)
 	love.graphics.setCanvas(canvas)
 	love.graphics.clear()
 	world:update(dt)
 	love.graphics.setCanvas()
 end
 
-function PlayScenario:draw()
+function PlayScenario.draw()
 	love.graphics.draw(canvas, 0, 0)
 end
 
