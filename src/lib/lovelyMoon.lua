@@ -1,7 +1,7 @@
 local lovelyMoon = {}
 
 function lovelyMoon.update(dt)
-  for _, state in pairs(_slotState.states) do
+  for _, state in _slotState._pairsIter(_slotState.states) do
     if state and state._enabled and state.update then
       state:update(dt)
     end
@@ -9,7 +9,7 @@ function lovelyMoon.update(dt)
 end
 
 function lovelyMoon.draw()
-  for _, state in pairs(_slotState.states) do
+  for _, state in _slotState._pairsIter(_slotState.states) do
     if state and state._enabled and state.draw then
       state:draw()
     end
@@ -17,7 +17,7 @@ function lovelyMoon.draw()
 end
 
 function lovelyMoon.keypressed(key, scancode, isrepeat)
-  for _, state in pairs(_slotState.states) do
+  for _, state in _slotState._pairsIter(_slotState.states) do
     if state and state._enabled and state.keypressed then
       state.keypressed(key, scancode, isrepeat)
     end
@@ -25,7 +25,7 @@ function lovelyMoon.keypressed(key, scancode, isrepeat)
 end
 
 function lovelyMoon.keyreleased(key, scancode)
-  for _, state in pairs(_slotState.states) do
+  for _, state in _slotState._pairsIter(_slotState.states) do
     if state and state._enabled and state.keyreleased then
       state.keyreleased(key, scancode)
     end
@@ -33,7 +33,7 @@ function lovelyMoon.keyreleased(key, scancode)
 end
 
 function lovelyMoon.keyhold(command)
-  for _, state in pairs(_slotState.states) do
+  for _, state in _slotState._pairsIter(_slotState.states) do
     if state and state._enabled and state.keyhold then
       state.keyhold(command)
     end
@@ -41,7 +41,7 @@ function lovelyMoon.keyhold(command)
 end
 
 function lovelyMoon.textinput(text)
-  for _, state in pairs(_slotState.states) do
+  for _, state in _slotState._pairsIter(_slotState.states) do
     if state and state._enabled and state.textinput then
       state:textinput(text)
     end
@@ -49,7 +49,7 @@ function lovelyMoon.textinput(text)
 end
 
 function lovelyMoon.mousemoved(x, y, dx, dy, istouch)
-  for _, state in pairs(_slotState.states) do
+  for _, state in _slotState._pairsIter(_slotState.states) do
     if state and state._enabled and state.mousemoved then
       state:mousemoved(x, y, dx, dy, istouch)
     end
@@ -57,7 +57,7 @@ function lovelyMoon.mousemoved(x, y, dx, dy, istouch)
 end
 
 function lovelyMoon.mousepressed(x, y, button, istouch, presses)
-  for _, state in pairs(_slotState.states) do
+  for _, state in _slotState._pairsIter(_slotState.states) do
     if state and state._enabled and state.mousepressed then
       state:mousepressed(x, y, button, istouch, presses)
     end
@@ -65,7 +65,7 @@ function lovelyMoon.mousepressed(x, y, button, istouch, presses)
 end
 
 function lovelyMoon.mousereleased(x, y, button, istouch, presses)
-  for _, state in pairs(_slotState.states) do
+  for _, state in _slotState._pairsIter(_slotState.states) do
     if state and state._enabled and state.mousereleased then
       state:mousereleased(x, y, button, istouch, presses)
     end
@@ -73,7 +73,7 @@ function lovelyMoon.mousereleased(x, y, button, istouch, presses)
 end
 
 function lovelyMoon.wheelmoved(x, y)
-  for _, state in pairs(_slotState.states) do
+  for _, state in _slotState._pairsIter(_slotState.states) do
     if state and state._enabled and state.wheelmoved then
       state:wheelmoved(x, y)
     end
