@@ -1,6 +1,6 @@
 stds.amora = {
-	globals = { "amora", "_L" },
-	read_globals = { "pl", "pw", "pd", "class", "state" },
+	globals = { "amora", "_L", "vec2", "pw", "pd" },
+	read_globals = { "pl", "class", "state", "vec2" },
 }
 
 std = "luajit+lua52+love+amora"

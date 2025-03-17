@@ -70,7 +70,7 @@ function Persistence.loadScenario(fileName)
 	end
 
 	local data = { layers = {} }
-	local validKeys = { name = true, bgm = true, width = true, gridW = true, gridY = true }
+	local validKeys = { name = true, bgm = true, width = true, gridW = true, gridH = true }
 	local section = 0
 
 	for line in love.filesystem.lines(path) do
@@ -80,7 +80,7 @@ function Persistence.loadScenario(fileName)
 			log.debug("Reading section %(sec)d" % { sec = section })
 
 			if section == 0 then
-				k, v = line:match("(%w+):(%w+)")
+				local k, v = line:match("(%w+):(%w+)")
 
 				if k and validKeys[k] then
 					data[k] = v
