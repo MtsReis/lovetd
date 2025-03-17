@@ -6,6 +6,10 @@ function Persistence.saveINI(data, dir, tweakableOnly)
 	dir = dir or "settings.cfg"
 	tweakableOnly = (tweakableOnly ~= false) or false -- True as default value
 
+	log.debug("Saving %(data)s to %(file)s" % {
+		data = (data == amora.settings) and "settings" or "data",
+		file = dir
+	})
 	local success, message = lip.save(dir, data, tweakableOnly)
 
 	if not success then
@@ -99,7 +103,21 @@ function Persistence.loadScenario(fileName)
 	return data
 end
 
-function Persistence.loadTileset(fileName)
+function Persistence.loadTilesets()
+	-- Reload the Module
+	package.loaded["scenarios.maps"] = nil
+
+	local gameTiles = require("scenarios.maps")[1]
+
+	for k, v in pairs(gameTiles) do
+		log.trace("Loading tileset for %(k)s", { k = k })
+		gameTiles[k].img = Persistence.loadTilesetImage(k)
+	end
+
+	return gameTiles
+end
+
+function Persistence.loadTilesetImage(fileName)
 	return love.graphics.newImage("assets/tilesets/" .. fileName .. ".png")
 end
 
