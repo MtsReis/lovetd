@@ -52,6 +52,10 @@ local game_tile = {
     { "PATH_BR", 20, "proto" },
 
 	{ "LIGHT_GRASS", 21, "proto" }, -- 21
+
+    -------------------------------------
+
+    { "BLUE_SQUARE", 3, "geometric" }, -- 22
 }
 
 return { tile_source, game_tile }
