@@ -61,4 +61,14 @@ function amora.ouch()
   os.exit()
 end
 
+function amora:exitGracefully()
+  local currWFlags
+  self.settings.video.w, self.settings.video.h, currWFlags = love.window.getMode()
+
+  self.settings.video.vsync = currWFlags.vsync
+  self.settings.video.fullscreen = currWFlags.fullscreen
+
+  love.event.quit()
+end
+
 return amora
