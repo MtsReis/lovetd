@@ -117,11 +117,11 @@ function StateManager.get(id)
 	end
 end
 
-function StateManager.enable(id)
+function StateManager.enable(id, ...)
 	for _, state in _slotState._pairsIter(_slotState.states) do
 		if state._id == id and not state._enabled then
 			log.trace(string.format("Starting state '%s'", id))
-			local _ = state.enable and state:enable() -- Run if exists
+			local _ = state.enable and state:enable(...) -- Run if exists
 			state._enabled = true
 			return state._enabled
 		end
