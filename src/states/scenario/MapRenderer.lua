@@ -49,7 +49,7 @@ function MapRenderer.load(layers, mapW, tileSize)
 	-- Load all quads from the tilesets in the tileQuads
 	for _, t in ipairs(precache.tilesets) do
 		tileQuads[t] = {}
-		tilesetImages[t] = Persistence.loadTileset(t)
+		tilesetImages[t] = Persistence.loadTilesetImage(t)
 
 		local currTileset = gameTileSets[t]
 
