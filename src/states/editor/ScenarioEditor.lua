@@ -71,7 +71,7 @@ function ScenarioEditor.draw()
             local yg = (math.ceil(i / sizeSquare) - 1)
             local xg = (i - 1) - yg * sizeSquare
 
-            love.graphics.draw([tileQuads[o].tileSetNumbertileSets].tile, tileQuads[o].quad, (xg+1)*tileSets["info"].sizeX, nextY + (yg+1)*tileSets["info"].sizeY)
+            love.graphics.draw(tileSets[tileQuads[o].tileSetNumber].tile, tileQuads[o].quad, (xg+1)*tileSets["info"].sizeX, nextY + (yg+1)*tileSets["info"].sizeY)
         end
     end
     love.graphics.rectangle("fill", love.mouse.getX(), love.mouse.getY(), 20, 20)
