@@ -134,12 +134,14 @@ function GUI.workspaces.ScenarioEditor:update(dt)
 
 	GUI.drawTiles()
 
-	for x = 0, mapWidth * gridW, gridW do
-		love.graphics.line(x, 0, x, mapWidth * gridH)
-	end
+	if self._attr.showTilesetsInfo then
+		for x = 0, mapWidth * gridW, gridW do
+			love.graphics.line(x, 0, x, mapWidth * gridH)
+		end
 
-	for y = 0, mapWidth * gridH, gridH do
-		love.graphics.line(0, y, mapWidth * gridW, y)
+		for y = 0, mapWidth * gridH, gridH do
+			love.graphics.line(0, y, mapWidth * gridW, y)
+		end
 	end
 
 	love.graphics.setCanvas()
@@ -209,7 +211,6 @@ function GUI.workspaces.ScenarioEditor:update(dt)
 	for i, o in ipairs(self.activeTiles) do
 		local _, _, imgW, imgH = o["quad"]:getViewport()
 		love.graphics.draw(self.tilesets[o["tileSetName"]].img, o["quad"], canvasX, 0)
-		canvasX = canvasX + self.tilesets[o["tileSetName"]].tileW
 
 		Slab.Image("img_tile_" .. i, {
 			Image = self.tilesCanvas,
@@ -220,6 +221,8 @@ function GUI.workspaces.ScenarioEditor:update(dt)
 			SubX = canvasX,
 			SubY = 0,
 		})
+		canvasX = canvasX + self.tilesets[o["tileSetName"]].tileW
+
 		if Slab.IsControlClicked() then
 			self._attr.selected.tile = i
 		end
