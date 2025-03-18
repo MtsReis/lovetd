@@ -54,6 +54,8 @@ function love.resize(w, h)
   log.debug("Updating video settings: ", pw(amora.settings.video))
 	amora.settings.video.h = h
 	amora.settings.video.w = w
+
+	lovelyMoon.resize(w, h)
 end
 
 function love.quit()
