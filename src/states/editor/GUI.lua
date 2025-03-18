@@ -9,9 +9,12 @@ for i = 1, mapWidth^2 do
 	object[i] = 0
 end
 
+-- CANVASES
+local mapArea = love.graphics.newCanvas(mapWidth * gridH, mapWidth * gridW)
+
 GUI.activeWS = ""
 GUI.workspaces = {
-	ScenarioEditor = { _attr = { showTilesetsInfo = false, selected = { tile = nil } } },
+	ScenarioEditor = { _attr = { showTilesetsInfo = false, selected = { tile = 0 } } },
 }
 
 function GUI.load(args)
@@ -107,26 +110,24 @@ function GUI.workspaces.ScenarioEditor:update(dt)
 		{ AutoSizeWindow = false, SizerFilter = { "E", "S", "SE" }, X = 0, Y = 0, CanObstruct = false, ConstrainPosition = true }
 	)
 
-	local MAPH = mapWidth * gridH
-	local MAPW = mapWidth * gridW
-	local grid = love.graphics.newCanvas(MAPW, MAPH)
-	love.graphics.setCanvas(grid)
+	love.graphics.setCanvas(mapArea)
 	love.graphics.clear()
-
-	for x = 0, mapWidth*gridW, gridW do
-		love.graphics.line(x, 0, x, MAPH)
-	end
-
-	for y = 0, mapWidth*gridH, gridH do
-		love.graphics.line(0, y, MAPW, y)
-	end
 
 	GUI.drawTiles()
 
-	love.graphics.setCanvas()
-	Slab.Image("img_grid", { Image = grid })
+	for x = 0, mapWidth*gridW, gridW do
+		love.graphics.line(x, 0, x, mapWidth * gridH)
+	end
 
-	if Slab.IsControlClicked() then
+	for y = 0, mapWidth*gridH, gridH do
+		love.graphics.line(0, y, mapWidth * gridW, y)
+	end
+
+	love.graphics.setCanvas()
+	Slab.Image("img_grid", { Image = mapArea })
+
+	if Slab.IsMouseDown() then
+		--print(pl.tablex.values(object))
 		local mouseX, mouseY = Slab.GetMousePositionWindow()
 		GUI.hitboxGrid(mouseX, mouseY, mapWidth)
 	end
@@ -144,6 +145,35 @@ function GUI.workspaces.ScenarioEditor:update(dt)
 	Slab.BeginWindow("AdditionalInfoMainWindow", { Title = "Additional Info", AutoSizeWindow = false })
 
 	Slab.Text(self._attr.selected.tile or "")
+
+	Slab.EndWindow()
+
+	-- PROPERTIES
+	Slab.BeginWindow('PropertiesMainWindow', {Title = "Properties"})
+
+	Slab.Text("Map size:")
+	if Slab.Input('MapSize', {Text = mapWidth, ReturnOnText = false}) then
+		mapWidth = Slab.GetInputText()
+	end
+	Slab.Separator()
+
+	Slab.Text("Tile width:")
+	if Slab.Input('GridW', {Text = gridW, ReturnOnText = false}) then
+		gridW = Slab.GetInputText()
+	end
+	Slab.Separator()
+
+	Slab.Text("Tile height:")
+	if Slab.Input('GridH', {Text = gridH, ReturnOnText = false}) then
+		gridH = Slab.GetInputText()
+	end
+
+	Slab.EndWindow()
+
+	-- Output
+	Slab.BeginWindow("OutputMainWindow", { Title = "Output", AutoSizeWindow = false })
+
+	Slab.Input("Output", { MultiLine = true, MultiLineW = 50, Text = pw(object), H = 200, W = 200 })
 
 	Slab.EndWindow()
 
