@@ -8,6 +8,7 @@
 ### Movement
 - moving
    - wishdir
+   - acceleration
    - speed
 
 ### Action

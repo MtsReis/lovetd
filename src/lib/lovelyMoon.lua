@@ -80,4 +80,13 @@ function lovelyMoon.wheelmoved(x, y)
   end
 end
 
+function lovelyMoon.resize(w, h)
+  for _, state in _slotState._pairsIter(_slotState.states) do
+    if state and state._enabled and state.resize then
+      state:resize(w, h)
+    end
+  end
+end
+
+
 return lovelyMoon

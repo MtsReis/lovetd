@@ -1,6 +1,6 @@
 local drawObjSystem = tiny.processingSystem()
 
-drawObjSystem.filter = tiny.requireAll("pos", "canvas", "dPivot", tiny.requireAny("geometry", "sprite"))
+drawObjSystem.filter = tiny.requireAll("pos", "rotation", "canvas", "dPivot", tiny.requireAny("geometry", "sprite"))
 
 function drawObjSystem:process(e, dt)
 	local LINE_WIDTH = 2
@@ -12,7 +12,7 @@ function drawObjSystem:process(e, dt)
 		love.graphics.setColor({ 1, 0, 1, 1 })
 		love.graphics.setLineWidth(LINE_WIDTH)
 
-		if e.action and e.action.curr == "attacking" then
+		if e.action and e.action.curr.attacking then
 			love.graphics.setColor({ 1, 0, 0, 1 })
 		end
 
@@ -30,6 +30,20 @@ function drawObjSystem:process(e, dt)
 
 		if e.geometry.type and e.geometry.type == "circ" then
 			love.graphics.circle(e.geometry.mode, posx, posy, e.geometry.w)
+		elseif e.geometry.type and e.geometry.type == "boid" then
+			love.graphics.push()
+			love.graphics.translate(posx, posy)
+			love.graphics.rotate(e.rotation)
+			love.graphics.polygon(
+				e.geometry.mode,
+				-e.geometry.h / 2,
+				-e.geometry.w / 2,
+				-e.geometry.h / 2,
+				e.geometry.w / 2,
+				e.geometry.h / 2,
+				0
+			)
+			love.graphics.pop()
 		else
 			love.graphics.rectangle(e.geometry.mode, posx, posy, e.geometry.w, e.geometry.h)
 		end
@@ -42,7 +56,7 @@ function drawObjSystem:process(e, dt)
 			love.graphics.setColor({ 1, 1, 1, 1 })
 			love.graphics.setLineWidth(LINE_WIDTH)
 
-			e.collisionbox.shape:draw('line')
+			e.collisionbox.shape:draw("line")
 		end
 	end
 

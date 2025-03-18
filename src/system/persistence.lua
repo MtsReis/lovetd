@@ -98,6 +98,16 @@ function Persistence.loadScenario(fileName)
 		end
 	end
 
+	-- Define the map height
+	local biggestLayerSize = 0
+	for _, v in ipairs(data.layers) do
+		if #v > biggestLayerSize then
+			biggestLayerSize = #v
+		end
+	end
+
+	data.height = biggestLayerSize / data.width
+
 	log.info("Scenario %(fileName)s loaded successfully" % { fileName = fileName })
 
 	return data
