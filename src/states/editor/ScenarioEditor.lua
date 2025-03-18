@@ -4,12 +4,11 @@ local ScenarioEditor = class('ScenarioEditor')
 local GUI
 local gameTileSets, gameTiles = unpack(require("scenarios.maps"))
 
-function ScenarioEditor.load(args)
+function ScenarioEditor.load()
     state.add(
 		require("states.editor.GUI"),
 		"GUI",
-		11,
-        args
+		11
 	)
 
     GUI = state.get("GUI")
@@ -32,6 +31,47 @@ end
 
 function ScenarioEditor.unload()
     state.destroy("MapRenderer")
+end
+
+-- Returns only the quads used in the gameTiles table
+-- Returns a table with 2 keys: quad and tileSetName
+function ScenarioEditor.tileQuad(tileset, tiles)
+    local tileQuads = {}
+    local columns = {}
+    local rows = {}
+    local active = {}
+
+    local tilesId = 2  -- Index for the needed info in the tiles table
+    local tilesName = 3
+
+    for i, o in pairs(tileset) do
+        tileQuads[i] = {}
+        columns = o["img"]:getWidth() / o["tileW"]
+        rows = o["img"]:getHeight() / o["tileH"]
+
+        for y = 0, rows - 1 do
+            for x = 0, columns - 1 do
+                local quad = {
+                    ["quad"] = love.graphics.newQuad(
+                        x * o["tileW"],
+                        y * o["tileH"],
+                        o["tileW"],
+                        o["tileH"],
+                        o["img"]:getDimensions()
+                    ),
+                    ["tileSetName"] = i
+                }
+                table.insert(tileQuads[i], quad)
+            end
+        end
+    end
+
+    for i, o in ipairs(tiles) do
+        if tileQuads[o[tilesName]][o[tilesId]] then
+            table.insert(active, tileQuads[o[tilesName]][o[tilesId]])
+        end
+    end
+    return active
 end
 
 return ScenarioEditor
