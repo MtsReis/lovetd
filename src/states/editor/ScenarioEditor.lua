@@ -18,6 +18,31 @@ function ScenarioEditor.enable()
     state.enable("GUI", "ScenarioEditor")
     GUI.workspaces.ScenarioEditor.tilesets = Persistence.loadTilesets()
     GUI.workspaces.ScenarioEditor.activeTiles = ScenarioEditor.tileQuad(GUI.workspaces.ScenarioEditor.tilesets, gameTiles)
+    
+    local maxWidth = 0
+    local maxHeight = 0
+    for _, v in pairs(gameTiles) do 
+        maxWidth = maxWidth + gameTileSets[v[3]].tileW
+
+        if (gameTileSets[v[3]].tileH > maxHeight) then
+            maxHeight = gameTileSets[v[3]].tileH
+        end
+    end
+
+    GUI.workspaces.ScenarioEditor.tilesCanvas = love.graphics.newCanvas(maxWidth, maxHeight)
+
+    maxWidth = 0
+    maxHeight = 0
+    for _, v in pairs(GUI.workspaces.ScenarioEditor.tilesets) do
+        maxWidth = maxWidth + v.img:getWidth()
+
+        if (v.img:getHeight() > maxHeight) then
+            maxHeight = v.img:getHeight()
+        end
+    end
+
+
+    GUI.workspaces.ScenarioEditor.tilesetCanvas = love.graphics.newCanvas(maxWidth, maxHeight)
 end
 
 function ScenarioEditor.disable()
