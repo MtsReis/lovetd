@@ -1,13 +1,15 @@
+local Camera = require("lib.camera")
 local I_TILESET_NAME = 3
+local MAP_BG_COLOUR = { 0.5, 0.5, 0.5, 1 }
 
 local mapCanvas = love.graphics.newCanvas()
 
 local MapRenderer = class("MapRenderer")
 local gameTileSets, gameTiles = unpack(require("scenarios.maps"))
 local loadedTiles = {}
-local map = { layers = {}, w = 0, gridW = 0, gridH = 0 }
+MapRenderer.map = { layers = {}, w = 0, h = 0, gridW = 0, gridH = 0 }
 
-function MapRenderer.load(layers, mapW, tileSize)
+function MapRenderer.load(layers, mapW, mapH, tileSize)
 	local precache = { tiles = {}, tilesets = {} }
 	local hash = { tiles = {}, tilesets = {} }
 
@@ -72,36 +74,44 @@ function MapRenderer.load(layers, mapW, tileSize)
 		end
 	end
 
-	map.layers = layers
-	map.w = mapW
-	map.gridW = tileSize[1]
-	map.gridH = tileSize[2]
+	MapRenderer.map.layers = layers
+	MapRenderer.map.gridW = tileSize[1]
+	MapRenderer.map.gridH = tileSize[2]
+	MapRenderer.map.w = mapW
+	MapRenderer.map.h = mapH
 
-	--print("MAP INFO: "..pw(loadedTiles))
+	MapRenderer.map.wPixels = MapRenderer.map.w * MapRenderer.map.gridW
+	MapRenderer.map.hPixels = MapRenderer.map.h * MapRenderer.map.gridH
 
 	loadedTiles.quads = tileQuads
 	loadedTiles.tilesetImages = tilesetImages
+
+	MapRenderer.cam = Camera(0, 0)
+
+	mapCanvas = love.graphics.newCanvas(MapRenderer.map.wPixels, MapRenderer.map.hPixels)
 end
 
 function MapRenderer.enable() end
 
 function MapRenderer.update()
 	love.graphics.setCanvas(mapCanvas)
-	for _, layer in ipairs(map.layers) do
+	love.graphics.clear( MAP_BG_COLOUR )
+
+	for _, layer in ipairs(MapRenderer.map.layers) do
 		for i, tile in ipairs(layer) do
 			if tile ~= 0 then
 				local currTile = gameTiles[tile]
 				local currTilePosId = currTile[2]
 				local currTileset = currTile[3]
 
-				local yg = (math.ceil(i / map.w) - 1)
-				local xg = (i - 1) - yg * map.w
+				local yg = (math.ceil(i / MapRenderer.map.w) - 1)
+				local xg = (i - 1) - yg * MapRenderer.map.w
 
 				love.graphics.draw(
 					loadedTiles.tilesetImages[currTileset],
 					loadedTiles.quads[currTileset][currTilePosId],
-					xg * map.gridW,
-					yg * map.gridH
+					xg * MapRenderer.map.gridW,
+					yg * MapRenderer.map.gridH
 				)
 			end
 		end
@@ -111,7 +121,9 @@ function MapRenderer.update()
 end
 
 function MapRenderer.draw()
+	MapRenderer.cam:attach()
 	love.graphics.draw(mapCanvas, 0, 0)
+	MapRenderer.cam:detach()
 end
 
 function MapRenderer.disable() end
