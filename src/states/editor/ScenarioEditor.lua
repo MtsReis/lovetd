@@ -25,9 +25,6 @@ function ScenarioEditor.disable()
 end
 
 function ScenarioEditor.keypressed(key)
-    if key == "console" then
-        pd(object)
-    end
 end
 
 function ScenarioEditor.unload()

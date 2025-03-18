@@ -4,6 +4,10 @@ local SlabDebug = require("lib.Slab.SlabDebug")
 local mapWidth = 36 -- Placeholder
 local gridW = 32    -- Placeholder
 local gridH = 32    -- Placeholder
+local object = {}
+for i = 1, mapWidth^2 do
+	object[i] = 0
+end
 
 GUI.activeWS = ""
 GUI.workspaces = {
@@ -117,8 +121,15 @@ function GUI.workspaces.ScenarioEditor:update(dt)
 		love.graphics.line(0, y, MAPW, y)
 	end
 
+	GUI.drawTiles()
+
 	love.graphics.setCanvas()
-	Slab.Image("img_map", { Image = grid })
+	Slab.Image("img_grid", { Image = grid })
+
+	if Slab.IsControlClicked() then
+		local mouseX, mouseY = Slab.GetMousePositionWindow()
+		GUI.hitboxGrid(mouseX, mouseY, mapWidth)
+	end
 
 	Slab.EndWindow()
 
@@ -170,6 +181,36 @@ function GUI.workspaces.ScenarioEditor:update(dt)
     if amora.debugMode then
         SlabDebug.Begin()
     end
+end
+
+function GUI.hitboxGrid(mouseX, mouseY, size)
+	local WINDOWINTERVAL = 4
+    for y = 1, size do
+        for x = 1, size do
+            if (mouseX >= (x-1)*gridW + WINDOWINTERVAL and mouseX < x*gridW + WINDOWINTERVAL) and (mouseY >= (y-1)*gridH + WINDOWINTERVAL and mouseY < y*gridH + WINDOWINTERVAL) then
+                -- To put the information in the correct index we do x + size * (y-1). Example:
+                -- If the image is a 3x3 that means that the first tile on the second row would be 4
+                -- X = 1 because it's the first iteration in a new row, Y = 2 because it's a new row, Size = 3 because it has 3 tiles in each row
+                -- 1 + 3 * (2 - 1) = 4
+                index = x+size*(y-1)
+                object[index] = GUI.workspaces.ScenarioEditor._attr.selected.tile
+            end
+        end
+    end
+end
+
+function GUI.drawTiles()
+	local WS = GUI.workspaces.ScenarioEditor
+	local QUAD = "quad"
+	local TILENAME = "tileSetName"
+
+	for i, o in ipairs(object) do
+		local yg = (math.ceil(i / mapWidth) - 1)
+		local xg = (i - 1) - yg * mapWidth
+		if o ~= 0 then
+			love.graphics.draw(WS.tilesets[WS.activeTiles[o][TILENAME]]["img"], WS.activeTiles[o][QUAD], xg*gridW, yg*gridH)
+		end
+	end
 end
 
 return GUI
