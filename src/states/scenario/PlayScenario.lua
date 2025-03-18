@@ -25,6 +25,7 @@ function PlayScenario.load(scenarioName)
 	local entitiesClasses = {
 		tower = require("world.entities.tower"),
 		unit = require("world.entities.unit"),
+		projectile = require("world.entities.projectile"),
 	}
 	local precachedSystems = {
 		require("world/systems/rendering").drawObj,
@@ -43,7 +44,8 @@ function PlayScenario.load(scenarioName)
 		entitiesClasses.unit(0, 300, world.space, "orc", canvas),
 		entitiesClasses.unit(30, 300, world.space, "human", canvas),
 		entitiesClasses.unit(50, 330, world.space, "somethingElse", canvas),
-		entitiesClasses.unit(44, 350, world.space, "orc", canvas)
+		entitiesClasses.unit(44, 350, world.space, "orc", canvas, { label = "ToughOrc"}),
+		entitiesClasses.projectile(44, 350, world.space, "arrow", canvas)
 	)
 end
 
