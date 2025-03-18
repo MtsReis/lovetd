@@ -10,4 +10,27 @@ function collisionSystem:process(e, dt)
     end
 end
 
-return { collision = collisionSystem }
+----------------------------------------
+local worldBoundariesSystem = tiny.processingSystem()
+
+worldBoundariesSystem.filter = tiny.requireAll("pos")
+
+function worldBoundariesSystem:process(e, dt)
+    if e.pos.x < 0 then
+        e.pos.x = 0
+    end
+
+    if e.pos.x > collisionSystem.world.properties.width then
+        e.pos.x = collisionSystem.world.properties.width
+    end
+
+    if e.pos.y < 0 then
+        e.pos.y = 0
+    end
+
+    if e.pos.y > collisionSystem.world.properties.height then
+        e.pos.y = collisionSystem.world.properties.height
+    end
+end
+
+return { collision = collisionSystem, worldBoundaries = worldBoundariesSystem }
