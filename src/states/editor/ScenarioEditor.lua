@@ -17,7 +17,7 @@ end
 
 function ScenarioEditor.enable()
     state.enable("GUI", "ScenarioEditor")
-    GUI.workspaces.ScenarioEditor.tiles = Persistence.loadTilesets()
+    GUI.workspaces.ScenarioEditor.tilesets = Persistence.loadTilesets()
 end
 
 function ScenarioEditor.disable()

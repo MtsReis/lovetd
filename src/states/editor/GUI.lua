@@ -69,7 +69,7 @@ function GUI.workspaces.ScenarioEditor:update(dt)
 	Slab.BeginWindow("TilesetsMainWindow", { Title = "Tilesets", AutoSizeWindow = false })
 
 	local cursorY = 0
-	for k, v in pairs(self.tiles) do
+	for k, v in pairs(self.tilesets) do
 		local imgW, imgH = v.img:getWidth(), v.img:getHeight()
 		v.item_tilesetCanvas = love.graphics.newCanvas(imgW, imgH)
 
