@@ -64,9 +64,7 @@ end
 function PlayScenario.enable()
 	mapRenderer.cam:lookAt(world.properties.width / 2, world.properties.height / 2)
 
-	-- Set the camera limits
-	mapRenderer.cam.maxScale = 5
-	mapRenderer.cam.minScale = 0.5
+	updateCamZoomLimits()
 
 	state.enable("MapRenderer")
 end
@@ -77,31 +75,15 @@ function PlayScenario.update(_, dt)
 	world:update(dt)
 	love.graphics.setCanvas()
 
-	if love.keyboard.isDown("left") then
-		mapRenderer.cam:move(dt * -200, 0)
-	elseif love.keyboard.isDown("right") then
-		mapRenderer.cam:move(dt * 200, 0)
-	end
-	if love.keyboard.isDown("up") then
-		mapRenderer.cam:move(0, dt * -200)
-	elseif love.keyboard.isDown("down") then
-		mapRenderer.cam:move(0, dt * 200)
-	end
-
-	if love.keyboard.isDown("pageup") then
-		mapRenderer.cam:zoom(1 + dt)
-	elseif love.keyboard.isDown("pagedown") then
-		mapRenderer.cam:zoom(1 / (1 + dt))
-		print(mapRenderer.cam.scale)
-	end
-
 	-- Force camera limits
-	if mapRenderer.cam.scale > mapRenderer.cam.maxScale then
-		mapRenderer.cam.scale = mapRenderer.cam.maxScale
-	end
+	if not amora.debugMode then
+		if mapRenderer.cam.scale > mapRenderer.cam.maxScale then
+			mapRenderer.cam.scale = mapRenderer.cam.maxScale
+		end
 
-	if mapRenderer.cam.scale < mapRenderer.cam.minScale then
-		mapRenderer.cam.scale = mapRenderer.cam.minScale
+		if mapRenderer.cam.scale < mapRenderer.cam.minScale then
+			mapRenderer.cam.scale = mapRenderer.cam.minScale
+		end
 	end
 end
 
@@ -131,6 +113,28 @@ function PlayScenario:mousemoved(x, y, dx, dy, istouch)
 	if mapRenderer.cam.dragging then
 		dx = -dx * amora.settings.preferences.screenDragSensitivity / mapRenderer.cam.scale
 		dy = -dy * amora.settings.preferences.screenDragSensitivity / mapRenderer.cam.scale
+
+		-- Don't move if it goes out of bounds without debugMode
+		if not amora.debugMode then
+			-- Forgive me for this mess, I promise I'll make it more readable later (:
+			-- cam.x - screen.w/2 / scale (undo scale) + dx < 0 (negative dx will go further to the left that the left border of the camera should) and dx < 0 (only block negative X movement, A.K.A left)
+			if
+				mapRenderer.cam.x - amora.settings.video.w / mapRenderer.cam.scale / 2 + dx < 0 and dx < 0
+				or mapRenderer.cam.x + amora.settings.video.w / mapRenderer.cam.scale / 2 + dx
+					> world.properties.width and dx > 0
+			then
+				dx = 0
+			end
+
+			if
+				mapRenderer.cam.y - amora.settings.video.h / mapRenderer.cam.scale / 2 + dy < 0 and dy < 0
+				or mapRenderer.cam.y + amora.settings.video.h / mapRenderer.cam.scale / 2 + dy
+					> world.properties.height and dy > 0
+			then
+				dy = 0
+			end
+		end
+
 		mapRenderer.cam:move(dx, dy)
 	end
 end
@@ -146,6 +150,22 @@ end
 
 function PlayScenario.unload()
 	state.destroy("MapRenderer")
+end
+
+function PlayScenario.resize()
+	updateCamZoomLimits()
+end
+
+---------------------------------------------------
+
+function updateCamZoomLimits()
+-- Set the camera limits
+mapRenderer.cam.maxScale = 5
+
+local worldWProportion = amora.settings.video.w / world.properties.width
+local worldHProportion = amora.settings.video.h / world.properties.height
+
+mapRenderer.cam.minScale = math.max(worldWProportion, worldHProportion)
 end
 
 return PlayScenario
