@@ -1,21 +1,21 @@
 return {
-	range = function(space, x, y, value, visible)
-		local range = { value = value, visible = visible }
-		range.shape = space.bump:circle(x, y, value)
+	pos = function(x, y)
+		return vec2.new(x, y)
+	end,
 
-		return range
+	rotation = function(angle)
+		return angle
 	end,
 
 	geometry = function(type, w, h, mode, colour)
-		if type ~= "rect" or type ~= "circ" then
+		if type ~= "circ" and type ~= "boid" then
 			type = "rect"
 		end
 
+		-- Circle: w = radius
+		-- Triangle: w = base
+		-- Boid: h = length
 		return { w = w, h = h, mode = mode, colour = colour, type = type }
-	end,
-
-	pos = function(x, y)
-		return vec2.new(x, y)
 	end,
 
 	dPivot = function(x, y)
@@ -26,8 +26,18 @@ return {
 		return vec2.new(x, y)
 	end,
 
-	velocity = function(rad, speed)
-		return { dir = vec2.fromAngle(rad), speed = speed }
+	range = function(space, x, y, value, visible)
+		local range = { value = value, visible = visible }
+		range.shape = space.bump:circle(x, y, value)
+
+		return range
+	end,
+
+	movement = function(velRad, speed, accelRad, accel)
+		return {
+			vel = { dir = vec2.fromAngle(velRad), speed = speed },
+			accel = { dir = vec2.fromAngle(accelRad), magnitude = accel },
+		}
 	end,
 
 	--[[
