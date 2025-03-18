@@ -4,9 +4,9 @@ local lovelyMoon = require 'lib.lovelyMoon'
 local InputVerify = class('InputVerify')
 
 InputVerify.commandList = {
-	["a"] = "console",
-	["MOUSE_3"] = "toggle_debug",
-	["MOUSE_2"] = "drag_screen"
+	["MOUSE_2"] = "drag_screen",
+	["f11"] = "toggle_fullscreen",
+	["f12"] = "toggle_debug"
 }
 
 InputVerify.holdingKeys = {}
