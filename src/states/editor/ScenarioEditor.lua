@@ -17,6 +17,7 @@ end
 function ScenarioEditor.enable()
     state.enable("GUI", "ScenarioEditor")
     GUI.workspaces.ScenarioEditor.tilesets = Persistence.loadTilesets()
+    GUI.workspaces.ScenarioEditor.activeTiles = ScenarioEditor.tileQuad(GUI.workspaces.ScenarioEditor.tilesets, gameTiles)
 end
 
 function ScenarioEditor.disable()
@@ -41,11 +42,11 @@ function ScenarioEditor.tileQuad(tileset, tiles)
     local rows = {}
     local active = {}
 
-    local tilesId = 2  -- Index for the needed info in the tiles table
-    local tilesName = 3
+    local TILESID = 2  -- Index for the needed info in the tiles table
+    local TILESNAME = 3
 
-    for i, o in pairs(tileset) do
-        tileQuads[i] = {}
+    for k, o in pairs(tileset) do
+        tileQuads[k] = {}
         columns = o["img"]:getWidth() / o["tileW"]
         rows = o["img"]:getHeight() / o["tileH"]
 
@@ -59,16 +60,16 @@ function ScenarioEditor.tileQuad(tileset, tiles)
                         o["tileH"],
                         o["img"]:getDimensions()
                     ),
-                    ["tileSetName"] = i
+                    ["tileSetName"] = k
                 }
-                table.insert(tileQuads[i], quad)
+                table.insert(tileQuads[k], quad)
             end
         end
     end
 
     for i, o in ipairs(tiles) do
-        if tileQuads[o[tilesName]][o[tilesId]] then
-            table.insert(active, tileQuads[o[tilesName]][o[tilesId]])
+        if tileQuads[o[TILESNAME]][o[TILESID]] then
+            table.insert(active, tileQuads[o[TILESNAME]][o[TILESID]])
         end
     end
     return active

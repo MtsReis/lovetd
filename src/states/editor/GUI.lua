@@ -1,6 +1,9 @@
 local Slab = require("lib.Slab")
 local GUI = class("GUI")
 local SlabDebug = require("lib.Slab.SlabDebug")
+local mapWidth = 36 -- Placeholder
+local gridW = 32    -- Placeholder
+local gridH = 32    -- Placeholder
 
 GUI.activeWS = ""
 GUI.workspaces = {
@@ -68,7 +71,6 @@ function GUI.workspaces.ScenarioEditor:update(dt)
 	-- TILESETS
 	Slab.BeginWindow("TilesetsMainWindow", { Title = "Tilesets", AutoSizeWindow = false })
 
-	local cursorY = 0
 	for k, v in pairs(self.tilesets) do
 		local imgW, imgH = v.img:getWidth(), v.img:getHeight()
 		v.item_tilesetCanvas = love.graphics.newCanvas(imgW, imgH)
@@ -91,8 +93,6 @@ function GUI.workspaces.ScenarioEditor:update(dt)
 
 		Slab.Image("img_ts_" .. k, { Image = v.item_tilesetCanvas })
 		Slab.Separator()
-
-		cursorY = cursorY + imgH
 	end
 
 	Slab.EndWindow()
@@ -102,6 +102,24 @@ function GUI.workspaces.ScenarioEditor:update(dt)
 		"MapEditorMainWindow",
 		{ AutoSizeWindow = false, SizerFilter = { "E", "S", "SE" }, X = 0, Y = 0, CanObstruct = false, ConstrainPosition = true }
 	)
+
+	local MAPH = mapWidth * gridH
+	local MAPW = mapWidth * gridW
+	local grid = love.graphics.newCanvas(MAPW, MAPH)
+	love.graphics.setCanvas(grid)
+	love.graphics.clear()
+
+	for x = 0, mapWidth*gridW, gridW do
+		love.graphics.line(x, 0, x, MAPH)
+	end
+
+	for y = 0, mapWidth*gridH, gridH do
+		love.graphics.line(0, y, MAPW, y)
+	end
+
+	love.graphics.setCanvas()
+	Slab.Image("img_map", { Image = grid })
+
 	Slab.EndWindow()
 
 	-- MAP METADATA
@@ -115,6 +133,36 @@ function GUI.workspaces.ScenarioEditor:update(dt)
 	Slab.BeginWindow("AdditionalInfoMainWindow", { Title = "Additional Info", AutoSizeWindow = false })
 
 	Slab.Text(self._attr.selected.tile or "")
+
+	Slab.EndWindow()
+
+	-- TILES
+	Slab.BeginWindow("TilesMainWindow", { Title = "Tiles", AutoSizeWindow = false })
+
+	local LIMITCOL = 10
+	local QUADWIDTH = 3
+	local QUADHEIGHT = 4
+	for i, o in ipairs(self.activeTiles) do
+		local _, _, imgW, imgH = o["quad"]:getViewport()
+		o.item_tileCanvas = love.graphics.newCanvas(imgW, imgH)
+
+		love.graphics.setCanvas(o.item_tileCanvas)
+		love.graphics.clear()
+		love.graphics.draw(self.tilesets[o["tileSetName"]].img, o["quad"], 0, 0)
+
+		love.graphics.setCanvas()
+
+		Slab.Image("img_tile_" .. i, { Image = o.item_tileCanvas })
+		if Slab.IsControlClicked() then
+			self._attr.selected.tile = i
+		end
+
+		if i % LIMITCOL ~= 0 then
+			Slab.SameLine()
+		else
+			Slab.NewLine()
+		end
+	end
 
 	Slab.EndWindow()
 
