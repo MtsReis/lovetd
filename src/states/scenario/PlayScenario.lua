@@ -27,6 +27,9 @@ function PlayScenario.load(scenarioName)
 
 	mapRenderer = state.get("MapRenderer")
 
+	-- Update canvas to the dimensions of the map
+	canvas = love.graphics.newCanvas(mapRenderer.map.wPixels, mapRenderer.map.hPixels)
+
 	-- World building
 	-- Systems
 	local entitiesClasses = {
@@ -39,11 +42,12 @@ function PlayScenario.load(scenarioName)
 		require("world/systems/attack").attack,
 		require("world/systems/movement").movement,
 		require("world/systems/collision").collision,
+		require("world/systems/collision").worldBoundaries,
 	}
 
 	world.properties = {
 		width = mapRenderer.map.w * PlayScenario.scenario.gridW,
-		height = mapRenderer.map.h * PlayScenario.scenario.gridH
+		height = mapRenderer.map.h * PlayScenario.scenario.gridH,
 	}
 
 	world:add(table.unpack(precachedSystems))
@@ -58,33 +62,77 @@ function PlayScenario.load(scenarioName)
 end
 
 function PlayScenario.enable()
-	mapRenderer.cam:lookAt(world.properties.width/2, world.properties.height/2)
+	mapRenderer.cam:lookAt(world.properties.width / 2, world.properties.height / 2)
+
+	-- Set the camera limits
+	mapRenderer.cam.maxScale = 5
+	mapRenderer.cam.minScale = 0.5
 
 	state.enable("MapRenderer")
 end
 
 function PlayScenario.update(_, dt)
-	mapRenderer.cam:attach()
 	love.graphics.setCanvas(canvas)
 	love.graphics.clear()
 	world:update(dt)
 	love.graphics.setCanvas()
-	mapRenderer.cam:detach()
 
 	if love.keyboard.isDown("left") then
-        mapRenderer.cam:move(dt * -200, 0)
-    elseif love.keyboard.isDown("right") then
-        mapRenderer.cam:move(dt * 200, 0)
-    end
-    if love.keyboard.isDown("up") then
-        mapRenderer.cam:move(0, dt * -200)
-    elseif love.keyboard.isDown("down") then
-        mapRenderer.cam:move(0, dt * 200)
-    end
+		mapRenderer.cam:move(dt * -200, 0)
+	elseif love.keyboard.isDown("right") then
+		mapRenderer.cam:move(dt * 200, 0)
+	end
+	if love.keyboard.isDown("up") then
+		mapRenderer.cam:move(0, dt * -200)
+	elseif love.keyboard.isDown("down") then
+		mapRenderer.cam:move(0, dt * 200)
+	end
+
+	if love.keyboard.isDown("pageup") then
+		mapRenderer.cam:zoom(1 + dt)
+	elseif love.keyboard.isDown("pagedown") then
+		mapRenderer.cam:zoom(1 / (1 + dt))
+		print(mapRenderer.cam.scale)
+	end
+
+	-- Force camera limits
+	if mapRenderer.cam.scale > mapRenderer.cam.maxScale then
+		mapRenderer.cam.scale = mapRenderer.cam.maxScale
+	end
+
+	if mapRenderer.cam.scale < mapRenderer.cam.minScale then
+		mapRenderer.cam.scale = mapRenderer.cam.minScale
+	end
 end
 
 function PlayScenario.draw()
+	mapRenderer.cam:attach()
 	love.graphics.draw(canvas, 0, 0)
+	mapRenderer.cam:detach()
+end
+
+-- Camera control
+function PlayScenario.keypressed(command)
+	if command == "drag_screen" then
+		mapRenderer.cam.dragging = true
+	end
+end
+
+function PlayScenario.keyreleased(command)
+	print(command)
+	if command == "drag_screen" then
+		mapRenderer.cam.dragging = false
+	end
+end
+
+function PlayScenario:mousemoved(x, y, dx, dy, istouch)
+	if mapRenderer.cam.dragging then
+		mapRenderer.cam:move(-dx, -dy)
+	end
+end
+
+function PlayScenario:wheelmoved(x, y)
+	mapRenderer.cam:zoom(1 + y * amora.settings.preferences.wheelSensitivity / 10)
 end
 
 function PlayScenario.disable()
