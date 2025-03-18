@@ -115,6 +115,7 @@ end
 function PlayScenario.keypressed(command)
 	if command == "drag_screen" then
 		mapRenderer.cam.dragging = true
+		love.mouse.setVisible(false)
 	end
 end
 
@@ -122,6 +123,7 @@ function PlayScenario.keyreleased(command)
 	print(command)
 	if command == "drag_screen" then
 		mapRenderer.cam.dragging = false
+		love.mouse.setVisible(true)
 	end
 end
 
