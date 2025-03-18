@@ -127,7 +127,9 @@ end
 
 function PlayScenario:mousemoved(x, y, dx, dy, istouch)
 	if mapRenderer.cam.dragging then
-		mapRenderer.cam:move(-dx, -dy)
+		dx = -dx * amora.settings.preferences.screenDragSensitivity / mapRenderer.cam.scale
+		dy = -dy * amora.settings.preferences.screenDragSensitivity / mapRenderer.cam.scale
+		mapRenderer.cam:move(dx, dy)
 	end
 end
 

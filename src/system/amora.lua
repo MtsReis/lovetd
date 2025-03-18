@@ -20,7 +20,8 @@ amora.settings = {
   preferences = {
     __tweakable = {"locale", "wheelSensitivity"},
     locale = nil,
-    wheelSensitivity = 1
+    wheelSensitivity = 1,
+    screenDragSensitivity = 0.5
   }
 }
 
