@@ -11,7 +11,7 @@ world.space = {
 
 local mapRenderer = {}
 
-function PlayScenario.load(scenarioName)
+function PlayScenario:load(scenarioName)
 	scenarioName = scenarioName or "proto"
 
 	PlayScenario.scenario = Persistence.loadScenario(scenarioName)
@@ -52,7 +52,7 @@ function PlayScenario.load(scenarioName)
 
 	world:add(table.unpack(precachedSystems))
 	world:add(
-		entitiesClasses.tower(love.graphics.getWidth() / 2, 400, world.space, "archer", canvas),
+		entitiesClasses.tower(world.properties.width / 2, 400, world.space, "archer", canvas),
 		entitiesClasses.unit(0, 300, world.space, "orc", canvas),
 		entitiesClasses.unit(30, 300, world.space, "human", canvas),
 		entitiesClasses.unit(50, 330, world.space, "somethingElse", canvas),
@@ -70,19 +70,21 @@ function PlayScenario.enable()
 end
 
 function PlayScenario.update(_, dt)
-	love.graphics.setCanvas(canvas)
-	love.graphics.clear()
-	world:update(dt)
-	love.graphics.setCanvas()
+	if not amora.pause then
+		love.graphics.setCanvas(canvas)
+		love.graphics.clear()
+		world:update(dt)
+		love.graphics.setCanvas()
 
-	-- Force camera limits
-	if not amora.debugMode then
-		if mapRenderer.cam.scale > mapRenderer.cam.maxScale then
-			mapRenderer.cam.scale = mapRenderer.cam.maxScale
-		end
+		-- Force camera limits
+		if not amora.debugMode then
+			if mapRenderer.cam.scale > mapRenderer.cam.maxScale then
+				mapRenderer.cam.scale = mapRenderer.cam.maxScale
+			end
 
-		if mapRenderer.cam.scale < mapRenderer.cam.minScale then
-			mapRenderer.cam.scale = mapRenderer.cam.minScale
+			if mapRenderer.cam.scale < mapRenderer.cam.minScale then
+				mapRenderer.cam.scale = mapRenderer.cam.minScale
+			end
 		end
 	end
 end
@@ -102,7 +104,6 @@ function PlayScenario.keypressed(command)
 end
 
 function PlayScenario.keyreleased(command)
-	print(command)
 	if command == "drag_screen" then
 		mapRenderer.cam.dragging = false
 		love.mouse.setVisible(true)
