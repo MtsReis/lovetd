@@ -6,7 +6,8 @@ local InputVerify = class('InputVerify')
 InputVerify.commandList = {
 	["MOUSE_2"] = "drag_screen",
 	["f11"] = "toggle_fullscreen",
-	["f12"] = "toggle_debug"
+	["f12"] = "toggle_debug",
+	["pause"] = "pause_game"
 }
 
 InputVerify.holdingKeys = {}

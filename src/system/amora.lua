@@ -2,6 +2,7 @@ local amora = class('amora')
 
 -- Default settings
 local videoW, videoH = love.window.getDesktopDimensions()
+amora.pause = false
 amora.settings = {
   sound = {
     __tweakable = {"sVolume", "mVolume"},
