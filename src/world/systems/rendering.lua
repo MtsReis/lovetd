@@ -80,8 +80,16 @@ function drawObjSystem:postProcess(dt)
 
 		love.graphics.setColor(1, 1, 1, 1)
 		love.graphics.print(
-			"Collision: %(cb)s\nMovement: %(m)s\nAttack: %(a)s\nTarget: %(t)s\nRange: %(r)s\nAction: %(act)s\n"
-				% { cb = pw(e.collisionbox), m = pw(e.movement), a = pw(e.attack), t = pw(e.target), r = pw(e.range), act = pw(e.action) },
+			"%(l)s\nCollision: %(cb)s\nMovement: %(m)s\nAttack: %(a)s\nTarget: %(t)s\nRange: %(r)s\nAction: %(act)s\n"
+				% {
+					l = e.label,
+					cb = pw(e.collisionbox),
+					m = pw(e.movement),
+					a = pw(e.attack),
+					t = pw(e.target),
+					r = pw(e.range),
+					act = pw(e.action),
+				},
 			0,
 			0
 		)

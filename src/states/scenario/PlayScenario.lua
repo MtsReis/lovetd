@@ -61,6 +61,8 @@ function PlayScenario:load(scenarioName)
 	world:add(table.unpack(precachedSystems))
 	world:add(
 		entitiesClasses.tower(world.properties.width / 2, 400, world.space, "archer", canvas),
+		entitiesClasses.tower(world.properties.width / 3, 400, world.space, "archer", canvas),
+		entitiesClasses.tower(world.properties.width * 0.75, world.properties.height / 5, world.space, "archer", canvas),
 		entitiesClasses.unit(0, 300, world.space, "orc", canvas),
 		entitiesClasses.unit(30, 300, world.space, "human", canvas),
 		entitiesClasses.unit(50, 330, world.space, "somethingElse", canvas),
