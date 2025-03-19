@@ -3,10 +3,11 @@ local GUI = class("GUI")
 local SlabDebug = require("lib.Slab.SlabDebug")
 local mapWidth = 36 -- Placeholder
 local gridW = 32 -- Placeholder
-local gridH = 32 -- Placeholder
-local object = {}
+local gridH = 32 -- Placeholder -- TODO make the read method
+local object = {[1] = {}}
+local activeLayer = 1
 for i = 1, mapWidth ^ 2 do
-	object[i] = 0
+	object[1][i] = 0
 end
 
 -- CANVASES
@@ -148,9 +149,36 @@ function GUI.workspaces.ScenarioEditor:update(dt)
 	Slab.Image("img_grid", { Image = mapArea })
 
 	if Slab.IsMouseDown() then
-		--print(pl.tablex.values(object))
 		local mouseX, mouseY = Slab.GetMousePositionWindow()
-		GUI.hitboxGrid(mouseX, mouseY, mapWidth)
+		GUI.hitboxGrid(mouseX, mouseY, mapWidth, activeLayer)
+	end
+
+	Slab.EndWindow()
+
+	-- LAYERS
+	Slab.BeginWindow('LayersMainWindow', {Title = "Layers"})
+
+	Slab.BeginListBox('LayerList')
+	for i = 1, #object do
+		Slab.BeginListBoxItem('Layer_' .. i, {Selected = Selected == i})
+		Slab.Text("Layer " .. i)
+
+		if Slab.IsListBoxItemClicked() then
+			activeLayer = i
+		end
+
+		Slab.EndListBoxItem()
+	end
+	Slab.EndListBox()
+
+	Slab.Button("+")
+	if Slab.IsControlClicked() then
+		local index = #object + 1
+		object[index] = {}
+
+		for i = 1, mapWidth ^ 2 do
+			object[index][i] = 0
+		end
 	end
 
 	Slab.EndWindow()
@@ -191,10 +219,24 @@ function GUI.workspaces.ScenarioEditor:update(dt)
 
 	Slab.EndWindow()
 
-	-- Output
+	-- OUTPUT
 	Slab.BeginWindow("OutputMainWindow", { Title = "Output", AutoSizeWindow = false })
 
-	Slab.Input("Output", { MultiLine = true, MultiLineW = 50, Text = pw(object), H = 200, W = 200 })
+	local finalString = "" -- Reset
+	finalString = "name:" .. "proto" .. "\n" -- PLACEHOLDER -- TODO: make a table with the metadata so this can be done with less cluster
+	finalString = finalString .. "gridW:" .. gridW .. "\n"
+	finalString = finalString .. "gridH:" .. gridH .. "\n"
+	finalString = finalString .. "bgm:0" .. "\n"
+	finalString = finalString .. "width:" .. mapWidth .. "\n;\n"
+
+	for i, o in ipairs(object) do
+		for i2, o2 in ipairs(o) do
+			finalString = finalString .. o2 .. " "
+		end
+		finalString = finalString .. "\n;\n"
+	end
+
+	Slab.Input("Output", { MultiLine = true, MultiLineW = 50, Text = finalString, H = 200, W = 200 })
 
 	Slab.EndWindow()
 
@@ -244,7 +286,7 @@ function GUI.workspaces.ScenarioEditor:update(dt)
 	end
 end
 
-function GUI.hitboxGrid(mouseX, mouseY, size)
+function GUI.hitboxGrid(mouseX, mouseY, size, layer)
 	local WINDOWINTERVAL = 4
 	for y = 1, size do
 		for x = 1, size do
@@ -257,7 +299,7 @@ function GUI.hitboxGrid(mouseX, mouseY, size)
 				-- X = 1 because it's the first iteration in a new row, Y = 2 because it's a new row, Size = 3 because it has 3 tiles in each row
 				-- 1 + 3 * (2 - 1) = 4
 				index = x + size * (y - 1)
-				object[index] = GUI.workspaces.ScenarioEditor._attr.selected.tile
+				object[layer][index] = GUI.workspaces.ScenarioEditor._attr.selected.tile
 			end
 		end
 	end
@@ -269,15 +311,17 @@ function GUI.drawTiles()
 	local TILENAME = "tileSetName"
 
 	for i, o in ipairs(object) do
-		local yg = (math.ceil(i / mapWidth) - 1)
-		local xg = (i - 1) - yg * mapWidth
-		if o ~= 0 then
-			love.graphics.draw(
-				WS.tilesets[WS.activeTiles[o][TILENAME]]["img"],
-				WS.activeTiles[o][QUAD],
-				xg * gridW,
-				yg * gridH
-			)
+		for i2, o2 in ipairs(o) do
+			local yg = (math.ceil(i2 / mapWidth) - 1)
+			local xg = (i2 - 1) - yg * mapWidth
+			if o2 ~= 0 then
+				love.graphics.draw(
+					WS.tilesets[WS.activeTiles[o2][TILENAME]]["img"],
+					WS.activeTiles[o2][QUAD],
+					xg * gridW,
+					yg * gridH
+				)
+			end
 		end
 	end
 end
