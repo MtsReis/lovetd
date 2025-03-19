@@ -200,9 +200,31 @@ function GUI.workspaces.ScenarioEditor:update(dt)
 	-- PROPERTIES
 	Slab.BeginWindow("PropertiesMainWindow", { Title = "Properties" })
 
+	-- WARNING DIALOG BOX START
+	if Slab.BeginDialog('Warning', {Title = "Warning"}) then
+		Slab.Text("If you change this value, the map will reset to a blank state, continue?")
+
+		if Slab.Button("Yes") then
+			mapWidth = Slab.GetInputText()
+			pl.tablex.clear(object)
+			object[1] = {}
+			for i = 1, mapWidth ^ 2 do
+				object[1][i] = 0
+			end
+			Slab.CloseDialog()
+		end
+		Slab.SameLine()
+		if Slab.Button("No") then
+			Slab.CloseDialog()
+		end
+
+		Slab.EndDialog()
+	end
+	-- WARNING DIALOG BOX END
+
 	Slab.Text("Map size:")
 	if Slab.Input("MapSize", { Text = mapWidth, ReturnOnText = false }) then
-		mapWidth = Slab.GetInputText()
+		Slab.OpenDialog('Warning')
 	end
 	Slab.Separator()
 
