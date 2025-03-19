@@ -26,10 +26,25 @@
 - type
 
 ### Attack
-- range {<value>, <visible>}
+- baseDamage
+- minDamageDecrement
+- maxDamageIncrement
+- cooldownTime
+
+### range
+- value
+- visible>
 
 ### Collision
 - collisionbox
 - hitbox
 - hurtbox
 - triggerzone
+- selectionBox
+
+### Health
+- curr
+- max
+
+### target
+- targetEntity

@@ -20,6 +20,7 @@ function Unit:initialize(x, y, space, type, canvas, options)
 		self.dPivot = c.dPivot()
 		self.movement.vel.speed = 50
 		self.collisionbox = c.collisionbox(space, x, y, W, H, -W/2, -H/2)
+		self.selectionbox = c.selectionbox(space, x, y, W, H, -W/2, -H/2)
 	elseif type == "human" then
 		self.geometry.colour = {10/255, 10/255, 10/255, 1}
 		self.movement.vel.speed = 90

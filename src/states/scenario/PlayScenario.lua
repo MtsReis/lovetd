@@ -5,8 +5,9 @@ local PlayScenario = class("PlayScenario")
 local canvas = love.graphics.newCanvas()
 local world = tiny.world()
 world.space = {
-	bump = HC.new(),
-	hit = HC.new(),
+	bump = HC.new(), -- Physical collisions
+	hit = HC.new(), -- Hit/hurt boxes interactions
+	selection = HC.new(), -- For mouse interaction
 }
 
 local mapRenderer = {}
@@ -39,15 +40,22 @@ function PlayScenario:load(scenarioName)
 	}
 	local precachedSystems = {
 		require("world/systems/rendering").drawObj,
-		require("world/systems/attack").attack,
 		require("world/systems/movement").movement,
 		require("world/systems/collision").collision,
 		require("world/systems/collision").worldBoundaries,
+
+		require("world/systems/selection").selection,
+
+		require("world/systems/attack").attack,
+		require("world/systems/attack").range,
 	}
 
 	world.properties = {
 		width = mapRenderer.map.w * PlayScenario.scenario.gridW,
 		height = mapRenderer.map.h * PlayScenario.scenario.gridH,
+		cam = mapRenderer.cam,
+		mouse = world.space.selection:point(mapRenderer.cam:worldCoords(love.mouse.getPosition())),
+		selectedEntity = nil,
 	}
 
 	world:add(table.unpack(precachedSystems))
@@ -122,7 +130,8 @@ function PlayScenario:mousemoved(x, y, dx, dy, istouch)
 			if
 				mapRenderer.cam.x - amora.settings.video.w / mapRenderer.cam.scale / 2 + dx < 0 and dx < 0
 				or mapRenderer.cam.x + amora.settings.video.w / mapRenderer.cam.scale / 2 + dx
-					> world.properties.width and dx > 0
+						> world.properties.width
+					and dx > 0
 			then
 				dx = 0
 			end
@@ -130,7 +139,8 @@ function PlayScenario:mousemoved(x, y, dx, dy, istouch)
 			if
 				mapRenderer.cam.y - amora.settings.video.h / mapRenderer.cam.scale / 2 + dy < 0 and dy < 0
 				or mapRenderer.cam.y + amora.settings.video.h / mapRenderer.cam.scale / 2 + dy
-					> world.properties.height and dy > 0
+						> world.properties.height
+					and dy > 0
 			then
 				dy = 0
 			end
@@ -160,13 +170,13 @@ end
 ---------------------------------------------------
 
 function updateCamZoomLimits()
--- Set the camera limits
-mapRenderer.cam.maxScale = 5
+	-- Set the camera limits
+	mapRenderer.cam.maxScale = 5
 
-local worldWProportion = amora.settings.video.w / world.properties.width
-local worldHProportion = amora.settings.video.h / world.properties.height
+	local worldWProportion = amora.settings.video.w / world.properties.width
+	local worldHProportion = amora.settings.video.h / world.properties.height
 
-mapRenderer.cam.minScale = math.max(worldWProportion, worldHProportion)
+	mapRenderer.cam.minScale = math.max(worldWProportion, worldHProportion)
 end
 
 return PlayScenario

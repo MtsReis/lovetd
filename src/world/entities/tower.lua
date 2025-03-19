@@ -12,6 +12,9 @@ function Tower:initialize(x, y, space, type, canvas, options)
 	self.dPivot = c.dPivot(W / 2, H / 2)
 
 	self.range = c.range(space, x, y, 100, true)
+	self.target = c.target()
+
+	self.selectionbox = c.selectionbox(space, x, y, W, H, -W/2, -H/2)
 
 	self.action = c.action({idle = 0}, {})
 

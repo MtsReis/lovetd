@@ -1,9 +1,9 @@
+local LINE_WIDTH = 2
 local drawObjSystem = tiny.processingSystem()
 
 drawObjSystem.filter = tiny.requireAll("pos", "rotation", "canvas", "dPivot", tiny.requireAny("geometry", "sprite"))
 
 function drawObjSystem:process(e, dt)
-	local LINE_WIDTH = 2
 	love.graphics.setCanvas(e.canvas)
 
 	-- Pre drawing
@@ -63,6 +63,33 @@ function drawObjSystem:process(e, dt)
 	love.graphics.setLineWidth(1)
 	love.graphics.setColor(1, 1, 1)
 	love.graphics.setCanvas()
+end
+
+function drawObjSystem:postProcess(dt)
+	if drawObjSystem.world.properties.selectedEntity and amora.debugMode then
+		local e = drawObjSystem.world.properties.selectedEntity
+
+		love.graphics.setCanvas(e.canvas)
+		love.graphics.setColor({ 1, 0.75, 0, 1 })
+		love.graphics.setLineWidth(LINE_WIDTH)
+
+		love.graphics.circle("line", e.pos.x, e.pos.y, e.geometry.w / 2)
+
+		love.graphics.setColor(0, 0, 0, 1)
+		love.graphics.rectangle("fill", 0, 0, 500, drawObjSystem.world.properties.height)
+
+		love.graphics.setColor(1, 1, 1, 1)
+		love.graphics.print(
+			"Collision: %(cb)s\nMovement: %(m)s\nAttack: %(a)s\nTarget: %(t)s\nRange: %(r)s\nAction: %(act)s\n"
+				% { cb = pw(e.collisionbox), m = pw(e.movement), a = pw(e.attack), t = pw(e.target), r = pw(e.range), act = pw(e.action) },
+			0,
+			0
+		)
+
+		love.graphics.setLineWidth(1)
+		love.graphics.setColor(1, 1, 1)
+		love.graphics.setCanvas()
+	end
 end
 
 return { drawObj = drawObjSystem }
