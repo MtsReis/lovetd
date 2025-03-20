@@ -9,6 +9,10 @@ local _resources = {
 	"sidebar_t1",
 	"sidebar_t2",
 	"sidebar_t3",
+	"sidebar_t1_tower",
+	"sidebar_t1_tower_hover",
+	"sidebar_t2_tower",
+	"sidebar_t3_tower",
 	"sidebar_towers",
 	"topbar",
 
@@ -33,8 +37,12 @@ UI.activeP = "" -- Active presentation
 UI.eventListeners = {}
 UI.presentations = {
 	PlayScenario = {
-		_attr = { sidebar = { width = 118, towerSpots = 3 }, buttons = {} },
+		_attr = {
+			sidebar = { width = 118, towerSpots = 3 },
+			buttons = {},
+		},
 		canvases = { sidebar_bg = love.graphics.newCanvas() },
+		_events = {},
 	},
 
 	MainMenu = {
@@ -109,6 +117,10 @@ function UI:update(dt)
 
 			if mx >= v.x and mx <= v.x + v.w and my >= v.y and my <= v.y + v.h then
 				v.state = "_hover"
+				if self.activeP == "PlayScenario" then
+					pd(v)
+					pd({mx, my})
+				end
 
 				if love.mouse.isDown(1) then
 					if v.state ~= "_pressed" then
@@ -258,15 +270,47 @@ function UI.presentations.PlayScenario:reload(dt)
 	local towerSectionH = screenH - towerSectionInitialy - sb_endH
 	local towerSpotMaxH = towerSectionH / self._attr.sidebar.towerSpots
 	for i = 1, self._attr.sidebar.towerSpots, 1 do
-		love.graphics.draw(
-			_resources["sidebar_t" .. i],
-			(self._attr.sidebar.width - _resources["sidebar_t" .. i]:getWidth()) / 2,
-			towerSectionInitialy
+		local iterationTower = "sidebar_t" .. i
+		self._attr.buttons["ele_" .. iterationTower .. "_tower"] = {
+			x = (self._attr.sidebar.width - _resources[iterationTower .. "_tower"]:getWidth()) / 2,
+			y = towerSectionInitialy
 				+ towerSpotMaxH * (i - 1)
-				+ (towerSpotMaxH - _resources["sidebar_t" .. i]:getHeight()) / 2
+				+ (towerSpotMaxH - _resources[iterationTower .. "_tower"]:getHeight()) / 2,
+			w = 64,
+			h = 62,
+			state = ""
+		}
+
+		love.graphics.draw(
+			_resources[iterationTower],
+			self._attr.buttons["ele_" .. iterationTower .. "_tower"].x,
+			self._attr.buttons["ele_" .. iterationTower .. "_tower"].y
 		) -- Tower text
+		love.graphics.draw(
+			_resources[iterationTower .. "_tower"],
+			self._attr.buttons["ele_" .. iterationTower .. "_tower"].x,
+			self._attr.buttons["ele_" .. iterationTower .. "_tower"].y
+		) -- Tower image
 	end
 
+	self._events = {
+		onPress = function(element)
+			for k, v in pairs(self._attr.buttons) do
+				if element == k then
+				end
+			end
+		end,
+		onRelease = function(element)
+			for k, v in pairs(self._attr.buttons) do
+				if element == k then
+					print("clicou")
+				end
+			end
+		end,
+	}
+
+	pd(self._events)
+	pd(self._attr.buttons)
 	love.graphics.setCanvas()
 end
 
