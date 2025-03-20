@@ -395,6 +395,7 @@ function GUI.outputString()
 		finalString = finalString .. k .. ":" .. v .. "\n"
 	end
 
+	finalString = finalString .. ";\n"
 	for i, o in ipairs(object) do
 		for i2, o2 in ipairs(o) do
 			finalString = finalString .. o2 .. " "
