@@ -2,6 +2,7 @@ local amora = class('amora')
 
 -- Default settings
 local videoW, videoH = love.window.getDesktopDimensions()
+amora.pause = false
 amora.settings = {
   sound = {
     __tweakable = {"sVolume", "mVolume"},
@@ -18,8 +19,10 @@ amora.settings = {
   },
 
   preferences = {
-    __tweakable = {"locale"},
-    locale = nil
+    __tweakable = {"locale", "wheelSensitivity"},
+    locale = nil,
+    wheelSensitivity = 1,
+    screenDragSensitivity = 0.5
   }
 }
 

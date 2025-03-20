@@ -4,24 +4,25 @@ local lovelyMoon = require 'lib.lovelyMoon'
 local InputVerify = class('InputVerify')
 
 InputVerify.commandList = {
-	keyboard = {
-		["a"] = "console"
-	}
+	["MOUSE_2"] = "drag_screen",
+	["f11"] = "toggle_fullscreen",
+	["f12"] = "toggle_debug",
+	["pause"] = "pause_game"
 }
 
 InputVerify.holdingKeys = {}
 
 function InputVerify:keypressed(key)
-	if self.commandList.keyboard[key] ~= nil then
-		self.holdingKeys[key] = self.commandList.keyboard[key]
-		lovelyMoon.keypressed(self.commandList.keyboard[key])
+	if self.commandList[key] ~= nil then
+		self.holdingKeys[key] = self.commandList[key]
+		lovelyMoon.keypressed(self.commandList[key])
 	end
 end
 
 function InputVerify:keyreleased(key)
-	if self.commandList.keyboard[key] ~= nil then
+	if self.commandList[key] ~= nil then
 		self.holdingKeys[key] = nil
-		lovelyMoon.keyreleased(self.commandList.keyboard[key])
+		lovelyMoon.keyreleased(self.commandList[key])
 	end
 end
 
