@@ -1,10 +1,12 @@
 local RangeSystem = tiny.processingSystem(class("RangeSystem"))
 
-RangeSystem.filter =
-	tiny.requireAny(tiny.requireAll("collisionbox", "pos"), tiny.requireAll("attack", "pos", "ai", "range", "action" , "target"))
+RangeSystem.filter = tiny.requireAny(
+	tiny.requireAll("collisionbox", "pos"),
+	tiny.requireAll("attack", "pos", "range", "action", "target", "stance")
+)
 
 function RangeSystem:process(e, dt)
-	if e.attack and e.attack.mode == "aggressive" and e.range then
+	if e.attack and e.stance == "aggressive" and e.range then
 		e.range.shape:moveTo(e.pos.x, e.pos.y)
 
 		-- Reset target and action
@@ -31,10 +33,8 @@ end
 
 local AttackSystem = tiny.processingSystem(class("AttackSystem"))
 
-AttackSystem.filter =
-	tiny.requireAll(tiny.requireAll("attack", "target"))
+AttackSystem.filter = tiny.requireAll(tiny.requireAll("attack", "target"))
 
-function AttackSystem:process(e, dt)
-end
+function AttackSystem:process(e, dt) end
 
 return { attack = AttackSystem, range = RangeSystem }

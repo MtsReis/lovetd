@@ -43,6 +43,7 @@ function PlayScenario:load(scenarioName)
 		require("world/systems/movement").movement,
 		require("world/systems/collision").collision,
 		require("world/systems/collision").worldBoundaries,
+		require("world/systems/collision").hit,
 
 		require("world/systems/selection").selection,
 
@@ -59,15 +60,16 @@ function PlayScenario:load(scenarioName)
 	}
 
 	world:add(table.unpack(precachedSystems))
+	local mainTower = entitiesClasses.tower(world.properties.width / 2, 400, world.space, "archer", canvas)
 	world:add(
-		entitiesClasses.tower(world.properties.width / 2, 400, world.space, "archer", canvas),
+		mainTower,
 		entitiesClasses.tower(world.properties.width / 3, 400, world.space, "archer", canvas),
 		entitiesClasses.tower(world.properties.width * 0.75, world.properties.height / 5, world.space, "archer", canvas),
 		entitiesClasses.unit(0, 300, world.space, "orc", canvas),
 		entitiesClasses.unit(30, 300, world.space, "human", canvas),
 		entitiesClasses.unit(50, 330, world.space, "somethingElse", canvas),
 		entitiesClasses.unit(44, 350, world.space, "orc", canvas, { label = "ToughOrc" }),
-		entitiesClasses.projectile(44, 350, world.space, "arrow", canvas, { label = "Sanic" })
+		entitiesClasses.projectile(44, 350, world.space, "arrow", mainTower, canvas, { label = "Sanic" })
 	)
 end
 

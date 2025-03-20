@@ -16,8 +16,12 @@ local function collisionbox(space, x, y, w, h, pivotx, pivoty)
 		end,
 	})
 
-	collisionbox.shape =
-		space:rectangle(x + collisionbox.pivot.x, y + collisionbox.pivot.y, collisionbox.w, collisionbox.h)
+	if w ~= 0 or h ~= 0 then
+		collisionbox.shape =
+			space:rectangle(x + collisionbox.pivot.x, y + collisionbox.pivot.y, collisionbox.w, collisionbox.h)
+	else
+		collisionbox.shape = space:point(x + collisionbox.pivot.x, y + collisionbox.pivot.y)
+	end
 
 	return collisionbox
 end
@@ -61,7 +65,9 @@ return {
 	end,
 
 	hurtbox = function(space, x, y, w, h, pivotx, pivoty)
-		return collisionbox(space.hit, x, y, w, h, pivotx, pivoty)
+		local box = collisionbox(space.hit, x, y, w, h, pivotx, pivoty)
+		box.wasAffectedBy = {}
+		return box
 	end,
 
 	triggerzone = function(space, x, y, w, h, pivotx, pivoty)
@@ -87,7 +93,7 @@ return {
 
 	--------
 
-	health = function(curr, max)
+	hp = function(curr, max)
 		return { curr = curr, max = max }
 	end,
 
@@ -117,4 +123,30 @@ return {
 	action = function(curr, queue)
 		return { curr = curr, queue = queue }
 	end,
+
+	invoker = function(invoker)
+		--print(invoker.class.super.name)
+		if invoker and invoker.class and invoker.class.super.name == "Entity" then
+			return invoker
+		end
+
+		return nil
+	end,
+
+	stance = function(mode)
+		if mode == "pacific" then
+			return mode
+		end
+
+		return "aggressive"
+	end,
+
+	-------------------
+	-- Especial values
+	-------------------
+	_effects_agent_on_target_once = {
+		"attack",
+		"eff_slow",
+	},
+	_effects_agent_on_target_constant = {},
 }

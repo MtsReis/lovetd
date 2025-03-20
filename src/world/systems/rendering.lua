@@ -54,9 +54,25 @@ function drawObjSystem:process(e, dt)
 	if amora.debugMode then
 		if e.collisionbox then
 			love.graphics.setColor({ 1, 1, 1, 1 })
-			love.graphics.setLineWidth(LINE_WIDTH)
+			love.graphics.setLineWidth(1)
 
 			e.collisionbox.shape:draw("line")
+		end
+
+		if e.hitbox then
+			love.graphics.setColor({ 1, 0, 0, 1 })
+			love.graphics.setLineWidth(LINE_WIDTH)
+
+			e.hitbox.shape:draw("line")
+		end
+
+
+
+		if e.hurtbox then
+			love.graphics.setColor({ 0, 0, 1, 1 })
+			love.graphics.setLineWidth(LINE_WIDTH)
+
+			e.hurtbox.shape:draw("line")
 		end
 	end
 

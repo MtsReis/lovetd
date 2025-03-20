@@ -31,6 +31,9 @@
 - maxDamageIncrement
 - cooldownTime
 
+### Stance
+aggressive / pacific
+
 ### range
 - value
 - visible>
@@ -42,9 +45,11 @@
 - triggerzone
 - selectionBox
 
-### Health
+### HP
 - curr
 - max
 
-### target
+### Target
 - targetEntity
+
+### Invoker (what other entity created this)

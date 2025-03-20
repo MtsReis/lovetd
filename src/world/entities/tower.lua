@@ -5,7 +5,6 @@ local Tower = class("Tower", Entity)
 
 function Tower:initialize(x, y, space, type, canvas, options)
 	local W, H = 40, 40
-
 	Entity.initialize(self, options)
 
 	self.canvas = canvas
@@ -22,9 +21,9 @@ function Tower:initialize(x, y, space, type, canvas, options)
 
 	self.action = c.action({ idle = 0 }, {})
 
-	-- temp
-	self.attack = { mode = "aggressive" }
-	self.ai = true
+	self.stance = c.stance("aggressive")
+	self.hp = c.hp(100, 100)
+	self.attack = c.attack(10, 2, 3, 1)
 end
 
 return Tower
