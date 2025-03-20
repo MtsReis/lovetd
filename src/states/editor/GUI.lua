@@ -6,6 +6,8 @@ local gridW = 32 -- Placeholder
 local gridH = 32 -- Placeholder -- TODO make the read method
 local object = {[1] = {}}
 local activeLayer = 1
+local fileAction = ''
+
 for i = 1, mapWidth ^ 2 do
 	object[1][i] = 0
 end
@@ -43,6 +45,31 @@ end
 function GUI.workspaces.ScenarioEditor:update(dt)
 	Slab.DisableDocks({ "Left", "Right", "Bottom" })
 
+	-- DIALOG OPEN SCENARIO
+	if fileAction ~= '' then
+		local file = Slab.FileDialog({
+			AllowMultiSelect = false,
+			Type = fileAction,
+			Directory = love.filesystem.getSourceBaseDirectory() .. "/src/scenarios",
+			Filters = { "*.tds" },
+			IncludeParent =  false
+		})
+
+		if file.Button ~= "" then
+			fileAction = ''
+
+			if file.Button == "OK" then
+				_, _, fileAction_file = file.Files[1]:find(".*[%/%\\](.*)[.].*")
+				local fileAction_file = Persistence.loadScenario(fileAction_file)
+				pl.tablex.clear(object)
+				object = fileAction_file.layers
+				mapWidth = fileAction_file.width
+				gridH = fileAction_file.gridH
+				gridW = fileAction_file.gridW
+			end
+		end
+	end
+
 	-- MAIN MENU BAR
 	if Slab.BeginMainMenuBar() then
 		if Slab.BeginMenu("File") then
@@ -50,7 +77,10 @@ function GUI.workspaces.ScenarioEditor:update(dt)
 				-- Create a new file.
 			end
 
-			Slab.MenuItem("Open Scenario")
+			if Slab.MenuItem("Open Scenario") then
+				fileAction = 'openfile'
+			end
+
 			Slab.MenuItem("Save Scenario")
 			Slab.Separator()
 			Slab.MenuItem("Save tile list")
