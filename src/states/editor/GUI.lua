@@ -60,8 +60,8 @@ function GUI.workspaces.ScenarioEditor:update(dt)
 		if file.Button ~= "" then
 			if file.Button == "OK" then
 				if fileAction == "openfile" then
-					_, _, fileAction_file = file.Files[1]:find(".*[%/%\\](.*)[.].*")
-					local fileAction_file = Persistence.loadScenario(fileAction_file)
+					local _, _, fileAction_file = file.Files[1]:find(".*[%/%\\](.*)[.].*")
+					fileAction_file = Persistence.loadScenario(fileAction_file)
 					pl.tablex.clear(object)
 					object = fileAction_file.layers
 					metadata.width = fileAction_file.width
