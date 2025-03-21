@@ -1,5 +1,7 @@
 local HC = require("lib.HC")
 
+local UI
+
 local PlayScenario = class("PlayScenario")
 
 local canvas = love.graphics.newCanvas()
@@ -67,6 +69,19 @@ function PlayScenario.enable()
 	updateCamZoomLimits()
 
 	state.enable("MapRenderer")
+
+	UI = state.get("UI")
+	UI:changePresentation("PlayScenario", {
+		onPressedTower1 = function()
+			print("Create tower 1")
+		end,
+		onPressedTower2 = function()
+			print("Create tower 2")
+		end,
+		onPressedTower3 = function()
+			print("Create tower 3")
+		end
+	})
 end
 
 function PlayScenario.update(_, dt)
