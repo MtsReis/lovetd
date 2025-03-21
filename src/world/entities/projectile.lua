@@ -1,15 +1,17 @@
+local MELEE_TIMESPAN = 0.8
 local c = require("world.components")
 local Entity = require("world.entities.entity")
 
 local Projectile = class("Projectile", Entity)
 
-function Projectile:initialize(invoker, type, space, options)
+function Projectile:initialize(invoker, type, space, target, options)
 	Entity.initialize(self, options)
 	local x = options.x or invoker.pos.x or nil
 	local y = options.y or invoker.pos.y or nil
 	local rotation = options.rotation or invoker.rotation or 0
 	local canvas = options.canvas or invoker.canvas or nil
 	local dPivot = options.dPivot or c.dPivot(0, 0)
+	local lifespan = options.dPivot or c.lifespan(5)
 
 	space = space or options.space or invoker.space or nil
 
@@ -28,6 +30,18 @@ function Projectile:initialize(invoker, type, space, options)
 	self.movement = c.movement(self.rotation, 100, 0, 2)
 
 	self.hitbox = c.hitbox(space, x, y, h, w, 0, 0)
+
+	self.lifespan = lifespan
+
+	if type == "melee" then
+		self.lifespan = c.lifespan(MELEE_TIMESPAN)
+		self.geometry = nil
+		self.sprite = nil
+
+		if target and target.pos then
+			self.pos = target.pos
+		end
+	end
 end
 
 return Projectile

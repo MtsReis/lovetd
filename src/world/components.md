@@ -55,3 +55,6 @@ aggressive / pacific
 ### Invoker (what other entity created this)
 
 ### Team (if player's or enemy's)
+
+### Lifespan (for temporary entities)
+### Condition (opposite of effect)

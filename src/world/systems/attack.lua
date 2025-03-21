@@ -1,4 +1,4 @@
-local STATE_ENUM = require("world.components").STATE_ENUM
+local STATE = require("world.components").STATE_ENUM
 local RangeSystem = tiny.processingSystem(class("RangeSystem"))
 local ProjectileEntity = require("world.entities.projectile")
 
@@ -43,16 +43,16 @@ local AttackSystem = tiny.processingSystem(class("AttackSystem"))
 AttackSystem.filter = tiny.requireAll("pos", "attack", "target", "team", "range", "state")
 
 function AttackSystem:process(e, dt)
-	if e.state == STATE_ENUM.attacking then
-
+	if e.state == STATE.attacking then
 		local currTimer = e.attack.attackCycleTimer - dt
+		local type = e.attack.ranged and "ranged" or "melee"
 
 		if currTimer < 0 then
 			local targetAngle = e.target.targetEntity.pos - e.pos
 			targetAngle = targetAngle:heading()
 			-- Resets attack
 			e.attack.attackCycleTimer = e.attack.cooldownTime - currTimer
-			AttackSystem.world:add(ProjectileEntity(e, "melee", AttackSystem.world.space, { rotation = targetAngle}))
+			AttackSystem.world:add(ProjectileEntity(e, type, AttackSystem.world.space, e.target.targetEntity, { rotation = targetAngle }))
 		else
 			e.attack.attackCycleTimer = currTimer
 		end

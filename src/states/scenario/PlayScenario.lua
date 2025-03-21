@@ -60,6 +60,9 @@ function PlayScenario:load(scenarioName)
 		require("world/systems/attack").range,
 
 		require("world/systems/state").state,
+		require("world/systems/death").death,
+		require("world/systems/lifespan").lifespan,
+		require("world/systems/lifespan").clearReferences,
 	}
 
 	world.properties = {

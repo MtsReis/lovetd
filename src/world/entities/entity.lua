@@ -3,8 +3,10 @@ local Entity = class("Entity")
 local count = 1
 
 function Entity:initialize(options)
+	self.lifespan = false
 	if options then
 		self.label = options.label
+		self.lifespan = options.lifespan
 	end
 
 	if not self.label then

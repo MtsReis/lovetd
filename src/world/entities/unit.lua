@@ -32,7 +32,7 @@ function Unit:initialize(x, y, space, type, canvas, options)
 		self.collisionbox = c.collisionbox(space, x, y, W, H, -W / 2, -H / 2)
 		self.selectionbox = c.selectionbox(space, x, y, W, H, -W / 2, -H / 2)
 
-		self.range = c.range(space, x, y, 30, true)
+		self.range = c.range(space, x, y, 30, false)
 		self.sightRange = c.sightRange(space, x, y, 65)
 		self.attack = c.attack(10, 2, 3, 1)
 		self.stance = c.stance("aggressive")
@@ -47,6 +47,8 @@ function Unit:initialize(x, y, space, type, canvas, options)
 
 		self.hp = c.hp(50, 50)
 		self.team = c.team(1)
+
+		self.lifespan = c.lifespan(3)
 	end
 end
 

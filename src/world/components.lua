@@ -1,4 +1,7 @@
 local STATE_ENUM = { idle = "IDLE", movingAlongPath = "MOVING_PATH", chasing = "CHASING", attacking = "ATTACKING" }
+local CONDITION_ENUM = { dead = "COND_DEAD" }
+local EFFECT_ENUM = { slow = "EFF_SLOW" }
+
 local DEFAULT_MAX_ACCEL = 50
 local Path = class("Path")
 
@@ -134,6 +137,13 @@ return {
 
 	--------
 
+	state = function(initialConditions)
+		local state = initialState or "idle"
+		return STATE_ENUM[state] or STATE_ENUM["idle"]
+	end,
+
+	--------
+
 	attack = function(baseDamage, minDamageDecrement, maxDamageIncrement, cooldownTime, ranged)
 		return {
 			baseDamage = baseDamage,
@@ -156,16 +166,28 @@ return {
 	sightRange = function(space, x, y, value, visible)
 		return rangeCircle(space.bump, x, y, value, amora.debugMode)
 	end,
+
 	--------
 
 	target = function(targetEntity)
 		return { targetEntity = targetEntity }
 	end,
 
-	state = function(initialState)
-		local state = initialState or "idle"
-		return STATE_ENUM[state] or STATE_ENUM["idle"]
+	----------------
+	-- CONDITIONS --
+	----------------
+	COND_DEAD = function()
+		return true
 	end,
+
+	----------------
+	-- EFFECTS --
+	----------------
+	EFF_SLOW = function(percentage)
+		return percentage
+	end,
+
+	--------
 
 	invoker = function(invoker)
 		--print(invoker.class.super.name)
@@ -194,6 +216,12 @@ return {
 		return Path:new(waypoints)
 	end,
 
+	--------
+
+	lifespan = function(seconds)
+		return seconds or 1
+	end,
+
 	-------------------
 	-- Especial values
 	-------------------
@@ -203,4 +231,6 @@ return {
 	},
 	_effects_agent_on_target_constant = {},
 	STATE_ENUM = STATE_ENUM,
+	CONDITION_ENUM = CONDITION_ENUM,
+	EFFECT_ENUM = EFFECT_ENUM,
 }

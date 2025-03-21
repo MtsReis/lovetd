@@ -1,4 +1,4 @@
-local STATE_ENUM = require("world.components").STATE_ENUM
+local STATE = require("world.components").STATE_ENUM
 local EMPTY_ENTITY_DEFAULT_RANGE = 15
 local h = require("world.entities.handlers.attack")
 
@@ -8,17 +8,17 @@ stateSystem.filter = tiny.requireAll("state", "pos")
 
 function stateSystem:process(e, dt)
 	-- MOVEMENT STATES
-	if e.state == STATE_ENUM.idle then
+	if e.state == STATE.idle then
 		-- Switch to moving state if there's a path to follow
 		if e.path then
-			e.state = STATE_ENUM.movingAlongPath
+			e.state = STATE.movingAlongPath
 		end
 
 		-- Switch to attack state if there's a target
 		if e.target and e.target.targetEntity then
-			e.state = STATE_ENUM.attacking
+			e.state = STATE.attacking
 		end
-	elseif e.state == STATE_ENUM.movingAlongPath and e.path and e.movement then
+	elseif e.state == STATE.movingAlongPath and e.path and e.movement then
 		-- Don't loop the trajectory. Remove this in case looping might be necessary
 		if e.path:getNextWpIndex() == 1 then
 			e.path._currWp = #e.path.wps - 1
@@ -51,13 +51,13 @@ function stateSystem:process(e, dt)
 				end
 			end
 		end
-	elseif e.state == STATE_ENUM.chasing then
+	elseif e.state == STATE.chasing then
 		-- Move toward the enemy
 		if e.target and e.target.targetEntity then
 			-- If target's hurtbox is in attack range
 			if e.range.shape:collidesWith(e.target.targetEntity.hurtbox.shape) then
 				-- Enemy is in attack range, switch to Attacking state
-				e.state = STATE_ENUM.attacking
+				e.state = STATE.attacking
 			else
 				-- Move towards the enemy
 				local direction = e.target.targetEntity.pos - e.pos
@@ -69,11 +69,11 @@ function stateSystem:process(e, dt)
 				end
 			end
 		else
-			e.state = STATE_ENUM.idle
+			e.state = STATE.idle
 		end
 	end
 
-	if e.state == STATE_ENUM.attacking then
+	if e.state == STATE.attacking then
 		-- Stop if moving
 		if e.movement then
 			e.movement.vel.speed = 0
@@ -88,7 +88,7 @@ function stateSystem:process(e, dt)
 			or not e.target.targetEntity.hurtbox
 			or not e.range.shape:collidesWith(e.target.targetEntity.hurtbox.shape)
 		then
-			e.state = STATE_ENUM.idle
+			e.state = STATE.idle
 			h.onStopAttacking(e)
 		end
 	-- If there’s an enemy in sightRange, switch to Chasing state and ignore other states
@@ -100,7 +100,7 @@ function stateSystem:process(e, dt)
 		and e.sightRange
 	then
 		if e.sightRange.shape:collidesWith(e.target.targetEntity.collisionbox.shape) then
-			e.state = STATE_ENUM.chasing
+			e.state = STATE.chasing
 		end
 	end
 end
