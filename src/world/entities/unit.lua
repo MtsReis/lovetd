@@ -32,7 +32,8 @@ function Unit:initialize(x, y, space, type, canvas, options)
 		self.collisionbox = c.collisionbox(space, x, y, W, H, -W / 2, -H / 2)
 		self.selectionbox = c.selectionbox(space, x, y, W, H, -W / 2, -H / 2)
 
-		self.range = c.range(space, x, y, 45, true)
+		self.range = c.range(space, x, y, 30, true)
+		self.sightRange = c.sightRange(space, x, y, 65)
 		self.attack = c.attack(10, 2, 3, 1)
 		self.stance = c.stance("aggressive")
 
@@ -42,7 +43,7 @@ function Unit:initialize(x, y, space, type, canvas, options)
 		self.path = c.path(options.path)
 	elseif type == "human" then
 		self.geometry.colour = { 10 / 255, 10 / 255, 10 / 255, 1 }
-		self.movement = c.movement(0, 130, -0.2, 2)
+		self.movement = c.movement(0, 130, 0, 2)
 
 		self.hp = c.hp(50, 50)
 		self.team = c.team(1)

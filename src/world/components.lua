@@ -51,6 +51,13 @@ local function collisionbox(space, x, y, w, h, pivotx, pivoty)
 	return collisionbox
 end
 
+local function rangeCircle(space, x, y, value, visible)
+	local range = { value = value, visible = visible }
+	range.shape = space:circle(x, y, value)
+
+	return range
+end
+
 return {
 	pos = function(x, y)
 		return vec2.new(x, y)
@@ -134,15 +141,21 @@ return {
 		}
 	end,
 
-	target = function(targetEntity)
-		return { targetEntity = targetEntity }
+	--------
+	-- Use rangeCircle as base
+	-- Attack range, for attacking state
+	range = function(space, x, y, value, visible)
+		return rangeCircle(space.hit, x, y, value, visible)
 	end,
 
-	range = function(space, x, y, value, visible)
-		local range = { value = value, visible = visible }
-		range.shape = space.bump:circle(x, y, value)
+	-- Sight range, mostly for chasing
+	sightRange = function(space, x, y, value, visible)
+		return rangeCircle(space.bump, x, y, value, amora.debugMode)
+	end,
+	--------
 
-		return range
+	target = function(targetEntity)
+		return { targetEntity = targetEntity }
 	end,
 
 	state = function(initialState)

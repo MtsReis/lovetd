@@ -43,29 +43,13 @@ function stateSystem:process(e, dt)
 				local direction = waypoint - e.pos
 				e.movement.vel.dir = direction:norm()
 			end
-
-			-- If there’s an enemy in range, switch to Chasing state
-			if e.target and e.target.targetEntity then
-				-- Try predefined range
-				local entityRange = e.range and e.range.value or nil
-				-- Then try biggest dimension from collisionbox
-				entityRange = not entityRange and e.collisionbox and math.max(e.collisionbox.w, e.collisionbox.h)
-					or entityRange
-				-- Then use default value
-				entityRange = entityRange or EMPTY_ENTITY_DEFAULT_RANGE
-
-				local targetDistance = e.pos:dist(e.target.targetEntity.pos)
-
-				if targetDistance < entityRange then
-					e.state = STATE_ENUM.chasing
-				end
-			end
 		end
 	elseif e.state == STATE_ENUM.chasing then
 		-- Move toward the enemy
 		if e.target and e.target.targetEntity then
 			local distance = e.pos:dist(e.target.targetEntity.pos)
 
+			-- Instead check if is in attack range
 			if distance > e.movement.vel.speed * dt then
 				-- Move toward the enemy
 				local direction = e.target.targetEntity.pos - e.pos
@@ -78,9 +62,18 @@ function stateSystem:process(e, dt)
 			e.state = STATE_ENUM.idle
 		end
 	elseif e.state == STATE_ENUM.attacking then
-		print("Attacking enemy!")
-
+		-- Stop if moving
+		if e.movement then
+			e.movement.vel.speed = 0
+		end
 		e.state = STATE_ENUM.idle
+	end
+
+	-- If there’s an enemy in sightRange, switch to Chasing state and ignore other states
+	if e.target and e.target.targetEntity and e.target.targetEntity.collisionbox and e.movement and e.sightRange then
+		if e.sightRange.shape:collidesWith(e.target.targetEntity.collisionbox.shape) then
+			e.state = STATE_ENUM.chasing
+		end
 	end
 end
 

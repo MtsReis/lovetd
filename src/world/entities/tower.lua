@@ -15,6 +15,8 @@ function Tower:initialize(x, y, space, type, canvas, options)
 	self.dPivot = c.dPivot(W / 2, H / 2)
 
 	self.selectionbox = c.selectionbox(space, x, y, W, H, -W / 2, -H / 2)
+	self.collisionbox = c.collisionbox(space, x, y, W, H, -W / 2, -H / 2)
+	self.hurtbox = c.hurtbox(space, x, y, W, H, -W / 2, -H / 2)
 
 	self.state = c.state("idle")
 

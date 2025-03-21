@@ -78,19 +78,20 @@ function PlayScenario:load(scenarioName)
 	local mainTower = entitiesClasses.tower(world.properties.width / 2, 400, world.space, "archer", canvas)
 	world:add(
 		mainTower,
-		entitiesClasses.tower(world.properties.width / 3, 400, world.space, "archer", canvas),
+		entitiesClasses.tower(world.properties.width / 3, 265, world.space, "archer", canvas),
 		entitiesClasses.tower(world.properties.width * 0.75, world.properties.height / 5, world.space, "archer", canvas),
-		entitiesClasses.unit(0, 300, world.space, "orc", canvas, { path = world.properties.paths[1] }),
-		entitiesClasses.unit(1000, 310, world.space, "human", canvas),
+		--entitiesClasses.unit(0, 300, world.space, "orc", canvas, { path = world.properties.paths[1] }),
+		entitiesClasses.unit(0, 450, world.space, "orc", canvas, { path = world.properties.paths[1] }),
+		entitiesClasses.unit(1000, 290, world.space, "human", canvas),
 		entitiesClasses.unit(50, 330, world.space, "somethingElse", canvas),
-		entitiesClasses.unit(
-			44,
-			350,
-			world.space,
-			"orc",
-			canvas,
-			{ label = "ToughOrc", path = world.properties.paths[1] }
-		),
+		-- entitiesClasses.unit(
+		-- 	44,
+		-- 	350,
+		-- 	world.space,
+		-- 	"orc",
+		-- 	canvas,
+		-- 	{ label = "ToughOrc", path = world.properties.paths[1] }
+		-- ),
 		entitiesClasses.projectile(44, 350, world.space, "arrow", mainTower, canvas, { label = "Sanic" })
 	)
 end

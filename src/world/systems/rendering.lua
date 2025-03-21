@@ -8,6 +8,17 @@ function drawObjSystem:process(e, dt)
 
 	-- Pre drawing
 	-- Range circle
+	if e.sightRange and e.sightRange.visible then
+		love.graphics.setColor({ 1, .5, .3, 1 })
+		love.graphics.setLineWidth(LINE_WIDTH)
+
+		if e.target and e.target.targetEntity then
+			love.graphics.setColor({ 1, .7, .5, 1 })
+		end
+
+		love.graphics.circle("line", e.pos.x, e.pos.y, e.sightRange.value)
+	end
+
 	if e.range and e.range.visible and e.attack then
 		love.graphics.setColor({ 1, 0, 1, 1 })
 		love.graphics.setLineWidth(LINE_WIDTH)
@@ -94,7 +105,7 @@ function drawObjSystem:postProcess(dt)
 
 		love.graphics.setColor(1, 1, 1, 1)
 		love.graphics.print(
-			"%(l)s\nState: %(st)s\nCollision: %(cb)s\nTeam: %(team)s\nMovement: %(m)s\nAttack: %(a)s\nTarget: %(t)s\nRange: %(r)s\nStance: %(stance)s\nPath: %(path)s\n"
+			"%(l)s\nState: %(st)s\nTeam: %(team)s\nMovement: %(m)s\nAttack: %(a)s\nTarget: %(t)s\nSightRange: %(sr)s\nRange: %(r)s\nStance: %(stance)s\nPath: %(path)s\nCollision: %(cb)s\n"
 				% {
 					l = e.label,
 					cb = pw(e.collisionbox),
@@ -102,6 +113,7 @@ function drawObjSystem:postProcess(dt)
 					a = pw(e.attack),
 					t = pw(e.target),
 					r = pw(e.range),
+					sr = pw(e.sightRange),
 					st = pw(e.state),
 					stance = pw(e.stance),
 					team = pw(e.team),
