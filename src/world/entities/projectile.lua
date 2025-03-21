@@ -3,21 +3,31 @@ local Entity = require("world.entities.entity")
 
 local Projectile = class("Projectile", Entity)
 
-function Projectile:initialize(x, y, space, type, invoker, canvas, options)
+function Projectile:initialize(invoker, type, space, options)
 	Entity.initialize(self, options)
-	local W, H = 10, 20
+	local x = options.x or invoker.pos.x or nil
+	local y = options.y or invoker.pos.y or nil
+	local rotation = options.rotation or invoker.rotation or 0
+	local canvas = options.canvas or invoker.canvas or nil
+	local dPivot = options.dPivot or c.dPivot(0, 0)
+
+	space = space or options.space or invoker.space or nil
+
+	local w = options.w or 10
+	local h = options.h or 20
+
+	self.invoker = c.invoker(invoker)
 
 	self.canvas = canvas
 
 	self.pos = c.pos(x, y)
-	self.rotation = c.rotation(3.14)
-	self.geometry = c.geometry("boid", W, H, "fill", { 0.5, 0, 1, 1 })
-	self.dPivot = c.dPivot(0, 0)
+	self.rotation = c.rotation(rotation)
+	self.geometry = c.geometry("boid", w, h, "fill", { 0.5, 0, 1, 1 })
+	self.dPivot = dPivot
 
-	self.invoker = c.invoker(invoker)
+	self.movement = c.movement(self.rotation, 100, 0, 2)
 
-	self.movement = c.movement(0, 100, 0, 2)
-	self.hitbox = c.hitbox(space, x, y, H, W, 0, 0)
+	self.hitbox = c.hitbox(space, x, y, h, w, 0, 0)
 end
 
 return Projectile

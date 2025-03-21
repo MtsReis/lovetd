@@ -91,8 +91,7 @@ function PlayScenario:load(scenarioName)
 			"orc",
 			canvas,
 			{ label = "ToughOrc", path = world.properties.paths[1] }
-		),
-		entitiesClasses.projectile(44, 350, world.space, "arrow", mainTower, canvas, { label = "Sanic" })
+		)
 	)
 end
 

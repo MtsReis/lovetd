@@ -1,5 +1,6 @@
 local STATE_ENUM = require("world.components").STATE_ENUM
 local EMPTY_ENTITY_DEFAULT_RANGE = 15
+local h = require("world.entities.handlers.attack")
 
 local stateSystem = tiny.processingSystem()
 
@@ -27,7 +28,6 @@ function stateSystem:process(e, dt)
 
 		-- Move along path
 		local nextWp = e.path:getNextWp()
-		print(pw(nextWp))
 
 		local waypoint = vec2.new(nextWp[1], nextWp[2])
 
@@ -58,7 +58,6 @@ function stateSystem:process(e, dt)
 			if e.range.shape:collidesWith(e.target.targetEntity.hurtbox.shape) then
 				-- Enemy is in attack range, switch to Attacking state
 				e.state = STATE_ENUM.attacking
-				e.movement.vel.speed = 0
 			else
 				-- Move towards the enemy
 				local direction = e.target.targetEntity.pos - e.pos
@@ -72,16 +71,34 @@ function stateSystem:process(e, dt)
 		else
 			e.state = STATE_ENUM.idle
 		end
-	elseif e.state == STATE_ENUM.attacking then
+	end
+
+	if e.state == STATE_ENUM.attacking then
 		-- Stop if moving
 		if e.movement then
 			e.movement.vel.speed = 0
+			e.movement.accel.magnitude = 0
 		end
-		e.state = STATE_ENUM.idle
-	end
 
+		-- Stop attacking if there's no target or if it's not in range
+		if
+			not e.target
+			or not e.range
+			or not e.target.targetEntity
+			or not e.target.targetEntity.hurtbox
+			or not e.range.shape:collidesWith(e.target.targetEntity.hurtbox.shape)
+		then
+			e.state = STATE_ENUM.idle
+			h.onStopAttacking(e)
+		end
 	-- If there’s an enemy in sightRange, switch to Chasing state and ignore other states
-	if e.target and e.target.targetEntity and e.target.targetEntity.collisionbox and e.movement and e.sightRange then
+	elseif
+		e.target
+		and e.target.targetEntity
+		and e.target.targetEntity.collisionbox
+		and e.movement
+		and e.sightRange
+	then
 		if e.sightRange.shape:collidesWith(e.target.targetEntity.collisionbox.shape) then
 			e.state = STATE_ENUM.chasing
 		end

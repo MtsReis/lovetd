@@ -134,13 +134,14 @@ return {
 
 	--------
 
-	attack = function(baseDamage, minDamageDecrement, maxDamageIncrement, cooldownTime)
+	attack = function(baseDamage, minDamageDecrement, maxDamageIncrement, cooldownTime, ranged)
 		return {
 			baseDamage = baseDamage,
 			minDamageDecrement = minDamageDecrement,
 			maxDamageIncrement = maxDamageIncrement,
 			cooldownTime = cooldownTime,
 			attackCycleTimer = 0,
+			ranged = ranged or false
 		}
 	end,
 
