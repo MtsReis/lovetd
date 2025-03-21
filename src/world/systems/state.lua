@@ -42,21 +42,30 @@ function stateSystem:process(e, dt)
 				-- Move toward the waypoint
 				local direction = waypoint - e.pos
 				e.movement.vel.dir = direction:norm()
+
+				-- Starts to accelerate if possible
+				if e.movement.vel.speed < e.movement.maxSpeed then
+					e.movement.accel.magnitude = e.movement.maxAccel
+				end
 			end
 		end
 	elseif e.state == STATE_ENUM.chasing then
 		-- Move toward the enemy
 		if e.target and e.target.targetEntity then
-			local distance = e.pos:dist(e.target.targetEntity.pos)
-
-			-- Instead check if is in attack range
-			if distance > e.movement.vel.speed * dt then
-				-- Move toward the enemy
-				local direction = e.target.targetEntity.pos - e.pos
-				e.movement.vel.dir = direction:norm()
-			else
+			-- If target's hurtbox is in attack range
+			if e.range.shape:collidesWith(e.target.targetEntity.hurtbox.shape) then
 				-- Enemy is in attack range, switch to Attacking state
 				e.state = STATE_ENUM.attacking
+				e.movement.vel.speed = 0
+			else
+				-- Move towards the enemy
+				local direction = e.target.targetEntity.pos - e.pos
+				e.movement.vel.dir = direction:norm()
+
+				-- Starts to accelerate if possible
+				if e.movement and e.movement.vel.speed < e.movement.maxSpeed then
+					e.movement.accel.magnitude = e.movement.maxAccel
+				end
 			end
 		else
 			e.state = STATE_ENUM.idle

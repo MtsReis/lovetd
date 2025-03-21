@@ -27,7 +27,7 @@ function Unit:initialize(x, y, space, type, canvas, options)
 		self.geometry.type = "circ"
 		self.geometry.colour = { 50 / 255, 148 / 255, 44 / 255, 1 }
 		self.dPivot = c.dPivot()
-		self.movement.vel.speed = 50
+		self.movement = c.movement(0, 50, 0, 0)
 
 		self.collisionbox = c.collisionbox(space, x, y, W, H, -W / 2, -H / 2)
 		self.selectionbox = c.selectionbox(space, x, y, W, H, -W / 2, -H / 2)
@@ -43,7 +43,7 @@ function Unit:initialize(x, y, space, type, canvas, options)
 		self.path = c.path(options.path)
 	elseif type == "human" then
 		self.geometry.colour = { 10 / 255, 10 / 255, 10 / 255, 1 }
-		self.movement = c.movement(0, 130, 0, 2)
+		self.movement = c.movement(0, 100, 0, 0, 130)
 
 		self.hp = c.hp(50, 50)
 		self.team = c.team(1)

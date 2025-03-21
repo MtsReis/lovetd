@@ -1,4 +1,5 @@
 local STATE_ENUM = { idle = "IDLE", movingAlongPath = "MOVING_PATH", chasing = "CHASING", attacking = "ATTACKING" }
+local DEFAULT_MAX_ACCEL = 50
 local Path = class("Path")
 
 function Path:initialize(waypoints)
@@ -116,10 +117,12 @@ return {
 
 	--------
 
-	movement = function(velRad, speed, accelRad, accel)
+	movement = function(velRad, speed, accelRad, accel, maxSpeed, maxAccel)
 		return {
 			vel = { dir = vec2.fromAngle(velRad), speed = speed },
 			accel = { dir = vec2.fromAngle(accelRad), magnitude = accel },
+			maxSpeed = maxSpeed or speed,
+			maxAccel = maxAccel or DEFAULT_MAX_ACCEL
 		}
 	end,
 
