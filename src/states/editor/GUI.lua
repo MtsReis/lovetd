@@ -1,17 +1,23 @@
 local Slab = require("lib.Slab")
 local GUI = class("GUI")
 local SlabDebug = require("lib.Slab.SlabDebug")
-local mapWidth = 36 -- Placeholder
-local gridW = 32 -- Placeholder
-local gridH = 32 -- Placeholder -- TODO make the read method
+local metadata = {
+	["name"] = "new scenario",
+	["gridW"] = 32,
+	["gridH"] = 32,
+	["bgm"] = 0,
+	["width"] = 36
+}
 local object = {[1] = {}}
 local activeLayer = 1
-for i = 1, mapWidth ^ 2 do
+local fileAction = ''
+
+for i = 1, metadata.width ^ 2 do
 	object[1][i] = 0
 end
 
 -- CANVASES
-local mapArea = love.graphics.newCanvas(mapWidth * gridH, mapWidth * gridW)
+local mapArea = love.graphics.newCanvas(metadata.width * metadata.gridH, metadata.width * metadata.gridW)
 
 GUI.activeWS = ""
 GUI.workspaces = {
@@ -36,12 +42,43 @@ end
 
 function GUI.draw()
 	Slab.Draw()
-	--love.graphics.draw(GUI.workspaces.ScenarioEditor.tilesetCanvas)
-	
 end
 
 function GUI.workspaces.ScenarioEditor:update(dt)
 	Slab.DisableDocks({ "Left", "Right", "Bottom" })
+
+	-- DIALOG OPEN SCENARIO
+	if fileAction ~= '' then
+		local file = Slab.FileDialog({
+			AllowMultiSelect = false,
+			Type = fileAction,
+			Directory = love.filesystem.getSourceBaseDirectory() .. "/src/scenarios",
+			Filters = { "*.tds" },
+			IncludeParent =  false
+		})
+
+		if file.Button ~= "" then
+			if file.Button == "OK" then
+				if fileAction == "openfile" then
+					local _, _, fileAction_file = file.Files[1]:find(".*[%/%\\](.*)[.].*")
+					fileAction_file = Persistence.loadScenario(fileAction_file)
+					pl.tablex.clear(object)
+					object = fileAction_file.layers
+					metadata.width = fileAction_file.width
+					metadata.gridH = fileAction_file.gridH
+					metadata.gridW = fileAction_file.gridW
+				end
+
+				if fileAction == "savefile" then
+					fileAction_file = file.Files[1]
+					fileAction_file = io.open(fileAction_file, 'w')
+					fileAction_file:write(GUI.outputString())
+					fileAction_file:close()
+				end
+			end
+			fileAction = ''
+		end
+	end
 
 	-- MAIN MENU BAR
 	if Slab.BeginMainMenuBar() then
@@ -50,8 +87,13 @@ function GUI.workspaces.ScenarioEditor:update(dt)
 				-- Create a new file.
 			end
 
-			Slab.MenuItem("Open Scenario")
-			Slab.MenuItem("Save Scenario")
+			if Slab.MenuItem("Open Scenario") then
+				fileAction = 'openfile'
+			end
+
+			if Slab.MenuItem("Save Scenario") then
+				fileAction = 'savefile'
+			end
 			Slab.Separator()
 			Slab.MenuItem("Save tile list")
 			Slab.Separator()
@@ -136,12 +178,12 @@ function GUI.workspaces.ScenarioEditor:update(dt)
 	GUI.drawTiles()
 
 	if self._attr.showTilesetsInfo then
-		for x = 0, mapWidth * gridW, gridW do
-			love.graphics.line(x, 0, x, mapWidth * gridH)
+		for x = 0, metadata.width * metadata.gridW, metadata.gridW do
+			love.graphics.line(x, 0, x, metadata.width * metadata.gridH)
 		end
 
-		for y = 0, mapWidth * gridH, gridH do
-			love.graphics.line(0, y, mapWidth * gridW, y)
+		for y = 0, metadata.width * metadata.gridH, metadata.gridH do
+			love.graphics.line(0, y, metadata.width * metadata.gridW, y)
 		end
 	end
 
@@ -150,7 +192,7 @@ function GUI.workspaces.ScenarioEditor:update(dt)
 
 	if Slab.IsMouseDown() then
 		local mouseX, mouseY = Slab.GetMousePositionWindow()
-		GUI.hitboxGrid(mouseX, mouseY, mapWidth, activeLayer)
+		GUI.hitboxGrid(mouseX, mouseY, metadata.width, activeLayer)
 	end
 
 	Slab.EndWindow()
@@ -176,7 +218,7 @@ function GUI.workspaces.ScenarioEditor:update(dt)
 		local index = #object + 1
 		object[index] = {}
 
-		for i = 1, mapWidth ^ 2 do
+		for i = 1, metadata.width ^ 2 do
 			object[index][i] = 0
 		end
 	end
@@ -205,10 +247,10 @@ function GUI.workspaces.ScenarioEditor:update(dt)
 		Slab.Text("If you change this value, the map will reset to a blank state, continue?")
 
 		if Slab.Button("Yes") then
-			mapWidth = Slab.GetInputText()
+			metadata.width = Slab.GetInputText()
 			pl.tablex.clear(object)
 			object[1] = {}
-			for i = 1, mapWidth ^ 2 do
+			for i = 1, metadata.width ^ 2 do
 				object[1][i] = 0
 			end
 			Slab.CloseDialog()
@@ -222,43 +264,41 @@ function GUI.workspaces.ScenarioEditor:update(dt)
 	end
 	-- WARNING DIALOG BOX END
 
+	Slab.Text("Name:")
+	if Slab.Input("Name", { Text = metadata.name, ReturnOnText = false }) then
+		metadata.name = Slab.GetInputText()
+	end
+	Slab.Separator()
+
 	Slab.Text("Map size:")
-	if Slab.Input("MapSize", { Text = mapWidth, ReturnOnText = false }) then
+	if Slab.Input("MapSize", { Text = metadata.width, ReturnOnText = false }) then
 		Slab.OpenDialog('Warning')
 	end
 	Slab.Separator()
 
 	Slab.Text("Tile width:")
-	if Slab.Input("GridW", { Text = gridW, ReturnOnText = false }) then
-		gridW = Slab.GetInputText()
+	if Slab.Input("GridW", { Text = metadata.gridW, ReturnOnText = false }) then
+		metadata.gridW = Slab.GetInputText()
 	end
 	Slab.Separator()
 
 	Slab.Text("Tile height:")
-	if Slab.Input("GridH", { Text = gridH, ReturnOnText = false }) then
-		gridH = Slab.GetInputText()
+	if Slab.Input("GridH", { Text = metadata.gridH, ReturnOnText = false }) then
+		metadata.gridH = Slab.GetInputText()
 	end
+
+	Slab.Text("BGM:")
+	if Slab.Input("BGM", { Text = metadata.bgm, ReturnOnText = false }) then
+		metadata.bgm = Slab.GetInputText()
+	end
+	Slab.Separator()
 
 	Slab.EndWindow()
 
 	-- OUTPUT
 	Slab.BeginWindow("OutputMainWindow", { Title = "Output", AutoSizeWindow = false })
 
-	local finalString = "" -- Reset
-	finalString = "name:" .. "proto" .. "\n" -- PLACEHOLDER -- TODO: make a table with the metadata so this can be done with less cluster
-	finalString = finalString .. "gridW:" .. gridW .. "\n"
-	finalString = finalString .. "gridH:" .. gridH .. "\n"
-	finalString = finalString .. "bgm:0" .. "\n"
-	finalString = finalString .. "width:" .. mapWidth .. "\n;\n"
-
-	for i, o in ipairs(object) do
-		for i2, o2 in ipairs(o) do
-			finalString = finalString .. o2 .. " "
-		end
-		finalString = finalString .. "\n;\n"
-	end
-
-	Slab.Input("Output", { MultiLine = true, MultiLineW = 50, Text = finalString, H = 200, W = 200 })
+	Slab.Input("Output", { MultiLine = true, MultiLineW = 50, Text = GUI.outputString(), H = 200, W = 200 })
 
 	Slab.EndWindow()
 
@@ -313,8 +353,8 @@ function GUI.hitboxGrid(mouseX, mouseY, size, layer)
 	for y = 1, size do
 		for x = 1, size do
 			if
-				(mouseX >= (x - 1) * gridW + WINDOWINTERVAL and mouseX < x * gridW + WINDOWINTERVAL)
-				and (mouseY >= (y - 1) * gridH + WINDOWINTERVAL and mouseY < y * gridH + WINDOWINTERVAL)
+				(mouseX >= (x - 1) * metadata.gridW + WINDOWINTERVAL and mouseX < x * metadata.gridW + WINDOWINTERVAL)
+				and (mouseY >= (y - 1) * metadata.gridH + WINDOWINTERVAL and mouseY < y * metadata.gridH + WINDOWINTERVAL)
 			then
 				-- To put the information in the correct index we do x + size * (y-1). Example:
 				-- If the image is a 3x3 that means that the first tile on the second row would be 4
@@ -334,18 +374,36 @@ function GUI.drawTiles()
 
 	for i, o in ipairs(object) do
 		for i2, o2 in ipairs(o) do
-			local yg = (math.ceil(i2 / mapWidth) - 1)
-			local xg = (i2 - 1) - yg * mapWidth
+			local yg = (math.ceil(i2 / metadata.width) - 1)
+			local xg = (i2 - 1) - yg * metadata.width
 			if o2 ~= 0 then
 				love.graphics.draw(
 					WS.tilesets[WS.activeTiles[o2][TILENAME]]["img"],
 					WS.activeTiles[o2][QUAD],
-					xg * gridW,
-					yg * gridH
+					xg * metadata.gridW,
+					yg * metadata.gridH
 				)
 			end
 		end
 	end
+end
+
+function GUI.outputString()
+	local finalString = ""
+
+	for k, v in pairs(metadata) do
+		finalString = finalString .. k .. ":" .. v .. "\n"
+	end
+
+	finalString = finalString .. ";\n"
+	for i, o in ipairs(object) do
+		for i2, o2 in ipairs(o) do
+			finalString = finalString .. o2 .. " "
+		end
+		finalString = finalString .. "\n;\n"
+	end
+
+	return finalString
 end
 
 return GUI
