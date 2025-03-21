@@ -27,6 +27,7 @@ function stateSystem:process(e, dt)
 
 		-- Move along path
 		local nextWp = e.path:getNextWp()
+		print(pw(nextWp))
 
 		local waypoint = vec2.new(nextWp[1], nextWp[2])
 
@@ -45,6 +46,7 @@ function stateSystem:process(e, dt)
 
 				-- Starts to accelerate if possible
 				if e.movement.vel.speed < e.movement.maxSpeed then
+					e.movement.accel.dir = e.movement.vel.dir
 					e.movement.accel.magnitude = e.movement.maxAccel
 				end
 			end

@@ -2,7 +2,7 @@ local HC = require("lib.HC")
 local Path = require("world.properties.path")
 local PREDEFINED_PATHS = {
 	{
-		Path({ 0, 320 }, { 557, 300 }, { 1114, 320 }),
+		Path({ 0, 320 }, { 557, 300 }, { 250, 500 },  { 1114, 320 }),
 	},
 }
 
@@ -78,7 +78,7 @@ function PlayScenario:load(scenarioName)
 	local mainTower = entitiesClasses.tower(world.properties.width / 2, 400, world.space, "archer", canvas)
 	world:add(
 		mainTower,
-		entitiesClasses.tower(world.properties.width / 3, 265, world.space, "archer", canvas),
+		entitiesClasses.tower(world.properties.width / 3, 200, world.space, "archer", canvas),
 		entitiesClasses.tower(world.properties.width * 0.75, world.properties.height / 5, world.space, "archer", canvas),
 		entitiesClasses.unit(0, 300, world.space, "orc", canvas, { path = world.properties.paths[1] }),
 		entitiesClasses.unit(0, 450, world.space, "orc", canvas, { path = world.properties.paths[1] }),
@@ -156,6 +156,19 @@ function PlayScenario.draw()
 
 	-- 	love.graphics.setColor(1, 1, 1, 1)
 	-- end
+
+	local wpLines = {}
+	love.graphics.setColor({ 0, 0.8, 0, 1 })
+	love.graphics.setLineWidth(2)
+
+	love.graphics.setLineWidth(1)
+	love.graphics.setColor({ 1, 1, 1, 1 })
+
+	for k, v in pairs(PREDEFINED_PATHS[1][1]) do
+		table.insert(wpLines, v[1])
+		table.insert(wpLines, v[2])
+	end
+	love.graphics.line(wpLines)
 	mapRenderer.cam:detach()
 end
 
