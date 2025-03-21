@@ -8,6 +8,7 @@ local metadata = {
 	["bgm"] = 0,
 	["width"] = 36
 }
+local waypoints = {}
 local object = {[1] = {}}
 local activeLayer = 1
 local fileAction = ''
@@ -176,6 +177,7 @@ function GUI.workspaces.ScenarioEditor:update(dt)
 	love.graphics.clear()
 
 	GUI.drawTiles()
+	GUI.drawWaypoints()
 
 	if self._attr.showTilesetsInfo then
 		for x = 0, metadata.width * metadata.gridW, metadata.gridW do
@@ -193,6 +195,11 @@ function GUI.workspaces.ScenarioEditor:update(dt)
 	if Slab.IsMouseDown() then
 		local mouseX, mouseY = Slab.GetMousePositionWindow()
 		GUI.hitboxGrid(mouseX, mouseY, metadata.width, activeLayer)
+	end
+
+	if Slab.IsMouseReleased() then
+		local mouseX, mouseY = Slab.GetMousePositionWindow()
+		GUI.waypoints(mouseX, mouseY, metadata.width)
 	end
 
 	Slab.EndWindow()
@@ -299,6 +306,7 @@ function GUI.workspaces.ScenarioEditor:update(dt)
 	Slab.BeginWindow("OutputMainWindow", { Title = "Output", AutoSizeWindow = false })
 
 	Slab.Input("Output", { MultiLine = true, MultiLineW = 50, Text = GUI.outputString(), H = 200, W = 200 })
+	Slab.Input("Waypoints", { MultiLine = true, MultiLineW = 50, Text = pw(waypoints), H = 200, W = 200 })
 
 	Slab.EndWindow()
 
@@ -339,6 +347,9 @@ function GUI.workspaces.ScenarioEditor:update(dt)
 	end
 
 	love.graphics.setCanvas()
+	if Slab.Button('Waypoint') then
+		self._attr.selected.tile = "Waypoint"
+	end
 
 	Slab.EndWindow()
 
@@ -350,20 +361,53 @@ end
 
 function GUI.hitboxGrid(mouseX, mouseY, size, layer)
 	local WINDOWINTERVAL = 4
+	local Selected = GUI.workspaces.ScenarioEditor._attr.selected.tile
 	for y = 1, size do
 		for x = 1, size do
 			if
 				(mouseX >= (x - 1) * metadata.gridW + WINDOWINTERVAL and mouseX < x * metadata.gridW + WINDOWINTERVAL)
 				and (mouseY >= (y - 1) * metadata.gridH + WINDOWINTERVAL and mouseY < y * metadata.gridH + WINDOWINTERVAL)
 			then
-				-- To put the information in the correct index we do x + size * (y-1). Example:
-				-- If the image is a 3x3 that means that the first tile on the second row would be 4
-				-- X = 1 because it's the first iteration in a new row, Y = 2 because it's a new row, Size = 3 because it has 3 tiles in each row
-				-- 1 + 3 * (2 - 1) = 4
-				index = x + size * (y - 1)
-				object[layer][index] = GUI.workspaces.ScenarioEditor._attr.selected.tile
+				if Selected ~= "Waypoint" then
+					-- To put the information in the correct index we do x + size * (y-1). Example:
+					-- If the image is a 3x3 that means that the first tile on the second row would be 4
+					-- X = 1 because it's the first iteration in a new row, Y = 2 because it's a new row, Size = 3 because it has 3 tiles in each row
+					-- 1 + 3 * (2 - 1) = 4
+					index = x + size * (y - 1)
+					object[layer][index] = Selected
+				end
 			end
 		end
+	end
+end
+
+function GUI.waypoints(mouseX, mouseY, size)
+	local WINDOWINTERVAL = 4
+	local Selected = GUI.workspaces.ScenarioEditor._attr.selected.tile
+	for y = 1, size do
+		for x = 1, size do
+			if
+				(mouseX >= (x - 1) * metadata.gridW + WINDOWINTERVAL and mouseX < x * metadata.gridW + WINDOWINTERVAL)
+				and (mouseY >= (y - 1) * metadata.gridH + WINDOWINTERVAL and mouseY < y * metadata.gridH + WINDOWINTERVAL)
+			then
+				if Selected == "Waypoint" then
+					local xy = {(x-1)*metadata.gridW, (y-1)*metadata.gridH}
+					for i, o in ipairs(waypoints) do
+						if pw(o) == pw(xy) then
+							table.remove(waypoints, i)
+							return
+						end
+					end
+					table.insert(waypoints, xy)
+				end
+			end
+		end
+	end
+end
+
+function GUI.drawWaypoints()
+	for i, o in ipairs(waypoints) do
+		love.graphics.print("P", o[1], o[2])
 	end
 end
 
