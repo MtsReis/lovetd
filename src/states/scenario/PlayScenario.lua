@@ -81,7 +81,7 @@ function PlayScenario:load(scenarioName)
 		entitiesClasses.tower(world.properties.width / 3, 400, world.space, "archer", canvas),
 		entitiesClasses.tower(world.properties.width * 0.75, world.properties.height / 5, world.space, "archer", canvas),
 		entitiesClasses.unit(0, 300, world.space, "orc", canvas, { path = world.properties.paths[1] }),
-		entitiesClasses.unit(30, 300, world.space, "human", canvas),
+		entitiesClasses.unit(1000, 310, world.space, "human", canvas),
 		entitiesClasses.unit(50, 330, world.space, "somethingElse", canvas),
 		entitiesClasses.unit(
 			44,
@@ -141,20 +141,20 @@ function PlayScenario.draw()
 	love.graphics.draw(canvas, 0, 0)
 
 	-- TODO: Remove this 🤬
-	if amora.debugMode then
-		love.graphics.setColor(1, 1, 1, 1)
-		love.graphics.rectangle("fill", 500, 0, 500, love.graphics.getHeight())
+	-- if amora.debugMode then
+	-- 	love.graphics.setColor(1, 1, 1, 1)
+	-- 	love.graphics.rectangle("fill", 500, 0, 500, love.graphics.getHeight())
 
-		love.graphics.setColor(0, 0, 0, 1)
-		love.graphics.print("Mouse\nX: %(x)s\nY: %(y)s\nMap X: %(mx)s\nMap Y: %(my)s\n" % {
-			x = love.mouse.getX(),
-			y = love.mouse.getY(),
-			mx = world.properties.mouse._pos.x,
-			my = world.properties.mouse._pos.y,
-		}, 500, 0)
+	-- 	love.graphics.setColor(0, 0, 0, 1)
+	-- 	love.graphics.print("Mouse\nX: %(x)s\nY: %(y)s\nMap X: %(mx)s\nMap Y: %(my)s\n" % {
+	-- 		x = love.mouse.getX(),
+	-- 		y = love.mouse.getY(),
+	-- 		mx = world.properties.mouse._pos.x,
+	-- 		my = world.properties.mouse._pos.y,
+	-- 	}, 500, 0)
 
-		love.graphics.setColor(1, 1, 1, 1)
-	end
+	-- 	love.graphics.setColor(1, 1, 1, 1)
+	-- end
 	mapRenderer.cam:detach()
 end
 

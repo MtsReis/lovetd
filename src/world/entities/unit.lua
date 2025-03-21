@@ -21,14 +21,20 @@ function Unit:initialize(x, y, space, type, canvas, options)
 	self.team = c.team(2)
 
 	self.state = c.state("idle")
+	self.target = c.target()
 
 	if type == "orc" then
 		self.geometry.type = "circ"
 		self.geometry.colour = { 50 / 255, 148 / 255, 44 / 255, 1 }
 		self.dPivot = c.dPivot()
 		self.movement.vel.speed = 50
+
 		self.collisionbox = c.collisionbox(space, x, y, W, H, -W / 2, -H / 2)
 		self.selectionbox = c.selectionbox(space, x, y, W, H, -W / 2, -H / 2)
+
+		self.range = c.range(space, x, y, 45, true)
+		self.attack = c.attack(10, 2, 3, 1)
+		self.stance = c.stance("aggressive")
 
 		self.hp = c.hp(100, 100)
 		self.team = c.team(2)
@@ -36,7 +42,7 @@ function Unit:initialize(x, y, space, type, canvas, options)
 		self.path = c.path(options.path)
 	elseif type == "human" then
 		self.geometry.colour = { 10 / 255, 10 / 255, 10 / 255, 1 }
-		self.movement.vel.speed = 90
+		self.movement = c.movement(0, 130, -0.2, 2)
 
 		self.hp = c.hp(50, 50)
 		self.team = c.team(1)

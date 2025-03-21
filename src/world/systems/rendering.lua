@@ -94,7 +94,7 @@ function drawObjSystem:postProcess(dt)
 
 		love.graphics.setColor(1, 1, 1, 1)
 		love.graphics.print(
-			"%(l)s\nCollision: %(cb)s\nTeam: %(team)s\nMovement: %(m)s\nAttack: %(a)s\nTarget: %(t)s\nRange: %(r)s\nState: %(st)s\nStance: %(stance)s\nPath: %(path)s\n"
+			"%(l)s\nState: %(st)s\nCollision: %(cb)s\nTeam: %(team)s\nMovement: %(m)s\nAttack: %(a)s\nTarget: %(t)s\nRange: %(r)s\nStance: %(stance)s\nPath: %(path)s\n"
 				% {
 					l = e.label,
 					cb = pw(e.collisionbox),

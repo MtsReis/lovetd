@@ -1,27 +1,32 @@
 local STATE_ENUM = require("world.components").STATE_ENUM
+local EMPTY_ENTITY_DEFAULT_RANGE = 15
 
 local stateSystem = tiny.processingSystem()
 
 stateSystem.filter = tiny.requireAll("state", "pos")
 
 function stateSystem:process(e, dt)
+	-- MOVEMENT STATES
 	if e.state == STATE_ENUM.idle then
 		-- Switch to moving state if there's a path to follow
 		if e.path then
 			e.state = STATE_ENUM.movingAlongPath
 		end
-	elseif e.state == STATE_ENUM.movingAlongPath and e.path and e.movement then
-        -- Don't loop the trajectory. Remove this in case looping might be necessary
-        if e.path:getNextWpIndex() == 1 then
-            e.state = STATE_ENUM.idle
-            e.path = nil
-            e.movement.vel.speed = 0
 
-            return
-        end
+		-- Switch to attack state if there's a target
+		if e.target and e.target.targetEntity then
+			e.state = STATE_ENUM.attacking
+		end
+	elseif e.state == STATE_ENUM.movingAlongPath and e.path and e.movement then
+		-- Don't loop the trajectory. Remove this in case looping might be necessary
+		if e.path:getNextWpIndex() == 1 then
+			e.path._currWp = #e.path.wps - 1
+
+			return
+		end
 
 		-- Move along path
-        local nextWp = e.path:getNextWp()
+		local nextWp = e.path:getNextWp()
 
 		local waypoint = vec2.new(nextWp[1], nextWp[2])
 
@@ -35,39 +40,47 @@ function stateSystem:process(e, dt)
 				e.path:advanceWp()
 			else
 				-- Move toward the waypoint
-                local direction = waypoint - e.pos
+				local direction = waypoint - e.pos
 				e.movement.vel.dir = direction:norm()
 			end
 
-			-- -- If there’s an enemy in range, switch to Chasing state
-			-- if target then
-			-- 	local targetDistance = math.sqrt((targetPos.x - position.x) ^ 2 + (targetPos.y - position.y) ^ 2)
-			-- 	if targetDistance < enemyDetection.detectionRange then
-			-- 		stateComponent.state = ChasingState
-			-- 	end
-			-- end
-		end
-	-- elseif stateComponent.state == ChasingState then
-	-- 	-- Move toward the enemy
-	-- 	if target then
-	-- 		local dx = targetPos.x - position.x
-	-- 		local dy = targetPos.y - position.y
-	-- 		local distance = math.sqrt(dx * dx + dy * dy)
+			-- If there’s an enemy in range, switch to Chasing state
+			if e.target and e.target.targetEntity then
+				-- Try predefined range
+				local entityRange = e.range and e.range.value or nil
+				-- Then try biggest dimension from collisionbox
+				entityRange = not entityRange and e.collisionbox and math.max(e.collisionbox.w, e.collisionbox.h)
+					or entityRange
+				-- Then use default value
+				entityRange = entityRange or EMPTY_ENTITY_DEFAULT_RANGE
 
-	-- 		if distance > velocity.speed * dt then
-	-- 			-- Move toward the enemy
-	-- 			position.x = position.x + (dx / distance) * velocity.speed * dt
-	-- 			position.y = position.y + (dy / distance) * velocity.speed * dt
-	-- 		else
-	-- 			-- Enemy is in attack range, switch to Attacking state
-	-- 			stateComponent.state = AttackingState
-	-- 		end
-	-- 	end
-	-- elseif stateComponent.state == AttackingState then
-	-- 	-- Perform attack logic (e.g., apply damage)
-	-- 	print("Attacking enemy!")
-	-- 	-- After attacking, return to idle or any other state (like moving again)
-	-- 	stateComponent.state = IdleState
+				local targetDistance = e.pos:dist(e.target.targetEntity.pos)
+
+				if targetDistance < entityRange then
+					e.state = STATE_ENUM.chasing
+				end
+			end
+		end
+	elseif e.state == STATE_ENUM.chasing then
+		-- Move toward the enemy
+		if e.target and e.target.targetEntity then
+			local distance = e.pos:dist(e.target.targetEntity.pos)
+
+			if distance > e.movement.vel.speed * dt then
+				-- Move toward the enemy
+				local direction = e.target.targetEntity.pos - e.pos
+				e.movement.vel.dir = direction:norm()
+			else
+				-- Enemy is in attack range, switch to Attacking state
+				e.state = STATE_ENUM.attacking
+			end
+		else
+			e.state = STATE_ENUM.idle
+		end
+	elseif e.state == STATE_ENUM.attacking then
+		print("Attacking enemy!")
+
+		e.state = STATE_ENUM.idle
 	end
 end
 

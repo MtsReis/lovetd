@@ -6,7 +6,7 @@ RangeSystem.filter = tiny.requireAny(
 )
 
 function RangeSystem:process(e, dt)
-	if e.attack and e.stance == "aggressive" and e.range then
+	if e.attack and e.stance == "aggressive" and e.range and e.target then
 		e.range.shape:moveTo(e.pos.x, e.pos.y)
 
 		-- Reset target
