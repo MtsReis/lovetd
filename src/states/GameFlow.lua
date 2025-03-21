@@ -44,8 +44,6 @@ end
 function _gameScenes.main_menu:startScene()
 	UI:changePresentation("MainMenu", {
 		onNewGame = function()
-			print("New Game! UHUL")
-			--GameFlow.changeScene("level_selection")
 			GameFlow.changeScene("gameplay")
 		end,
 		onOptions = function()
@@ -72,8 +70,6 @@ function _gameScenes.save_game:endScene() end
 
 function _gameScenes.gameplay:startScene()
 	state.enable("PlayScenario")
-
-	UI:changePresentation("PlayScenario")
 end
 
 function _gameScenes.gameplay:endScene() end
