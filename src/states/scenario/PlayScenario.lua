@@ -1,4 +1,10 @@
 local HC = require("lib.HC")
+local Path = require("world.properties.path")
+local PREDEFINED_PATHS = {
+	{
+		Path({ 0, 320 }, { 557, 300 }, { 1114, 320 }),
+	},
+}
 
 local UI
 
@@ -34,12 +40,13 @@ function PlayScenario:load(scenarioName)
 	canvas = love.graphics.newCanvas(mapRenderer.map.wPixels, mapRenderer.map.hPixels)
 
 	-- World building
-	-- Systems
 	local entitiesClasses = {
 		tower = require("world.entities.tower"),
 		unit = require("world.entities.unit"),
 		projectile = require("world.entities.projectile"),
 	}
+
+	-- Systems
 	local precachedSystems = {
 		require("world/systems/rendering").drawObj,
 		require("world/systems/movement").movement,
@@ -51,6 +58,8 @@ function PlayScenario:load(scenarioName)
 
 		require("world/systems/attack").attack,
 		require("world/systems/attack").range,
+
+		require("world/systems/state").state,
 	}
 
 	world.properties = {
@@ -59,18 +68,29 @@ function PlayScenario:load(scenarioName)
 		cam = mapRenderer.cam,
 		mouse = world.space.selection:point(mapRenderer.cam:worldCoords(love.mouse.getPosition())),
 		selectedEntity = nil,
+
+		paths = PREDEFINED_PATHS[1],
 	}
 
 	world:add(table.unpack(precachedSystems))
+
+	-- Entities
 	local mainTower = entitiesClasses.tower(world.properties.width / 2, 400, world.space, "archer", canvas)
 	world:add(
 		mainTower,
 		entitiesClasses.tower(world.properties.width / 3, 400, world.space, "archer", canvas),
 		entitiesClasses.tower(world.properties.width * 0.75, world.properties.height / 5, world.space, "archer", canvas),
-		entitiesClasses.unit(0, 300, world.space, "orc", canvas),
+		entitiesClasses.unit(0, 300, world.space, "orc", canvas, { path = world.properties.paths[1] }),
 		entitiesClasses.unit(30, 300, world.space, "human", canvas),
 		entitiesClasses.unit(50, 330, world.space, "somethingElse", canvas),
-		entitiesClasses.unit(44, 350, world.space, "orc", canvas, { label = "ToughOrc" }),
+		entitiesClasses.unit(
+			44,
+			350,
+			world.space,
+			"orc",
+			canvas,
+			{ label = "ToughOrc", path = world.properties.paths[1] }
+		),
 		entitiesClasses.projectile(44, 350, world.space, "arrow", mainTower, canvas, { label = "Sanic" })
 	)
 end
@@ -92,7 +112,7 @@ function PlayScenario.enable()
 		end,
 		onPressedTower3 = function()
 			print("Create tower 3")
-		end
+		end,
 	})
 end
 
@@ -119,6 +139,22 @@ end
 function PlayScenario.draw()
 	mapRenderer.cam:attach()
 	love.graphics.draw(canvas, 0, 0)
+
+	-- TODO: Remove this 🤬
+	if amora.debugMode then
+		love.graphics.setColor(1, 1, 1, 1)
+		love.graphics.rectangle("fill", 500, 0, 500, love.graphics.getHeight())
+
+		love.graphics.setColor(0, 0, 0, 1)
+		love.graphics.print("Mouse\nX: %(x)s\nY: %(y)s\nMap X: %(mx)s\nMap Y: %(my)s\n" % {
+			x = love.mouse.getX(),
+			y = love.mouse.getY(),
+			mx = world.properties.mouse._pos.x,
+			my = world.properties.mouse._pos.y,
+		}, 500, 0)
+
+		love.graphics.setColor(1, 1, 1, 1)
+	end
 	mapRenderer.cam:detach()
 end
 

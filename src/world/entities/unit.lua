@@ -18,6 +18,9 @@ function Unit:initialize(x, y, space, type, canvas, options)
 	self.collisionbox = c.collisionbox(space, x, y, W, H, 0, 0)
 	self.hurtbox = c.hurtbox(space, x, y, W, H, 0, 0)
 	self.hp = c.hp(20, 20)
+	self.team = c.team(2)
+
+	self.state = c.state("idle")
 
 	if type == "orc" then
 		self.geometry.type = "circ"
@@ -28,11 +31,15 @@ function Unit:initialize(x, y, space, type, canvas, options)
 		self.selectionbox = c.selectionbox(space, x, y, W, H, -W / 2, -H / 2)
 
 		self.hp = c.hp(100, 100)
+		self.team = c.team(2)
+
+		self.path = c.path(options.path)
 	elseif type == "human" then
 		self.geometry.colour = { 10 / 255, 10 / 255, 10 / 255, 1 }
 		self.movement.vel.speed = 90
 
 		self.hp = c.hp(50, 50)
+		self.team = c.team(1)
 	end
 end
 

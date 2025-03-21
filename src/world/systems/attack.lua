@@ -1,30 +1,23 @@
 local RangeSystem = tiny.processingSystem(class("RangeSystem"))
 
 RangeSystem.filter = tiny.requireAny(
-	tiny.requireAll("collisionbox", "pos"),
-	tiny.requireAll("attack", "pos", "range", "action", "target", "stance")
+	tiny.requireAll("hurtbox", "pos", "team"),
+	tiny.requireAll("attack", "pos", "range", "target", "stance", "team")
 )
 
 function RangeSystem:process(e, dt)
 	if e.attack and e.stance == "aggressive" and e.range then
 		e.range.shape:moveTo(e.pos.x, e.pos.y)
 
-		-- Reset target and action
+		-- Reset target
 		e.target.targetEntity = nil
-		if e.action.curr.attacking then
-			e.action.curr.attacking = nil
-		end
 
 		-- Iterate over all entities in the world
 		for _, otherEntity in pairs(self.entities) do
-			-- Only entities with collisionbox
-			if e ~= otherEntity and otherEntity.collisionbox then
+			-- Only OPPONENTS with collisionbox and hurtbox
+			if e ~= otherEntity and e.team ~= otherEntity.team and otherEntity.collisionbox then
 				if e.range.shape:collidesWith(otherEntity.collisionbox.shape) then
 					e.target.targetEntity = otherEntity
-
-					if e.action then
-						e.action.curr.attacking = true
-					end
 				end
 			end
 		end

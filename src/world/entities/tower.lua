@@ -14,16 +14,18 @@ function Tower:initialize(x, y, space, type, canvas, options)
 	self.geometry = c.geometry("rect", W, H, "fill", { 1, 0, 1, 1 })
 	self.dPivot = c.dPivot(W / 2, H / 2)
 
+	self.selectionbox = c.selectionbox(space, x, y, W, H, -W / 2, -H / 2)
+
+	self.state = c.state("idle")
+
+	self.hp = c.hp(100, 100)
+
+	self.stance = c.stance("aggressive")
+	self.attack = c.attack(10, 2, 3, 1)
 	self.range = c.range(space, x, y, 100, true)
 	self.target = c.target()
 
-	self.selectionbox = c.selectionbox(space, x, y, W, H, -W / 2, -H / 2)
-
-	self.action = c.action({ idle = 0 }, {})
-
-	self.stance = c.stance("aggressive")
-	self.hp = c.hp(100, 100)
-	self.attack = c.attack(10, 2, 3, 1)
+	self.team = c.team(1)
 end
 
 return Tower

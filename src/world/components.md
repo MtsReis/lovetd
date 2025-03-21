@@ -53,3 +53,5 @@ aggressive / pacific
 - targetEntity
 
 ### Invoker (what other entity created this)
+
+### Team (if player's or enemy's)

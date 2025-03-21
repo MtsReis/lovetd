@@ -12,7 +12,7 @@ function drawObjSystem:process(e, dt)
 		love.graphics.setColor({ 1, 0, 1, 1 })
 		love.graphics.setLineWidth(LINE_WIDTH)
 
-		if e.action and e.action.curr.attacking then
+		if e.target and e.target.targetEntity then
 			love.graphics.setColor({ 1, 0, 0, 1 })
 		end
 
@@ -66,8 +66,6 @@ function drawObjSystem:process(e, dt)
 			e.hitbox.shape:draw("line")
 		end
 
-
-
 		if e.hurtbox then
 			love.graphics.setColor({ 0, 0, 1, 1 })
 			love.graphics.setLineWidth(LINE_WIDTH)
@@ -96,7 +94,7 @@ function drawObjSystem:postProcess(dt)
 
 		love.graphics.setColor(1, 1, 1, 1)
 		love.graphics.print(
-			"%(l)s\nCollision: %(cb)s\nMovement: %(m)s\nAttack: %(a)s\nTarget: %(t)s\nRange: %(r)s\nAction: %(act)s\n"
+			"%(l)s\nCollision: %(cb)s\nTeam: %(team)s\nMovement: %(m)s\nAttack: %(a)s\nTarget: %(t)s\nRange: %(r)s\nState: %(st)s\nStance: %(stance)s\nPath: %(path)s\n"
 				% {
 					l = e.label,
 					cb = pw(e.collisionbox),
@@ -104,7 +102,10 @@ function drawObjSystem:postProcess(dt)
 					a = pw(e.attack),
 					t = pw(e.target),
 					r = pw(e.range),
-					act = pw(e.action),
+					st = pw(e.state),
+					stance = pw(e.stance),
+					team = pw(e.team),
+					path = pw(e.path),
 				},
 			0,
 			0

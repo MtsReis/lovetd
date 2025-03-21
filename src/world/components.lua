@@ -1,3 +1,28 @@
+local STATE_ENUM = { idle = "IDLE", movingAlongPath = "MOVING_PATH", chasing = "CHASING", attacking = "ATTACKING" }
+local Path = class("Path")
+
+function Path:initialize(waypoints)
+	if type(waypoints) ~= "table" or not waypoints[1] or type(waypoints[1][1]) ~= "number" then
+		log.error("Waypoints must contain at least 1 (x,y) point")
+		waypoints = {{0, 0}, {10, 10}}
+	end
+
+	self.wps = waypoints
+	self._currWp = 1
+end
+
+function Path:getNextWpIndex()
+	return (self._currWp + 1 > #self.wps) and 1 or self._currWp + 1
+end
+
+function Path:getNextWp()
+	return self.wps[self:getNextWpIndex()]
+end
+
+function Path:advanceWp()
+	self._currWp = self:getNextWpIndex()
+end
+
 --[[
 	size: [w, h] vector
 	pivot: [w, h] vector
@@ -120,8 +145,9 @@ return {
 		return range
 	end,
 
-	action = function(curr, queue)
-		return { curr = curr, queue = queue }
+	state = function(initialState)
+		local state = initialState or "idle"
+		return STATE_ENUM[state] or STATE_ENUM["idle"]
 	end,
 
 	invoker = function(invoker)
@@ -141,6 +167,16 @@ return {
 		return "aggressive"
 	end,
 
+	team = function(teamNumber)
+		return teamNumber or 2
+	end,
+
+	--------
+
+	path = function(waypoints)
+		return Path:new(waypoints)
+	end,
+
 	-------------------
 	-- Especial values
 	-------------------
@@ -149,4 +185,5 @@ return {
 		"eff_slow",
 	},
 	_effects_agent_on_target_constant = {},
+	STATE_ENUM = STATE_ENUM,
 }
