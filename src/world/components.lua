@@ -245,6 +245,10 @@ return {
 		}
 	end,
 
+	construction = function(type, cost)
+		return {type = type, cost = cost}
+	end,
+
 	-------------------
 	-- Especial values
 	-------------------

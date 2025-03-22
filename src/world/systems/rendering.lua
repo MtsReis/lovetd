@@ -33,7 +33,11 @@ function drawObjSystem:process(e, dt)
 	-- Obj drawing
 
 	if e.sprite then
-		love.graphics.setColor(e.colour or { 1, 1, 1, 1 })
+		if e.construction then
+			love.graphics.setColor(e.colour or { 1, 1, 1, .7 })
+		else
+			love.graphics.setColor(e.colour or { 1, 1, 1, 1 })
+		end
 		love.graphics.draw(e.sprite.img, e.pos.x, e.pos.y, 0, e.sprite.sx, e.sprite.sy, e.dPivot.x, e.dPivot.y)
 	elseif e.geometry then
 		local posx = e.pos.x - e.dPivot.x

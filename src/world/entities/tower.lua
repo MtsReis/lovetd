@@ -71,7 +71,7 @@ function Tower:initialize(x, y, space, type, canvas, options)
 		self.hurtbox = c.hurtbox(space, x, y, W - 20, H - 20, -W / 2, -H / 2)
 
 		self.attack = c.attack(25, 2, 3, 2, true)
-		self.range = c.range(space, x, y, 330, true)
+		self.range = c.range(space, x, y, 200, true)
 	end
 end
 

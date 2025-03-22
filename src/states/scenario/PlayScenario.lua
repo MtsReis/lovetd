@@ -62,6 +62,7 @@ world.space = {
 	hit = HC.new(), -- Hit/hurt boxes interactions
 	selection = HC.new(), -- For mouse interaction
 }
+local entitiesClasses
 
 local mapRenderer = {}
 
@@ -76,16 +77,16 @@ local _images = {
 
 	tower1 = "sprites/tower1",
 	tower2 = "sprites/tower2",
-	tower3 = "sprites/tower3"
+	tower3 = "sprites/tower3",
 }
 
 local _sounds = {
-	coin_drop = "coin_drop.ogg"
+	coin_drop = "coin_drop.ogg",
 }
 
 local _music = {
 	thinking = "bgm1.mp3",
-	action = "bgm2.mp3"
+	action = "bgm2.mp3",
 }
 
 function PlayScenario:load(scenarioName)
@@ -108,11 +109,12 @@ function PlayScenario:load(scenarioName)
 	canvas = love.graphics.newCanvas(mapRenderer.map.wPixels, mapRenderer.map.hPixels)
 
 	-- World building
-	local entitiesClasses = {
+	entitiesClasses = {
 		tower = require("world.entities.tower"),
 		unit = require("world.entities.unit"),
 		projectile = require("world.entities.projectile"),
 		spawner = require("world.entities.spawner"),
+		construction = require("world.entities.construction"),
 	}
 
 	-- Systems
@@ -120,6 +122,7 @@ function PlayScenario:load(scenarioName)
 		require("world/systems/lifespan").lifespan,
 
 		require("world/systems/spawner").spawner,
+		require("world/systems/construction").construction,
 
 		require("world/systems/rendering").drawObj,
 		require("world/systems/movement").movement,
@@ -138,12 +141,14 @@ function PlayScenario:load(scenarioName)
 		require("world/systems/lifespan").clearReferences,
 	}
 
+	local mwx, mwy = mapRenderer.cam:worldCoords(love.mouse.getPosition())
 	world.properties = {
 		width = mapRenderer.map.w * PlayScenario.scenario.gridW,
 		height = mapRenderer.map.h * PlayScenario.scenario.gridH,
 		COINS_PER_KILL = 5,
 
 		cam = mapRenderer.cam,
+		mousePos = { x = mwx, y = mwy },
 		mouse = world.space.selection:point(mapRenderer.cam:worldCoords(love.mouse.getPosition())),
 		selectedEntity = nil,
 
@@ -151,8 +156,8 @@ function PlayScenario:load(scenarioName)
 	}
 
 	world.player = {
-		coins = 0,
-		killed_enemies = 0
+		coins = 50,
+		killed_enemies = 0,
 	}
 
 	-- Aditional assets
@@ -179,7 +184,7 @@ function PlayScenario:load(scenarioName)
 		world.properties.width / 2,
 		world.properties.height / 2,
 		8,
-		4,
+		40,
 		nil,
 		entitiesClasses.unit,
 		PREDEFINED_PATHS[1][1][1][1] - math.random(120, 900),
@@ -194,7 +199,7 @@ function PlayScenario:load(scenarioName)
 		world.properties.width / 2,
 		world.properties.height / 2,
 		8,
-		4,
+		40,
 		nil,
 		entitiesClasses.unit,
 		PREDEFINED_PATHS[1][2][1][1] - math.random(120, 900),
@@ -240,7 +245,19 @@ function PlayScenario.enable()
 	UI = state.get("UI")
 	UI:changePresentation("PlayScenario", {
 		onPressedTower1 = function()
-			print("Create tower 1")
+			log.debug("Creating tower 1")
+
+			if not world.properties._construction then
+				world.properties._construction = entitiesClasses.construction(
+					world.properties.width / 2,
+					world.properties.height / 2,
+					world.space,
+					"face",
+					canvas
+				)
+
+				world:add(world.properties._construction)
+			end
 		end,
 		onPressedTower2 = function()
 			print("Create tower 2")
@@ -256,6 +273,16 @@ end
 
 function PlayScenario.update(_, dt)
 	if not amora.pause then
+		-- Update mouse position
+		world.properties.mousePos.x, world.properties.mousePos.y = mapRenderer.cam:worldCoords(love.mouse.getPosition())
+		world.properties.mouse:moveTo(world.properties.mousePos.x, world.properties.mousePos.y)
+
+		if world.properties._construction then
+			love.mouse.setVisible(false)
+		else
+			love.mouse.setVisible(true)
+		end
+
 		love.graphics.setCanvas(canvas)
 		love.graphics.clear()
 		world:update(dt)
@@ -295,6 +322,30 @@ function PlayScenario.keyreleased(command)
 	if command == "drag_screen" then
 		mapRenderer.cam.dragging = false
 		love.mouse.setVisible(true)
+
+		-- Remove construction
+		if world.properties._construction then
+			world.properties._construction.lifespan = 0
+			world.properties._construction = nil
+		end
+	elseif command == "mouse_command" then
+		-- Make construction
+		if world.properties._construction then
+			if world.player.coins >= world.properties._construction.construction.cost then
+				world:add(entitiesClasses.tower(
+					world.properties._construction.pos.x,
+					world.properties._construction.pos.y,
+					world.space,
+					world.properties._construction.construction.type,
+					canvas
+				))
+
+				world.player.coins = world.player.coins - world.properties._construction.construction.cost
+
+				world.properties._construction.lifespan = 0
+				world.properties._construction = nil
+			end
+		end
 	end
 end
 
