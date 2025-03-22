@@ -31,7 +31,7 @@ local PREDEFINED_PATHS = {
 		Path({
 			0,
 			736,
-		},{
+		}, {
 			320,
 			636,
 		}, {
@@ -177,8 +177,16 @@ function PlayScenario:load(scenarioName)
 		spawnerBottom,
 		spawnerSide,
 		entitiesClasses.tower(world.properties.width / 3, 200, world.space, "archer", canvas),
+		entitiesClasses.unit(world.properties.width / 3, 300, world.space, "evil_elf", canvas, { label = "Evil Elf" }),
 		entitiesClasses.tower(world.properties.width * 0.75, world.properties.height / 5, world.space, "archer", canvas),
-		entitiesClasses.unit(1000, 290, world.space, "human", canvas),
+		entitiesClasses.unit(
+			PREDEFINED_PATHS[1][1][1][1] + math.random(-130, 130),
+			PREDEFINED_PATHS[1][1][1][2] + math.random(-130, 130),
+			world.space,
+			"elf",
+			canvas,
+			{ label = "Elf", path = world.properties.paths[1] }
+		),
 		entitiesClasses.unit(50, 330, world.space, "somethingElse", canvas),
 		entitiesClasses.unit(
 			PREDEFINED_PATHS[1][1][1][1] + math.random(-130, 130),
@@ -259,11 +267,15 @@ function PlayScenario.draw()
 	love.graphics.setLineWidth(1)
 	love.graphics.setColor({ 1, 1, 1, 1 })
 
-	for k, v in pairs(PREDEFINED_PATHS[1][1]) do
-		table.insert(wpLines, v[1])
-		table.insert(wpLines, v[2])
+	for i, p in ipairs(PREDEFINED_PATHS[1]) do
+		for k, v in pairs(p) do
+			table.insert(wpLines, v[1])
+			table.insert(wpLines, v[2])
+		end
+
+		love.graphics.line(wpLines)
 	end
-	love.graphics.line(wpLines)
+
 	mapRenderer.cam:detach()
 end
 

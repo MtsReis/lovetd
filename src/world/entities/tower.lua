@@ -25,7 +25,7 @@ function Tower:initialize(x, y, space, type, canvas, options)
 
 	self.stance = c.stance("aggressive")
 	self.attack = c.attack(10, 2, 3, 1, true)
-	self.range = c.range(space, x, y, 100, true)
+	self.range = c.range(space, x, y, 130, true)
 	self.target = c.target()
 
 	self.team = c.team(1)

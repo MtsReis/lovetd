@@ -2,6 +2,9 @@ local STATE_ENUM = { idle = "IDLE", movingAlongPath = "MOVING_PATH", chasing = "
 local CONDITION_ENUM = { dead = "COND_DEAD" }
 local EFFECT_ENUM = { slow = "EFF_SLOW", pierce = "EFF_PIERCE" }
 
+local ASSETS_DIR = "assets/sprites/"
+local ASSETS_EXT = ".png"
+
 local DEFAULT_MAX_ACCEL = 50
 local Path = class("Path")
 
@@ -88,6 +91,10 @@ return {
 		end
 
 		return vec2.new(x, y)
+	end,
+
+	sprite = function(img, sx, sy)
+		return { img = love.graphics.newImage(ASSETS_DIR .. img .. ASSETS_EXT), sx = sx or 1, sy = sy or 1 }
 	end,
 
 	--------

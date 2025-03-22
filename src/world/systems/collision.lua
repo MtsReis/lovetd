@@ -59,7 +59,7 @@ end
 --- worldBoundariesSystem ---
 local worldBoundariesSystem = tiny.processingSystem()
 
-worldBoundariesSystem.filter = tiny.requireAll("pos")
+worldBoundariesSystem.filter = tiny.requireAll("pos", "collisionbox")
 
 function worldBoundariesSystem:process(e, dt)
 	if e.pos.x < 0 then

@@ -1,6 +1,8 @@
 local Bootstrap = class('Bootstrap')
 
 function Bootstrap.load()
+  math.randomseed()
+
   -----------------------------------------------
   --                  settings
   -----------------------------------------------

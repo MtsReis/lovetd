@@ -43,7 +43,7 @@ local AttackSystem = tiny.processingSystem(class("AttackSystem"))
 AttackSystem.filter = tiny.requireAll("pos", "attack", "target", "team", "range", "state")
 
 function AttackSystem:process(e, dt)
-	if e.state == STATE.attacking then
+	if e.state == STATE.attacking and e.target.targetEntity then
 		local currTimer = e.attack.attackCycleTimer - dt
 		local type = e.attack.ranged and "ranged" or "melee"
 

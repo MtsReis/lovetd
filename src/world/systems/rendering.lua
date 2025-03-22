@@ -33,6 +33,7 @@ function drawObjSystem:process(e, dt)
 	-- Obj drawing
 
 	if e.sprite then
+		love.graphics.draw(e.sprite.img, e.pos.x, e.pos.y, 0, e.sprite.sx, e.sprite.sy, e.dPivot.x, e.dPivot.y)
 	elseif e.geometry then
 		local posx = e.pos.x - e.dPivot.x
 		local posy = e.pos.y - e.dPivot.y
