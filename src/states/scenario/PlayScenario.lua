@@ -257,6 +257,19 @@ function PlayScenario.enable()
 				)
 
 				world:add(world.properties._construction)
+			else
+				world.properties._construction.lifespan = 0
+				world.properties._construction = nil
+
+				world.properties._construction = entitiesClasses.construction(
+					world.properties.width / 2,
+					world.properties.height / 2,
+					world.space,
+					"face",
+					canvas
+				)
+
+				world:add(world.properties._construction)
 			end
 		end,
 		onPressedTower2 = function()
@@ -272,12 +285,38 @@ function PlayScenario.enable()
 				)
 
 				world:add(world.properties._construction)
+			else
+				world.properties._construction.lifespan = 0
+				world.properties._construction = nil
+
+				world.properties._construction = entitiesClasses.construction(
+					world.properties.width / 2,
+					world.properties.height / 2,
+					world.space,
+					"tall",
+					canvas
+				)
+
+				world:add(world.properties._construction)
 			end
 		end,
 		onPressedTower3 = function()
-			print("Creating tower 3")
+			log.debug("Creating tower 3")
 
 			if not world.properties._construction then
+				world.properties._construction = entitiesClasses.construction(
+					world.properties.width / 2,
+					world.properties.height / 2,
+					world.space,
+					"ritual",
+					canvas
+				)
+
+				world:add(world.properties._construction)
+			else
+				world.properties._construction.lifespan = 0
+				world.properties._construction = nil
+
 				world.properties._construction = entitiesClasses.construction(
 					world.properties.width / 2,
 					world.properties.height / 2,
@@ -353,21 +392,26 @@ function PlayScenario.keyreleased(command)
 			world.properties._construction = nil
 		end
 	elseif command == "mouse_command" then
-		-- Make construction
-		if world.properties._construction then
-			if world.player.coins >= world.properties._construction.construction.cost then
-				world:add(entitiesClasses.tower(
-					world.properties._construction.pos.x,
-					world.properties._construction.pos.y,
-					world.space,
-					world.properties._construction.construction.type,
-					canvas
-				))
+		-- No world interaction when on sidebar
+		if love.mouse.getX() < amora.settings.video.w - UI.presentations.PlayScenario._attr.sidebar.width then
+			-- Make construction
+			if world.properties._construction then
+				if world.player.coins >= world.properties._construction.construction.cost then
+					world:add(
+						entitiesClasses.tower(
+							world.properties._construction.pos.x,
+							world.properties._construction.pos.y,
+							world.space,
+							world.properties._construction.construction.type,
+							canvas
+						)
+					)
 
-				world.player.coins = world.player.coins - world.properties._construction.construction.cost
+					world.player.coins = world.player.coins - world.properties._construction.construction.cost
 
-				world.properties._construction.lifespan = 0
-				world.properties._construction = nil
+					world.properties._construction.lifespan = 0
+					world.properties._construction = nil
+				end
 			end
 		end
 	end
