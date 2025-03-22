@@ -12,7 +12,7 @@ function DrawHpSystem:process(e, dt)
 	local content_img = DrawHpSystem.world.resources.hp_content
 	local maxHealthBar = e.hp.max / 2
 	local healthContent = math.max(0, e.hp.curr / 2)
-	local color = { 241/255, 24/255, 45/255, 1 }
+	local color = e.team and e.team == 1 and { 114/255, 234/255, 78/255, 1 } or { 241/255, 24/255, 45/255, 1 }
 
 	love.graphics.setCanvas(e.canvas)
 	local x, y = e.pos.x - CONTAINER_SIDE_W - maxHealthBar / 2, e.pos.y - e.geometry.h - CONTAINER_H
