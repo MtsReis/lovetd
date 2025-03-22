@@ -62,7 +62,7 @@ UI.presentations = {
 					w = 64,
 					h = 62,
 					state = "",
-					active = false,
+					active = true,
 				},
 				ele_sidebar_tower3 = {
 					x = 0,
@@ -70,7 +70,7 @@ UI.presentations = {
 					w = 64,
 					h = 62,
 					state = "",
-					active = false,
+					active = true,
 				},
 			},
 		},
@@ -82,6 +82,8 @@ UI.presentations = {
 					triggerListener("onPressedTower1")
 				elseif element == "ele_sidebar_tower2" then
 					triggerListener("onPressedTower2")
+				elseif element == "ele_sidebar_tower3" then
+					triggerListener("onPressedTower3")
 				end
 			end,
 		},

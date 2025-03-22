@@ -260,10 +260,34 @@ function PlayScenario.enable()
 			end
 		end,
 		onPressedTower2 = function()
-			print("Create tower 2")
+			log.debug("Creating tower 2")
+
+			if not world.properties._construction then
+				world.properties._construction = entitiesClasses.construction(
+					world.properties.width / 2,
+					world.properties.height / 2,
+					world.space,
+					"tall",
+					canvas
+				)
+
+				world:add(world.properties._construction)
+			end
 		end,
 		onPressedTower3 = function()
-			print("Create tower 3")
+			print("Creating tower 3")
+
+			if not world.properties._construction then
+				world.properties._construction = entitiesClasses.construction(
+					world.properties.width / 2,
+					world.properties.height / 2,
+					world.space,
+					"ritual",
+					canvas
+				)
+
+				world:add(world.properties._construction)
+			end
 		end,
 	})
 
