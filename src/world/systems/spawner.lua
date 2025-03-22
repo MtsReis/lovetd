@@ -12,10 +12,6 @@ function spawnerSystem:process(e, dt)
 			-- Resets timer
 			e.spawnOverTime.spawnCycleTimer = e.spawnOverTime.cooldownTime - currTimer
 
-			log.debug(
-				"Spawning new entity. %(n)s -> %(s)s. Args: %(a)s"
-					% { s = pw(e.spawnOverTime.blueprint), n = e.spawnOverTime.blueprint, a = pw(e.spawnOverTime.args) }
-			)
 			spawnerSystem.world:add(e.spawnOverTime.blueprint(table.unpack(e.spawnOverTime.args)))
 			e.spawnOverTime.amount = e.spawnOverTime.amount - 1
 		else
