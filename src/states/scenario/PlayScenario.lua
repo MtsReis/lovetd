@@ -27,6 +27,23 @@ local PREDEFINED_PATHS = {
 			896,
 			160,
 		}),
+
+		Path({
+			0,
+			736,
+		},{
+			320,
+			636,
+		}, {
+			320,
+			480,
+		}, {
+			320,
+			192,
+		}, {
+			832,
+			192,
+		}),
 	},
 }
 local ASSETS_DIR = "assets/"
@@ -53,7 +70,7 @@ local _resources = {
 	elf = "sprites/elf",
 	elf_e = "sprites/elf_e",
 	org = "sprites/org",
-	org_e = "sprites/org_e"
+	org_e = "sprites/org_e",
 }
 
 function PlayScenario:load(scenarioName)
@@ -80,11 +97,14 @@ function PlayScenario:load(scenarioName)
 		tower = require("world.entities.tower"),
 		unit = require("world.entities.unit"),
 		projectile = require("world.entities.projectile"),
+		spawner = require("world.entities.spawner"),
 	}
 
 	-- Systems
 	local precachedSystems = {
 		require("world/systems/lifespan").lifespan,
+
+		require("world/systems/spawner").spawner,
 
 		require("world/systems/rendering").drawObj,
 		require("world/systems/movement").movement,
@@ -110,9 +130,8 @@ function PlayScenario:load(scenarioName)
 		mouse = world.space.selection:point(mapRenderer.cam:worldCoords(love.mouse.getPosition())),
 		selectedEntity = nil,
 
-		paths = PREDEFINED_PATHS[1]
+		paths = PREDEFINED_PATHS[1],
 	}
-
 
 	-- Aditional assets
 	world.resources = {}
@@ -124,26 +143,41 @@ function PlayScenario:load(scenarioName)
 
 	-- Entities
 	local mainTower = entitiesClasses.tower(world.properties.width / 2, 400, world.space, "archer", canvas)
+	local spawnerBottom = entitiesClasses.spawner(
+		world.properties.width / 2,
+		world.properties.height / 2,
+		5,
+		2,
+		nil,
+		entitiesClasses.unit,
+		PREDEFINED_PATHS[1][1][1][1] - math.random(120, 900),
+		PREDEFINED_PATHS[1][1][1][2] - math.random(10, 20),
+		world.space,
+		"orc",
+		canvas,
+		{ path = world.properties.paths[1] }
+	)
+
+	local spawnerSide = entitiesClasses.spawner(
+		world.properties.width / 2,
+		world.properties.height / 2,
+		5,
+		2,
+		nil,
+		entitiesClasses.unit,
+		PREDEFINED_PATHS[1][2][1][1] - math.random(120, 900),
+		PREDEFINED_PATHS[1][2][1][2] - math.random(10, 20),
+		world.space,
+		"orc",
+		canvas,
+		{ path = world.properties.paths[2] }
+	)
 	world:add(
 		mainTower,
+		spawnerBottom,
+		spawnerSide,
 		entitiesClasses.tower(world.properties.width / 3, 200, world.space, "archer", canvas),
 		entitiesClasses.tower(world.properties.width * 0.75, world.properties.height / 5, world.space, "archer", canvas),
-		entitiesClasses.unit(
-			PREDEFINED_PATHS[1][1][1][1] + math.random(-130, 130),
-			PREDEFINED_PATHS[1][1][1][2] + math.random(-130, 130),
-			world.space,
-			"orc",
-			canvas,
-			{ path = world.properties.paths[1] }
-		),
-		entitiesClasses.unit(
-			PREDEFINED_PATHS[1][1][1][1] + math.random(-130, 130),
-			PREDEFINED_PATHS[1][1][1][2] + math.random(-130, 130),
-			world.space,
-			"orc",
-			canvas,
-			{ path = world.properties.paths[1] }
-		),
 		entitiesClasses.unit(1000, 290, world.space, "human", canvas),
 		entitiesClasses.unit(50, 330, world.space, "somethingElse", canvas),
 		entitiesClasses.unit(

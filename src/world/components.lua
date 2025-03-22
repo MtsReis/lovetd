@@ -8,7 +8,7 @@ local Path = class("Path")
 function Path:initialize(waypoints)
 	if type(waypoints) ~= "table" or not waypoints[1] or type(waypoints[1][1]) ~= "number" then
 		log.error("Waypoints must contain at least 1 (x,y) point")
-		waypoints = {{0, 0}, {10, 10}}
+		waypoints = { { 0, 0 }, { 10, 10 } }
 	end
 
 	self.wps = waypoints
@@ -125,7 +125,7 @@ return {
 			vel = { dir = vec2.fromAngle(velRad), speed = speed },
 			accel = { dir = vec2.fromAngle(accelRad), magnitude = accel },
 			maxSpeed = maxSpeed or speed,
-			maxAccel = maxAccel or DEFAULT_MAX_ACCEL
+			maxAccel = maxAccel or DEFAULT_MAX_ACCEL,
 		}
 	end,
 
@@ -151,7 +151,7 @@ return {
 			maxDamageIncrement = maxDamageIncrement,
 			cooldownTime = cooldownTime,
 			attackCycleTimer = 0,
-			ranged = ranged or false
+			ranged = ranged or false,
 		}
 	end,
 
@@ -224,6 +224,18 @@ return {
 
 	lifespan = function(seconds)
 		return seconds or 1
+	end,
+
+	--------
+
+	spawnOverTime = function(cooldownTime, amount, blueprint, ...)
+		return {
+			amount = amount,
+			cooldownTime = cooldownTime,
+			spawnCycleTimer = 0,
+			args = table.pack(...),
+			blueprint = blueprint,
+		}
 	end,
 
 	-------------------
