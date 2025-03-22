@@ -34,7 +34,7 @@ function Projectile:initialize(invoker, type, space, target, options)
 	self.hitbox = c.hitbox(space, x, y, h, w, 0, 0)
 
 	self.lifespan = lifespan
-	self[EFFECT.pierce] = 5
+	self[EFFECT.pierce] = 0
 
 	if type == "melee" then
 		self.lifespan = c.lifespan(MELEE_TIMESPAN)

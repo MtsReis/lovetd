@@ -12,7 +12,7 @@ source: source entity ref
 target: target entity ref
 type: i
 ]]
-local function applyEffects(source, target, sourceIdPrefix)
+local function applyEffects(source, target, sourceIdPrefix, isAgent)
 	local sourceId = sourceIdPrefix .. source.label or "" -- agent3_source1_source1
 
 	-- Effect applied only once per target
@@ -34,6 +34,15 @@ local function applyEffects(source, target, sourceIdPrefix)
 			end
 		end
 
+		-- If source has no pierce, despawn
+		if isAgent then
+			if not source[EFFECT.pierce] or source[EFFECT.pierce] < 1 then
+				source.lifespan = 0
+			else
+				source[EFFECT.pierce] = source[EFFECT.pierce] - 1
+			end
+		end
+
 		target.hurtbox.wasAffectedBy[sourceId] = true
 	end
 end
@@ -44,17 +53,10 @@ local handlers = {
 		-- agent3_source1
 		local sourceIdPrefix = "%(a)s%(i)s"
 			% { a = a.label and a.label .. "_" or "", i = i.label and i.label .. "_" or "" }
-		applyEffects(a, t, sourceIdPrefix)
-
-		-- If source has no pierce, despawn
-		-- if not a[EFFECT.pierce] or a[EFFECT.pierce] < 1 then
-		-- 	a.lifespan = 0
-		-- else
-		-- 	a[EFFECT.pierce] = a[EFFECT.pierce] - 1
-		-- end
+		applyEffects(a, t, sourceIdPrefix, true)
 
 		if i and i.label then
-			applyEffects(i, t, sourceIdPrefix)
+			applyEffects(i, t, sourceIdPrefix, false)
 		end
 	end,
 }
