@@ -1,5 +1,6 @@
 local c = require("world.components")
 local Entity = require("world.entities.entity")
+local EFFECT = c.EFFECT_ENUM
 
 local Tower = class("Tower", Entity)
 
@@ -23,7 +24,7 @@ function Tower:initialize(x, y, space, type, canvas, options)
 	self.hp = c.hp(100, 100)
 
 	self.stance = c.stance("aggressive")
-	self.attack = c.attack(10, 2, 3, 1)
+	self.attack = c.attack(10, 2, 3, 1, true)
 	self.range = c.range(space, x, y, 100, true)
 	self.target = c.target()
 

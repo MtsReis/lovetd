@@ -47,8 +47,6 @@ function Unit:initialize(x, y, space, type, canvas, options)
 
 		self.hp = c.hp(50, 50)
 		self.team = c.team(1)
-
-		self.lifespan = c.lifespan(3)
 	end
 end
 

@@ -7,7 +7,7 @@ deathSystem.filter = tiny.requireAll("hp")
 
 function deathSystem:process(e, dt)
 	if e.hp.curr <= 0 and not e[CONDITION.dead] then
-        e.lifespan = c.lifespan(2)
+        e.lifespan = c.lifespan(0)
         e[CONDITION.dead] = c[CONDITION.dead]()
     end
 end

@@ -1,6 +1,6 @@
 local STATE_ENUM = { idle = "IDLE", movingAlongPath = "MOVING_PATH", chasing = "CHASING", attacking = "ATTACKING" }
 local CONDITION_ENUM = { dead = "COND_DEAD" }
-local EFFECT_ENUM = { slow = "EFF_SLOW" }
+local EFFECT_ENUM = { slow = "EFF_SLOW", pierce = "EFF_PIERCE" }
 
 local DEFAULT_MAX_ACCEL = 50
 local Path = class("Path")
@@ -185,6 +185,10 @@ return {
 	----------------
 	EFF_SLOW = function(percentage)
 		return percentage
+	end,
+
+	EFF_PIERCE = function(amount)
+		return amount
 	end,
 
 	--------

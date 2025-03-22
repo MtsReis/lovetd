@@ -1,7 +1,7 @@
 local LINE_WIDTH = 2
 local drawObjSystem = tiny.processingSystem()
 
-drawObjSystem.filter = tiny.requireAll("pos", "rotation", "canvas", "dPivot", tiny.requireAny("geometry", "sprite"))
+drawObjSystem.filter = tiny.requireAll("pos", "rotation", "canvas", "dPivot", "geometry")
 
 function drawObjSystem:process(e, dt)
 	love.graphics.setCanvas(e.canvas)

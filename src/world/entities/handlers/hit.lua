@@ -5,6 +5,7 @@ t: Target
 ]]
 local effects_once = require("world.components")._effects_agent_on_target_once
 local effects_constant = require("world.components")._effects_agent_on_target_constant
+local EFFECT = require("world.components").EFFECT_ENUM
 
 --[[
 source: source entity ref
@@ -44,6 +45,13 @@ local handlers = {
 		local sourceIdPrefix = "%(a)s%(i)s"
 			% { a = a.label and a.label .. "_" or "", i = i.label and i.label .. "_" or "" }
 		applyEffects(a, t, sourceIdPrefix)
+
+		-- If source has no pierce, despawn
+		-- if not a[EFFECT.pierce] or a[EFFECT.pierce] < 1 then
+		-- 	a.lifespan = 0
+		-- else
+		-- 	a[EFFECT.pierce] = a[EFFECT.pierce] - 1
+		-- end
 
 		if i and i.label then
 			applyEffects(i, t, sourceIdPrefix)

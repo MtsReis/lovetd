@@ -29,6 +29,8 @@ local PREDEFINED_PATHS = {
 		}),
 	},
 }
+local ASSETS_DIR = "assets/"
+local ASSETS_EXT = ".png"
 
 local UI
 
@@ -43,6 +45,16 @@ world.space = {
 }
 
 local mapRenderer = {}
+
+local _resources = {
+	hp_container_s = "UI/hp_container_s",
+	hp_container_c = "UI/hp_container_c",
+
+	elf = "sprites/elf",
+	elf_e = "sprites/elf_e",
+	org = "sprites/org",
+	org_e = "sprites/org_e"
+}
 
 function PlayScenario:load(scenarioName)
 	scenarioName = scenarioName or "ShoreBattle"
@@ -72,7 +84,6 @@ function PlayScenario:load(scenarioName)
 
 	-- Systems
 	local precachedSystems = {
-
 		require("world/systems/lifespan").lifespan,
 
 		require("world/systems/rendering").drawObj,
@@ -85,6 +96,7 @@ function PlayScenario:load(scenarioName)
 
 		require("world/systems/attack").attack,
 		require("world/systems/attack").range,
+		require("world/systems/hp").drawHp,
 
 		require("world/systems/state").state,
 		require("world/systems/death").death,
@@ -98,8 +110,15 @@ function PlayScenario:load(scenarioName)
 		mouse = world.space.selection:point(mapRenderer.cam:worldCoords(love.mouse.getPosition())),
 		selectedEntity = nil,
 
-		paths = PREDEFINED_PATHS[1],
+		paths = PREDEFINED_PATHS[1]
 	}
+
+
+	-- Aditional assets
+	world.resources = {}
+	for k, v in pairs(_resources) do
+		world.resources[k] = love.graphics.newImage(ASSETS_DIR .. v .. ASSETS_EXT)
+	end
 
 	world:add(table.unpack(precachedSystems))
 

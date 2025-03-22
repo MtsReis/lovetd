@@ -1,6 +1,7 @@
 local MELEE_TIMESPAN = 0.8
 local c = require("world.components")
 local Entity = require("world.entities.entity")
+local EFFECT = c.EFFECT_ENUM
 
 local Projectile = class("Projectile", Entity)
 
@@ -19,6 +20,7 @@ function Projectile:initialize(invoker, type, space, target, options)
 	local h = options.h or 20
 
 	self.invoker = c.invoker(invoker)
+	self.team = c.team(invoker.team)
 
 	self.canvas = canvas
 
@@ -27,16 +29,18 @@ function Projectile:initialize(invoker, type, space, target, options)
 	self.geometry = c.geometry("boid", w, h, "fill", { 0.5, 0, 1, 1 })
 	self.dPivot = dPivot
 
-	self.movement = c.movement(self.rotation, 100, 0, 2)
+	self.movement = c.movement(self.rotation, 500, 0, 2)
 
 	self.hitbox = c.hitbox(space, x, y, h, w, 0, 0)
 
 	self.lifespan = lifespan
+	self[EFFECT.pierce] = 5
 
 	if type == "melee" then
 		self.lifespan = c.lifespan(MELEE_TIMESPAN)
 		self.geometry = nil
 		self.sprite = nil
+		self.movement = c.movement(self.rotation, 0, 0, 0)
 
 		if target and target.pos then
 			self.pos = target.pos

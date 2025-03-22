@@ -33,7 +33,11 @@ function hitSystem:process(e, dt)
 			if e ~= otherEntity and otherEntity.hurtbox then
 				if e.hitbox.shape:collidesWith(otherEntity.hurtbox.shape) then
                     local invoker = e.invoker
-					h.onHit(invoker, e, otherEntity)
+
+					-- No self harm or FF
+					if not e.invoker or not e.invoker.team or not otherEntity.team or e.invoker.team ~= otherEntity.team then
+						h.onHit(invoker, e, otherEntity)
+					end
 				end
 			end
 		end
