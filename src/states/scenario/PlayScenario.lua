@@ -276,39 +276,6 @@ end
 function PlayScenario.draw()
 	mapRenderer.cam:attach()
 	love.graphics.draw(canvas, 0, 0)
-
-	-- TODO: Remove this 🤬
-	-- if amora.debugMode then
-	-- 	love.graphics.setColor(1, 1, 1, 1)
-	-- 	love.graphics.rectangle("fill", 500, 0, 500, love.graphics.getHeight())
-
-	-- 	love.graphics.setColor(0, 0, 0, 1)
-	-- 	love.graphics.print("Mouse\nX: %(x)s\nY: %(y)s\nMap X: %(mx)s\nMap Y: %(my)s\n" % {
-	-- 		x = love.mouse.getX(),
-	-- 		y = love.mouse.getY(),
-	-- 		mx = world.properties.mouse._pos.x,
-	-- 		my = world.properties.mouse._pos.y,
-	-- 	}, 500, 0)
-
-	-- 	love.graphics.setColor(1, 1, 1, 1)
-	-- end
-
-	local wpLines = {}
-	love.graphics.setColor({ 0, 0.8, 0, 1 })
-	love.graphics.setLineWidth(2)
-
-	love.graphics.setLineWidth(1)
-	love.graphics.setColor({ 1, 1, 1, 1 })
-
-	for i, p in ipairs(PREDEFINED_PATHS[1]) do
-		for k, v in pairs(p) do
-			table.insert(wpLines, v[1])
-			table.insert(wpLines, v[2])
-		end
-
-		love.graphics.line(wpLines)
-	end
-
 	mapRenderer.cam:detach()
 end
 
