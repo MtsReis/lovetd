@@ -2,7 +2,31 @@ local HC = require("lib.HC")
 local Path = require("world.properties.path")
 local PREDEFINED_PATHS = {
 	{
-		Path({ 0, 320 }, { 557, 300 }, { 250, 500 },  { 1114, 320 }),
+		Path({
+			0,
+			736,
+		}, {
+			544,
+			736,
+		}, {
+			640,
+			640,
+		}, {
+			640,
+			448,
+		}, {
+			672,
+			416,
+		}, {
+			672,
+			288,
+		}, {
+			896,
+			288,
+		}, {
+			896,
+			160,
+		}),
 	},
 }
 
@@ -21,7 +45,7 @@ world.space = {
 local mapRenderer = {}
 
 function PlayScenario:load(scenarioName)
-	scenarioName = scenarioName or "proto"
+	scenarioName = scenarioName or "ShoreBattle"
 
 	PlayScenario.scenario = Persistence.loadScenario(scenarioName)
 	state.add(
@@ -48,6 +72,9 @@ function PlayScenario:load(scenarioName)
 
 	-- Systems
 	local precachedSystems = {
+
+		require("world/systems/lifespan").lifespan,
+
 		require("world/systems/rendering").drawObj,
 		require("world/systems/movement").movement,
 		require("world/systems/collision").collision,
@@ -61,7 +88,6 @@ function PlayScenario:load(scenarioName)
 
 		require("world/systems/state").state,
 		require("world/systems/death").death,
-		require("world/systems/lifespan").lifespan,
 		require("world/systems/lifespan").clearReferences,
 	}
 
@@ -83,13 +109,27 @@ function PlayScenario:load(scenarioName)
 		mainTower,
 		entitiesClasses.tower(world.properties.width / 3, 200, world.space, "archer", canvas),
 		entitiesClasses.tower(world.properties.width * 0.75, world.properties.height / 5, world.space, "archer", canvas),
-		entitiesClasses.unit(0, 300, world.space, "orc", canvas, { path = world.properties.paths[1] }),
-		entitiesClasses.unit(0, 450, world.space, "orc", canvas, { path = world.properties.paths[1] }),
+		entitiesClasses.unit(
+			PREDEFINED_PATHS[1][1][1][1] + math.random(-130, 130),
+			PREDEFINED_PATHS[1][1][1][2] + math.random(-130, 130),
+			world.space,
+			"orc",
+			canvas,
+			{ path = world.properties.paths[1] }
+		),
+		entitiesClasses.unit(
+			PREDEFINED_PATHS[1][1][1][1] + math.random(-130, 130),
+			PREDEFINED_PATHS[1][1][1][2] + math.random(-130, 130),
+			world.space,
+			"orc",
+			canvas,
+			{ path = world.properties.paths[1] }
+		),
 		entitiesClasses.unit(1000, 290, world.space, "human", canvas),
 		entitiesClasses.unit(50, 330, world.space, "somethingElse", canvas),
 		entitiesClasses.unit(
-			44,
-			350,
+			PREDEFINED_PATHS[1][1][1][1] + math.random(-130, 130),
+			PREDEFINED_PATHS[1][1][1][2] + math.random(-130, 130),
 			world.space,
 			"orc",
 			canvas,
