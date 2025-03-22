@@ -1,7 +1,7 @@
 local Bootstrap = class('Bootstrap')
 
 function Bootstrap.load()
-  math.randomseed()
+  math.randomseed(os.time(os.date("!*t")))
 
   -----------------------------------------------
   --                  settings
