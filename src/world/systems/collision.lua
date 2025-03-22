@@ -41,12 +41,6 @@ function hitSystem:process(e, dt)
 				end
 			end
 		end
-
-
-		-- TODO: Remove this
-		if e.hitbox and e.pos.x + e.hitbox.w >= collisionSystem.world.properties.width then
-			e.pos.x = 0
-		end
 	end
 	if e.hurtbox then
 		e.hurtbox.shape:moveTo(e.pos.x, e.pos.y)

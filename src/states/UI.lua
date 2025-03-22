@@ -21,6 +21,8 @@ local _resources = {
 
 	"topbar",
 
+	"coins",
+
 	"pause",
 
 	"new_game_btn",
@@ -44,6 +46,7 @@ UI.presentations = {
 	PlayScenario = {
 		_attr = {
 			sidebar = { width = 118, towerSpots = 3 },
+			coins = { qty = 0, font = love.graphics.newFont(30) },
 			buttons = {
 				ele_sidebar_tower1 = {
 					x = 0,
@@ -73,8 +76,7 @@ UI.presentations = {
 		},
 		canvases = { sidebar_bg = love.graphics.newCanvas(), sidebar_fg = love.graphics.newCanvas() },
 		_events = {
-			onPress = function(element)
-			end,
+			onPress = function(element) end,
 			onRelease = function(element)
 				if element == "ele_sidebar_tower1" then
 					triggerListener("onPressedTower1")
@@ -135,6 +137,8 @@ function UI.load()
 	UI.presentations.PlayScenario.canvases.sidebar_bg =
 		love.graphics.newCanvas(UI.presentations.PlayScenario._attr.sidebar.width, amora.settings.video.h)
 	UI.presentations.PlayScenario.canvases.sidebar_fg = love.graphics.newCanvas()
+	UI.presentations.PlayScenario._attr.coins.font = love.graphics.newFont(30)
+
 end
 
 function UI:enable(presentation, listeners)
@@ -303,6 +307,11 @@ function UI.presentations.PlayScenario:update(dt)
 
 	-------------------- TOPBAR --------------------
 	love.graphics.draw(_resources.topbar, 0, 0, 0, screenW, 1) -- y scaled
+
+	-------------------- Coins --------------------
+	love.graphics.draw(_resources.coins, 10, 10, 0, .2, .2)
+	love.graphics.setFont(self._attr.coins.font)
+	love.graphics.print(self._attr.coins.qty, 10 + _resources.coins:getWidth() * .2, _resources.coins:getHeight() * .1)
 
 	love.graphics.setCanvas()
 end

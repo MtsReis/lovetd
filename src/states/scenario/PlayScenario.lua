@@ -48,6 +48,8 @@ local PREDEFINED_PATHS = {
 }
 local ASSETS_DIR = "assets/"
 local ASSETS_EXT = ".png"
+local SOUNDS_DIR = "assets/sounds/"
+local MUSIC_DIR = "assets/music/"
 
 local UI
 
@@ -63,7 +65,7 @@ world.space = {
 
 local mapRenderer = {}
 
-local _resources = {
+local _images = {
 	hp_container_s = "UI/hp_container_s",
 	hp_container_c = "UI/hp_container_c",
 
@@ -71,6 +73,15 @@ local _resources = {
 	elf_e = "sprites/elf_e",
 	org = "sprites/org",
 	org_e = "sprites/org_e",
+}
+
+local _sounds = {
+	coin_drop = "coin_drop.ogg"
+}
+
+local _music = {
+	thinking = "bgm1.mp3",
+	action = "bgm2.mp3"
 }
 
 function PlayScenario:load(scenarioName)
@@ -126,6 +137,8 @@ function PlayScenario:load(scenarioName)
 	world.properties = {
 		width = mapRenderer.map.w * PlayScenario.scenario.gridW,
 		height = mapRenderer.map.h * PlayScenario.scenario.gridH,
+		COINS_PER_KILL = 5,
+
 		cam = mapRenderer.cam,
 		mouse = world.space.selection:point(mapRenderer.cam:worldCoords(love.mouse.getPosition())),
 		selectedEntity = nil,
@@ -133,10 +146,25 @@ function PlayScenario:load(scenarioName)
 		paths = PREDEFINED_PATHS[1],
 	}
 
+	world.player = {
+		coins = 0,
+		killed_enemies = 0
+	}
+
 	-- Aditional assets
 	world.resources = {}
-	for k, v in pairs(_resources) do
+	for k, v in pairs(_images) do
 		world.resources[k] = love.graphics.newImage(ASSETS_DIR .. v .. ASSETS_EXT)
+	end
+
+	world.resources.sounds = {}
+	for k, v in pairs(_sounds) do
+		world.resources.sounds[k] = love.audio.newSource(SOUNDS_DIR .. v, "static")
+	end
+
+	world.resources.music = {}
+	for k, v in pairs(_music) do
+		world.resources.music[k] = love.audio.newSource(MUSIC_DIR .. v, "stream")
 	end
 
 	world:add(table.unpack(precachedSystems))
@@ -187,7 +215,6 @@ function PlayScenario:load(scenarioName)
 			canvas,
 			{ label = "Elf", path = world.properties.paths[1] }
 		),
-		entitiesClasses.unit(50, 330, world.space, "somethingElse", canvas),
 		entitiesClasses.unit(
 			PREDEFINED_PATHS[1][1][1][1] + math.random(-130, 130),
 			PREDEFINED_PATHS[1][1][1][2] + math.random(-130, 130),
@@ -218,6 +245,9 @@ function PlayScenario.enable()
 			print("Create tower 3")
 		end,
 	})
+
+	world.resources.music.action:setLooping(true)
+	world.resources.music.action:play()
 end
 
 function PlayScenario.update(_, dt)
@@ -237,6 +267,9 @@ function PlayScenario.update(_, dt)
 				mapRenderer.cam.scale = mapRenderer.cam.minScale
 			end
 		end
+
+		-- Update UI values
+		UI.presentations.PlayScenario._attr.coins.qty = world.player.coins
 	end
 end
 

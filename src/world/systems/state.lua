@@ -13,6 +13,11 @@ function stateSystem:process(e, dt)
 		if e.path then
 			e.state = STATE.movingAlongPath
 		end
+
+		-- Switch to attack state if there's a target and can't move/chase
+		if e.target and e.target.targetEntity and not e.movement then
+			e.state = STATE.attacking
+		end
 	elseif e.state == STATE.movingAlongPath and e.path and e.movement then
 		-- Don't loop the trajectory. Remove this in case looping might be necessary
 		if e.path:getNextWpIndex() == 1 then
