@@ -13,9 +13,15 @@ function DrawHpSystem:process(e, dt)
 	local maxHealthBar = e.hp.max / 2
 	local healthContent = math.max(0, e.hp.curr / 2)
 	local color = e.team and e.team == 1 and { 114/255, 234/255, 78/255, 1 } or { 241/255, 24/255, 45/255, 1 }
+	local width = e.sprite and e.sprite.img:getWidth() or e.geometry.w
+	local height = e.sprite and e.sprite.img:getHeight() or e.geometry.h
 
 	love.graphics.setCanvas(e.canvas)
-	local x, y = e.pos.x - CONTAINER_SIDE_W - maxHealthBar / 2, e.pos.y - e.geometry.h - CONTAINER_H
+	local x, y = e.pos.x - CONTAINER_SIDE_W - maxHealthBar / 2, e.pos.y - height - CONTAINER_H / 2
+
+	if y <= 0 then
+		y = 5
+	end
 
 	love.graphics.draw(container_img_s, x, y, 0, 1, 0.5)
 	love.graphics.draw(container_img_c, x + CONTAINER_SIDE_W, y, 0, maxHealthBar, 0.5)

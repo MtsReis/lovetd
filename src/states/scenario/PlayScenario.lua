@@ -73,6 +73,10 @@ local _images = {
 	elf_e = "sprites/elf_e",
 	org = "sprites/org",
 	org_e = "sprites/org_e",
+
+	tower1 = "sprites/tower1",
+	tower2 = "sprites/tower2",
+	tower3 = "sprites/tower3"
 }
 
 local _sounds = {
@@ -170,12 +174,12 @@ function PlayScenario:load(scenarioName)
 	world:add(table.unpack(precachedSystems))
 
 	-- Entities
-	local mainTower = entitiesClasses.tower(world.properties.width / 2, 400, world.space, "archer", canvas)
+	local mainTower = entitiesClasses.tower(world.properties.width / 2, 400, world.space, "face", canvas)
 	local spawnerBottom = entitiesClasses.spawner(
 		world.properties.width / 2,
 		world.properties.height / 2,
-		5,
-		2,
+		8,
+		4,
 		nil,
 		entitiesClasses.unit,
 		PREDEFINED_PATHS[1][1][1][1] - math.random(120, 900),
@@ -189,8 +193,8 @@ function PlayScenario:load(scenarioName)
 	local spawnerSide = entitiesClasses.spawner(
 		world.properties.width / 2,
 		world.properties.height / 2,
-		5,
-		2,
+		8,
+		4,
 		nil,
 		entitiesClasses.unit,
 		PREDEFINED_PATHS[1][2][1][1] - math.random(120, 900),
@@ -204,9 +208,9 @@ function PlayScenario:load(scenarioName)
 		mainTower,
 		spawnerBottom,
 		spawnerSide,
-		entitiesClasses.tower(world.properties.width / 3, 200, world.space, "archer", canvas),
+		entitiesClasses.tower(world.properties.width / 3, 200, world.space, "tall", canvas),
 		entitiesClasses.unit(world.properties.width / 3, 300, world.space, "evil_elf", canvas, { label = "Evil Elf" }),
-		entitiesClasses.tower(world.properties.width * 0.75, world.properties.height / 5, world.space, "archer", canvas),
+		entitiesClasses.tower(world.properties.width * 0.75, world.properties.height / 5, world.space, "ritual", canvas),
 		entitiesClasses.unit(
 			PREDEFINED_PATHS[1][1][1][1] + math.random(-130, 130),
 			PREDEFINED_PATHS[1][1][1][2] + math.random(-130, 130),
@@ -247,7 +251,7 @@ function PlayScenario.enable()
 	})
 
 	world.resources.music.action:setLooping(true)
-	world.resources.music.action:play()
+	-- world.resources.music.action:play()
 end
 
 function PlayScenario.update(_, dt)

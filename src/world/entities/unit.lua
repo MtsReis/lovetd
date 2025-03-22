@@ -30,14 +30,14 @@ function Unit:initialize(x, y, space, type, canvas, options)
 		self.sprite = c.sprite("org")
 
 		self.dPivot = c.dPivot(self.sprite.img:getWidth() / 2, self.sprite.img:getHeight() / 2)
-		self.movement = c.movement(0, 80, 0, 0)
+		self.movement = c.movement(0, 50, 0, 0)
 
 		self.collisionbox = c.collisionbox(space, x, y, W, H, -W / 2, -H / 2)
 		self.selectionbox = c.selectionbox(space, x, y, W, H, -W / 2, -H / 2)
 
-		self.range = c.range(space, x, y, 30, false)
-		self.sightRange = c.sightRange(space, x, y, 65)
-		self.attack = c.attack(10, 2, 3, 1)
+		self.range = c.range(space, x, y, 25, false)
+		self.sightRange = c.sightRange(space, x, y, 60)
+		self.attack = c.attack(15, 2, 3, 1.5)
 		self.stance = c.stance("aggressive")
 
 		self.hp = c.hp(100, 100)
@@ -57,7 +57,7 @@ function Unit:initialize(x, y, space, type, canvas, options)
 
 		self.range = c.range(space, x, y, 100, false)
 		self.sightRange = c.sightRange(space, x, y, 175)
-		self.attack = c.attack(10, 2, 3, 1, true)
+		self.attack = c.attack(4, 2, 3, .5, true)
 		self.stance = c.stance("aggressive")
 
 		self.hp = c.hp(45, 45)
