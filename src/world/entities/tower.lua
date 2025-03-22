@@ -72,6 +72,20 @@ function Tower:initialize(x, y, space, type, canvas, options)
 
 		self.attack = c.attack(25, 2, 3, 2, true)
 		self.range = c.range(space, x, y, 200, true)
+	elseif type == "main" then
+		W, H = 48, 48
+
+		self.sprite = c.sprite("tower4")
+		self.dPivot = c.dPivot(self.sprite.img:getWidth() - W / 2 - 24, self.sprite.img:getHeight() - H / 2)
+
+		self.hp = c.hp(1, 1)
+
+		self.selectionbox = c.selectionbox(space, x, y, W, H, -W / 2, -H / 2)
+		self.collisionbox = c.collisionbox(space, x, y, W, H, -W / 2, -H / 2)
+		self.hurtbox = c.hurtbox(space, x, y, W - 20, H - 20, -W / 2, -H / 2)
+
+		self.attack = c.attack(25, 2, 3, 2, true)
+		self.range = c.range(space, x, y, 200, true)
 	end
 end
 

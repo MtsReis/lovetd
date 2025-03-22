@@ -69,6 +69,7 @@ local mapRenderer = {}
 local _images = {
 	hp_container_s = "UI/hp_container_s",
 	hp_container_c = "UI/hp_container_c",
+	hp_tower = "UI/hp_tower",
 
 	elf = "sprites/elf",
 	elf_e = "sprites/elf_e",
@@ -158,6 +159,7 @@ function PlayScenario:load(scenarioName)
 	world.player = {
 		coins = 50,
 		killed_enemies = 0,
+		main_tower = entitiesClasses.tower(910, 180, world.space, "main", canvas)
 	}
 
 	-- Aditional assets
@@ -179,18 +181,17 @@ function PlayScenario:load(scenarioName)
 	world:add(table.unpack(precachedSystems))
 
 	-- Entities
-	local mainTower = entitiesClasses.tower(world.properties.width / 2, 400, world.space, "face", canvas)
 	local spawnerBottom = entitiesClasses.spawner(
 		world.properties.width / 2,
 		world.properties.height / 2,
-		8,
+		2,
 		40,
 		nil,
 		entitiesClasses.unit,
 		PREDEFINED_PATHS[1][1][1][1] - math.random(120, 900),
 		PREDEFINED_PATHS[1][1][1][2] - math.random(10, 20),
 		world.space,
-		"orc",
+		"elf",
 		canvas,
 		{ path = world.properties.paths[1] }
 	)
@@ -198,7 +199,7 @@ function PlayScenario:load(scenarioName)
 	local spawnerSide = entitiesClasses.spawner(
 		world.properties.width / 2,
 		world.properties.height / 2,
-		8,
+		2,
 		40,
 		nil,
 		entitiesClasses.unit,
@@ -210,12 +211,13 @@ function PlayScenario:load(scenarioName)
 		{ path = world.properties.paths[2] }
 	)
 	world:add(
-		mainTower,
+		world.player.main_tower,
 		spawnerBottom,
 		spawnerSide,
 		entitiesClasses.tower(world.properties.width / 3, 200, world.space, "tall", canvas),
+		entitiesClasses.tower(530, 630, world.space, "face", canvas),
+		entitiesClasses.tower(world.properties.width / 2, 400, world.space, "ritual", canvas),
 		entitiesClasses.unit(world.properties.width / 3, 300, world.space, "evil_elf", canvas, { label = "Evil Elf" }),
-		entitiesClasses.tower(world.properties.width * 0.75, world.properties.height / 5, world.space, "ritual", canvas),
 		entitiesClasses.unit(
 			PREDEFINED_PATHS[1][1][1][1] + math.random(-130, 130),
 			PREDEFINED_PATHS[1][1][1][2] + math.random(-130, 130),
@@ -336,7 +338,7 @@ function PlayScenario.enable()
 end
 
 function PlayScenario.update(_, dt)
-	if not amora.pause then
+	if not amora.pause and not world.player.endScenario then
 		-- Update mouse position
 		world.properties.mousePos.x, world.properties.mousePos.y = mapRenderer.cam:worldCoords(love.mouse.getPosition())
 		world.properties.mouse:moveTo(world.properties.mousePos.x, world.properties.mousePos.y)
@@ -365,6 +367,14 @@ function PlayScenario.update(_, dt)
 
 		-- Update UI values
 		UI.presentations.PlayScenario._attr.coins.qty = world.player.coins
+	end
+
+	if world.player.results then
+		if world.player.results.endScenarioIn <= 0 then
+			world.player.endScenario = true
+		else
+			world.player.results.endScenarioIn = world.player.results.endScenarioIn - dt
+		end
 	end
 end
 

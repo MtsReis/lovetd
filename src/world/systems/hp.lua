@@ -9,7 +9,10 @@ DrawHpSystem.filter = tiny.requireAll("hp", "canvas", "pos", "geometry")
 function DrawHpSystem:process(e, dt)
 	local container_img_s = DrawHpSystem.world.resources.hp_container_s
 	local container_img_c = DrawHpSystem.world.resources.hp_container_c
+	local hp_tower = DrawHpSystem.world.resources.hp_tower
+	local hp_tower_scale = .3
 	local content_img = DrawHpSystem.world.resources.hp_content
+
 	local maxHealthBar = e.hp.max / 2
 	local healthContent = math.max(0, e.hp.curr / 2)
 	local color = e.team and e.team == 1 and { 114/255, 234/255, 78/255, 1 } or { 241/255, 24/255, 45/255, 1 }
@@ -31,6 +34,11 @@ function DrawHpSystem:process(e, dt)
 	love.graphics.rectangle("fill", x + CONTAINER_SIDE_W, y + CONTAINER_TOP_H / 2, healthContent, HEALTHBAR_CONTENT_H)
 
 	love.graphics.setColor(1, 1, 1)
+
+	if e == DrawHpSystem.world.player.main_tower then
+		love.graphics.draw(hp_tower, x - hp_tower:getWidth()*hp_tower_scale/2, y - hp_tower:getHeight()*hp_tower_scale/2, 0, hp_tower_scale, hp_tower_scale)
+	end
+
 	love.graphics.setCanvas()
 end
 

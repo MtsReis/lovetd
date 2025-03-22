@@ -56,7 +56,7 @@ function Unit:initialize(x, y, space, type, canvas, options)
 		self.selectionbox = c.selectionbox(space, x, y, W, H, -W / 2, -H / 2)
 
 		self.range = c.range(space, x, y, 100, false)
-		self.sightRange = c.sightRange(space, x, y, 175)
+		self.sightRange = c.sightRange(space, x, y, 150)
 		self.attack = c.attack(4, 2, 3, .5, true)
 		self.stance = c.stance("aggressive")
 
