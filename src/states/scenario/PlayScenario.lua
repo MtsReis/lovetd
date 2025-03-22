@@ -331,7 +331,8 @@ function PlayScenario.enable()
 	})
 
 	world.resources.music.action:setLooping(true)
-	-- world.resources.music.action:play()
+	world.resources.music.action:setVolume(amora.settings.sound.mVolume/100)
+	world.resources.music.action:play()
 end
 
 function PlayScenario.update(_, dt)
