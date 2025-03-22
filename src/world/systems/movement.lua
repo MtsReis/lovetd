@@ -8,7 +8,7 @@ function movementSystem:process(e, dt)
 
 	local newVelocity = velocity + deltaVelocity
 
-	e.movement.vel.speed = newVelocity:getmag()
+	e.movement.vel.speed = math.min(newVelocity:getmag(), e.movement.maxSpeed)
     e.movement.vel.dir = newVelocity:norm()
 
 	local deltaPosition = e.movement.vel.dir * e.movement.vel.speed * dt

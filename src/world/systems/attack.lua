@@ -1,24 +1,36 @@
-local AttackSystem = tiny.processingSystem(class("AttackSystem"))
+local STATE = require("world.components").STATE_ENUM
+local RangeSystem = tiny.processingSystem(class("RangeSystem"))
+local ProjectileEntity = require("world.entities.projectile")
 
-AttackSystem.filter =
-	tiny.requireAny(tiny.requireAll("collisionbox", "pos"), tiny.requireAll("attack", "pos", "ai", "range", "action"))
+RangeSystem.filter = tiny.requireAny(
+	tiny.requireAll("hurtbox", "pos", "team"),
+	tiny.requireAll("attack", "pos", "target", "stance", "team", tiny.requireAny("sightRange", "range"))
+)
 
-function AttackSystem:process(e, dt)
-	if e.attack and e.attack.mode == "aggressive" and e.range then
+function RangeSystem:process(e, dt)
+	local refRange = e.range
+	if e.range then
 		e.range.shape:moveTo(e.pos.x, e.pos.y)
-		if e.action.curr.attacking then
-			e.action.curr.attacking = nil
-		end
+	end
 
-		-- Iterate over all entities in the world
-		for _, otherEntity in pairs(self.entities) do
-			-- Only entities with collisionbox
-			if e ~= otherEntity and otherEntity.collisionbox then
-				if e.range.shape:collidesWith(otherEntity.collisionbox.shape) then
-					print("Targetable entity found. Distance:", e.pos:dist(otherEntity.pos))
+	if e.sightRange then
+		e.sightRange.shape:moveTo(e.pos.x, e.pos.y)
+		refRange = e.sightRange
+	end
 
-					if e.action then
-						e.action.curr.attacking = true
+	if e.attack and e.stance == "aggressive" and refRange and e.target then
+		refRange.shape:moveTo(e.pos.x, e.pos.y)
+
+		-- Only look for new targets if the curr isn't in range
+		if not e.target.targetEntity or not refRange.shape:collidesWith(e.target.targetEntity.collisionbox.shape) then
+			e.target.targetEntity = nil
+
+			-- Iterate over all entities in the world
+			for _, otherEntity in pairs(self.entities) do
+				-- Only OPPONENTS with collisionbox and hurtbox
+				if e ~= otherEntity and e.team ~= otherEntity.team and otherEntity.collisionbox then
+					if refRange.shape:collidesWith(otherEntity.collisionbox.shape) then
+						e.target.targetEntity = otherEntity
 					end
 				end
 			end
@@ -26,4 +38,25 @@ function AttackSystem:process(e, dt)
 	end
 end
 
-return { attack = AttackSystem }
+local AttackSystem = tiny.processingSystem(class("AttackSystem"))
+
+AttackSystem.filter = tiny.requireAll("pos", "attack", "target", "team", "range", "state")
+
+function AttackSystem:process(e, dt)
+	if e.state == STATE.attacking then
+		local currTimer = e.attack.attackCycleTimer - dt
+		local type = e.attack.ranged and "ranged" or "melee"
+
+		if currTimer < 0 then
+			local targetAngle = e.target.targetEntity.pos - e.pos
+			targetAngle = targetAngle:heading()
+			-- Resets attack
+			e.attack.attackCycleTimer = e.attack.cooldownTime - currTimer
+			AttackSystem.world:add(ProjectileEntity(e, type, AttackSystem.world.space, e.target.targetEntity, { rotation = targetAngle }))
+		else
+			e.attack.attackCycleTimer = currTimer
+		end
+	end
+end
+
+return { attack = AttackSystem, range = RangeSystem }

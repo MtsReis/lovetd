@@ -17,15 +17,12 @@ function DebugMode.update()
 end
 
 function DebugMode.keypressed(command)
-	log.info("Pressed the key for the '%(c)s command!" % { c = command })
 end
 
 function DebugMode.keyreleased(command)
-	log.info("Release the key for the '%(c)s command!" % { c = command })
 end
 
 function DebugMode.keyhold(command)
-	log.info("Holding the key for the '%(c)s command!" % { c = command })
 end
 
 function DebugMode.disable()
