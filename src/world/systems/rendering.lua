@@ -19,7 +19,7 @@ function drawObjSystem:process(e, dt)
 		love.graphics.circle("line", e.pos.x, e.pos.y, e.sightRange.value)
 	end
 
-	if e.range and e.range.visible and e.attack then
+	if e.range and (e.range.visible or drawObjSystem.world.properties.selectedEntity == e) then
 		love.graphics.setColor({ 1, 0, 1, 1 })
 		love.graphics.setLineWidth(LINE_WIDTH)
 
@@ -106,28 +106,7 @@ function drawObjSystem:postProcess(dt)
 
 		love.graphics.circle("line", e.pos.x, e.pos.y, e.geometry.w / 2)
 
-		love.graphics.setColor(0, 0, 0, 1)
-		love.graphics.rectangle("fill", 0, 0, 500, drawObjSystem.world.properties.height)
-
-		love.graphics.setColor(1, 1, 1, 1)
-		love.graphics.print(
-			"%(l)s\nState: %(st)s\nTeam: %(team)s\nMovement: %(m)s\nAttack: %(a)s\nTarget: %(t)s\nSightRange: %(sr)s\nRange: %(r)s\nStance: %(stance)s\nPath: %(path)s\nCollision: %(cb)s\n"
-				% {
-					l = e.label,
-					cb = pw(e.collisionbox),
-					m = pw(e.movement),
-					a = pw(e.attack),
-					t = pw(e.target),
-					r = pw(e.range),
-					sr = pw(e.sightRange),
-					st = pw(e.state),
-					stance = pw(e.stance),
-					team = pw(e.team),
-					path = pw(e.path),
-				},
-			0,
-			0
-		)
+		love.graphics.print(e.label .. "\n" .. pw(e.range), 0, 0)
 
 		love.graphics.setLineWidth(1)
 		love.graphics.setColor(1, 1, 1)

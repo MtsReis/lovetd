@@ -13,17 +13,23 @@ function Construction:initialize(x, y, space, type, canvas, options)
 		cost = 20
 		self.sprite = c.sprite("tower1")
 
+		self.range = c.range(space, x, y, 130, true)
+
 		W, H = 64, 64
 		self.dPivot = c.dPivot(self.sprite.img:getWidth() - W / 2 - 13, self.sprite.img:getHeight() - H / 2)
 	elseif type == "tall" then
 		cost = 35
 		self.sprite = c.sprite("tower2")
 
+		self.range = c.range(space, x, y, 330, true)
+
 		W, H = 64, 64
 		self.dPivot = c.dPivot(self.sprite.img:getWidth() - W / 2 - 17, self.sprite.img:getHeight() - H / 2)
 	elseif type == "ritual" then
 		cost = 40
 		self.sprite = c.sprite("tower3")
+
+		self.range = c.range(space, x, y, 200, true)
 
 		W, H = 48, 48
 		self.dPivot = c.dPivot(self.sprite.img:getWidth() - W / 2 - 24, self.sprite.img:getHeight() - H / 2)
@@ -36,8 +42,6 @@ function Construction:initialize(x, y, space, type, canvas, options)
 	self.rotation = c.rotation(0)
 
 	self.collisionbox = c.collisionbox(space, x, y, W, H, -W / 2, -H / 2)
-
-	self.range = c.range(space, x, y, 130, true)
 
 	self.construction = c.construction(type, cost)
 end
