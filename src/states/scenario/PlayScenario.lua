@@ -277,7 +277,7 @@ function PlayScenario:load(scenarioName)
 	end
 	
 	for k, v in pairs(blockedCoords) do
-		world:add(entitiesClasses.blocker(v.x * v.w, v.y * v.h, world.space, v.w, v.h, {canvas = canvas}))
+		world:add(entitiesClasses.blocker(v.x * v.w, v.y * v.h, world.space, v.w, v.h))
 	end
 
 	-- Events

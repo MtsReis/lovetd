@@ -1,6 +1,6 @@
 local STATE_ENUM = { idle = "IDLE", movingAlongPath = "MOVING_PATH", chasing = "CHASING", attacking = "ATTACKING" }
-local CONDITION_ENUM = { dead = "COND_DEAD" }
-local EFFECT_ENUM = { slow = "EFF_SLOW", pierce = "EFF_PIERCE" }
+local CONDITION_ENUM = { dead = "COND_DEAD", cursed = "COND_CURSED" }
+local EFFECT_ENUM = { slow = "EFF_SLOW", pierce = "EFF_PIERCE", curse = "EFF_CURSE" }
 
 local ASSETS_DIR = "assets/sprites/"
 local ASSETS_EXT = ".png"
@@ -187,6 +187,10 @@ return {
 		return true
 	end,
 
+	COND_CURSED = function(cursedBy)
+		return { cursedBy = cursedBy }
+	end,
+
 	----------------
 	-- EFFECTS --
 	----------------
@@ -196,6 +200,10 @@ return {
 
 	EFF_PIERCE = function(amount)
 		return amount
+	end,
+
+	EFF_CURSE = function(chance)
+		return chance
 	end,
 
 	--------
@@ -246,11 +254,11 @@ return {
 	end,
 
 	construction = function(type, cost)
-		return {type = type, cost = cost, blocked = false}
+		return { type = type, cost = cost, blocked = false }
 	end,
 
 	message = function(text)
-		return {text = text, when = os.clock()}
+		return { text = text, when = os.clock() }
 	end,
 
 	-------------------
@@ -258,7 +266,9 @@ return {
 	-------------------
 	_effects_agent_on_target_once = {
 		"attack",
-		"eff_slow",
+		"EFF_SLOW",
+		"EFF_CURSE"
+		
 	},
 	_effects_agent_on_target_constant = {},
 	STATE_ENUM = STATE_ENUM,

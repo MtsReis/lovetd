@@ -3,9 +3,11 @@ i: Invoker
 a: Agent
 t: Target
 ]]
+local c = require("world.components")
+local EFFECT = c.EFFECT_ENUM
+local CONDITION = c.CONDITION_ENUM
 local effects_once = require("world.components")._effects_agent_on_target_once
 local effects_constant = require("world.components")._effects_agent_on_target_constant
-local EFFECT = require("world.components").EFFECT_ENUM
 
 --[[
 source: source entity ref
@@ -30,6 +32,11 @@ local function applyEffects(source, target, sourceIdPrefix, isAgent)
 							% { s = source.label, d = inflictedDmg, t = target.label }
 					)
 					target.hp.curr = target.hp.curr - inflictedDmg
+				elseif EFFECT.curse then
+					-- Roll dice
+					if math.random() <= source[EFFECT.curse] / 100 then
+						target[CONDITION.cursed] = c[CONDITION.cursed](source.team)
+					end
 				end
 			end
 		end

@@ -1,3 +1,4 @@
+local CONDITION = require("world.components").CONDITION_ENUM
 local LINE_WIDTH = 2
 local drawObjSystem = tiny.sortedProcessingSystem()
 
@@ -43,9 +44,12 @@ function drawObjSystem:process(e, dt)
 			else
 				love.graphics.setColor(e.colour or { 1, 1, 1, 0.7 })
 			end
+		elseif e[CONDITION.cursed] then
+			love.graphics.setColor(e.colour or { 0.4, 0.4, 0.4, 1 })
 		else
 			love.graphics.setColor(e.colour or { 1, 1, 1, 1 })
 		end
+
 		love.graphics.draw(e.sprite.img, e.pos.x, e.pos.y, 0, e.sprite.sx, e.sprite.sy, e.dPivot.x, e.dPivot.y)
 	elseif e.geometry then
 		local posx = e.pos.x - e.dPivot.x

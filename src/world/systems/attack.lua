@@ -22,7 +22,7 @@ function RangeSystem:process(e, dt)
 		refRange.shape:moveTo(e.pos.x, e.pos.y)
 
 		-- Only look for new targets if the curr isn't in range
-		if not e.target.targetEntity or not refRange.shape:collidesWith(e.target.targetEntity.collisionbox.shape) then
+		if not e.target.targetEntity or not refRange.shape:collidesWith(e.target.targetEntity.collisionbox.shape) or e.target.targetEntity.team == e.team then
 			e.target.targetEntity = nil
 
 			-- Iterate over all entities in the world

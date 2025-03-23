@@ -72,6 +72,8 @@ function Tower:initialize(x, y, space, type, canvas, options)
 
 		self.attack = c.attack(25, 2, 3, 2, true)
 		self.range = c.range(space, x, y, 200)
+
+		self[EFFECT.curse] = c[EFFECT.curse](10)
 	elseif type == "main" then
 		W, H = 48, 48
 
