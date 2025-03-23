@@ -274,9 +274,11 @@ function PlayScenario:load(scenarioName)
 
 		entitiesClasses.unit(world.properties.width / 3, 300, world.space, "evil_elf", canvas, { label = "Evil Elf" }),
 
-		entitiesClasses.unit(845, 165, world.space, "evil_elf", canvas, { label = "Evil Elf" }),
-		entitiesClasses.unit(910, 230, world.space, "evil_elf", canvas, { label = "Evil Elf" }),
-		entitiesClasses.unit(965, 165, world.space, "evil_elf", canvas, { label = "Evil Elf" })
+		entitiesClasses.unit(845, 165, world.space, "evil_elf", canvas, { label = "Evil Elf 2" }),
+		entitiesClasses.unit(910, 230, world.space, "evil_elf", canvas, { label = "Evil Elf 3" }),
+		entitiesClasses.unit(965, 165, world.space, "evil_elf", canvas, { label = "Evil Elf 4" }),
+		entitiesClasses.unit(870, 250, world.space, "evil_orc", canvas, { label = "Evil Orc" }),
+		entitiesClasses.unit(955, 250, world.space, "evil_orc", canvas, { label = "Evil Orc 2" })
 	)
 
 	-- Add collisionboxes to blockable tiles
