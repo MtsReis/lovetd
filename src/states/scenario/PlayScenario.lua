@@ -487,6 +487,8 @@ function PlayScenario.keyreleased(command)
 
 						world.properties._construction.lifespan = 0
 						world.properties._construction = nil
+					else
+						world:add(entitiesClasses.message("Unable to build here, something is in the way.", HUD_canvas))
 					end
 				else
 					world:add(entitiesClasses.message("Not enough coins!", HUD_canvas))
