@@ -58,6 +58,8 @@ function Tower:initialize(x, y, space, type, canvas, options)
 
 		self.attack = c.attack(25, 2, 3, 2, true)
 		self.range = c.range(space, x, y, 330)
+
+		self[EFFECT.pierce] = c[EFFECT.pierce](5)
 	elseif type == "ritual" then
 		W, H = 48, 48
 

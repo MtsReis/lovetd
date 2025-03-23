@@ -50,6 +50,9 @@ local ASSETS_DIR = "assets/"
 local ASSETS_EXT = ".png"
 local SOUNDS_DIR = "assets/sounds/"
 local MUSIC_DIR = "assets/music/"
+local SHADERS_DIR = "world/shaders/"
+
+local BLUR_SHADER_RADIUS = 10
 
 local BLOCKED_TILES = {
 	[4] = true,
@@ -114,6 +117,10 @@ local _sounds = {
 local _music = {
 	thinking = "bgm1.mp3",
 	action = "bgm2.mp3",
+}
+
+local _shader = {
+	blur = "blur",
 }
 
 function PlayScenario:load(scenarioName)
@@ -214,6 +221,16 @@ function PlayScenario:load(scenarioName)
 		world.resources.music[k] = love.audio.newSource(MUSIC_DIR .. v, "stream")
 	end
 
+	world.resources.shaders = {}
+	for k, v in pairs(_shader) do
+		local code = love.filesystem.read(SHADERS_DIR .. v .. ".glsl")
+		world.resources.shaders[k] = love.graphics.newShader(code)
+	end
+
+	world.resources.shaders.blur:send("radius", BLUR_SHADER_RADIUS)
+	world.resources.shaders.blur:send("PI", math.pi)
+	world.resources.shaders.blur:send("resolution", { amora.settings.video.w, amora.settings.video.h })
+
 	world:add(table.unpack(precachedSystems))
 
 	-- Entities
@@ -275,7 +292,7 @@ function PlayScenario:load(scenarioName)
 			end
 		end
 	end
-	
+
 	for k, v in pairs(blockedCoords) do
 		world:add(entitiesClasses.blocker(v.x * v.w, v.y * v.h, world.space, v.w, v.h))
 	end
@@ -426,18 +443,28 @@ function PlayScenario.update(_, dt)
 	end
 
 	if world.player.results then
+		mapRenderer.applyShader = world.resources.shaders.blur
 		if world.player.results.endScenarioIn <= 0 then
 			world.player.endScenario = true
 		else
 			world.player.results.endScenarioIn = world.player.results.endScenarioIn - dt
+			world.resources.shaders.blur:send("radius", math.max(0.001, BLUR_SHADER_RADIUS - world.player.results.endScenarioIn * 10))
 		end
+	elseif mapRenderer.applyShader then
+		mapRenderer.applyShader = nil
 	end
 end
 
 function PlayScenario.draw()
+	if mapRenderer.applyShader then
+		love.graphics.setShader(mapRenderer.applyShader)
+	end
+
 	mapRenderer.cam:attach()
 	love.graphics.draw(canvas, 0, 0)
 	mapRenderer.cam:detach()
+
+	love.graphics.setShader()
 
 	love.graphics.draw(HUD_canvas, 0, 0)
 end

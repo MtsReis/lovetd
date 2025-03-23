@@ -28,7 +28,7 @@ local handlers = {
 
 		-- RIP
 		if e == world.player.main_tower then
-			world.handlers.onEndScenario(false, 0.5)
+			world.handlers.onEndScenario(false, 1)
 		end
 	end,
 }

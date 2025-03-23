@@ -95,7 +95,7 @@ function MapRenderer.enable() end
 
 function MapRenderer.update()
 	love.graphics.setCanvas(mapCanvas)
-	love.graphics.clear( MAP_BG_COLOUR )
+	love.graphics.clear(MAP_BG_COLOUR)
 
 	for _, layer in ipairs(MapRenderer.map.layers) do
 		for i, tile in ipairs(layer) do
@@ -121,8 +121,13 @@ function MapRenderer.update()
 end
 
 function MapRenderer.draw()
+	if MapRenderer.applyShader then
+		love.graphics.setShader(MapRenderer.applyShader)
+	end
+
 	MapRenderer.cam:attach()
 	love.graphics.draw(mapCanvas, 0, 0)
+	love.graphics.setShader()
 	MapRenderer.cam:detach()
 end
 
