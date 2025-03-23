@@ -392,8 +392,15 @@ end
 -- Camera control
 function PlayScenario.keypressed(command)
 	if command == "drag_screen" then
-		mapRenderer.cam.dragging = true
 		love.mouse.setVisible(false)
+
+		-- Remove construction
+		if world.properties._construction then
+			world.properties._construction.lifespan = 0
+			world.properties._construction = nil
+		else
+			mapRenderer.cam.dragging = true
+		end
 	end
 end
 
@@ -401,12 +408,6 @@ function PlayScenario.keyreleased(command)
 	if command == "drag_screen" then
 		mapRenderer.cam.dragging = false
 		love.mouse.setVisible(true)
-
-		-- Remove construction
-		if world.properties._construction then
-			world.properties._construction.lifespan = 0
-			world.properties._construction = nil
-		end
 	elseif command == "mouse_command" then
 		if world.properties.selectedEntity then
 			world.properties.selectedEntity = nil

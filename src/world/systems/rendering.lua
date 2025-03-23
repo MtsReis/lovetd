@@ -23,12 +23,7 @@ function drawObjSystem:process(e, dt)
 		love.graphics.circle("line", e.pos.x, e.pos.y, e.sightRange.value)
 	end
 
-	if
-		e.range
-		and e.attack
-		and e.attack.ranged
-		and (e.range.visible or self.world.properties.selectedEntity == e)
-	then
+	if e.range and e.attack and e.attack.ranged and (e.range.visible or self.world.properties.selectedEntity == e) then
 		love.graphics.setColor({ 1, 0, 1, 1 })
 		love.graphics.setLineWidth(LINE_WIDTH)
 
@@ -43,7 +38,11 @@ function drawObjSystem:process(e, dt)
 
 	if e.sprite then
 		if e.construction then
-			love.graphics.setColor(e.colour or { 1, 1, 1, 0.7 })
+			if e.construction.blocked then
+				love.graphics.setColor(e.colour or { 1, 0, 0, 0.7 })
+			else
+				love.graphics.setColor(e.colour or { 1, 1, 1, 0.7 })
+			end
 		else
 			love.graphics.setColor(e.colour or { 1, 1, 1, 1 })
 		end
