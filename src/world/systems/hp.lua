@@ -16,6 +16,9 @@ function DrawHpSystem:process(e, dt)
 	local hp_tower_scale = 0.3
 	local content_img = self.world.resources.hp_content
 
+	local atk_icon = self.world.resources.atk
+	local atk_spd_icon = self.world.resources.atk_spd
+
 	local maxHealthBar = e.hp.max / 2
 	local healthContent = math.max(0, e.hp.curr / 2)
 	local color = e.team and e.team == 1 and { 114 / 255, 234 / 255, 78 / 255, 1 }
@@ -58,6 +61,7 @@ function DrawHpSystem:process(e, dt)
 		local text = "%(min)d - %(max)d" % { min = min, max = max }
 		local textW = font:getWidth(text)
 		love.graphics.print(text, e.pos.x - textW / 2, y + CONTAINER_H + 1)
+		love.graphics.draw(atk_icon, e.pos.x - textW / 2 - 20, y + CONTAINER_H + 1, 0, .7, .7)
 
 		if e.attack.cooldownTime % 1 == 0 then
 			text = "%(dps)d"
@@ -71,6 +75,7 @@ function DrawHpSystem:process(e, dt)
 
 		textW = font:getWidth(text)
 		love.graphics.print(text, e.pos.x - textW / 2, y + CONTAINER_H + textH + 1)
+		love.graphics.draw(atk_spd_icon, e.pos.x - textW / 2 - 20, y + CONTAINER_H + textH + 1, 0, .7, .7)
 	end
 
 	love.graphics.setCanvas()
