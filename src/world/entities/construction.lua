@@ -11,7 +11,7 @@ function Construction:initialize(x, y, space, type, canvas, options)
 
 	if type == "face" then
 		cost = 20
-		self.sprite = c.sprite("tower1")
+		self.sprite = c.sprite("tower1", .5, .5)
 
 		self.attack = c.attack(1, 2, 3, 0.08, true)
 		self.range = c.range(space, x, y, 130, true)
@@ -20,7 +20,7 @@ function Construction:initialize(x, y, space, type, canvas, options)
 		self.dPivot = c.dPivot(self.sprite.img:getWidth() - W / 2 - 13, self.sprite.img:getHeight() - H / 2)
 	elseif type == "tall" then
 		cost = 35
-		self.sprite = c.sprite("tower2")
+		self.sprite = c.sprite("tower2", .5, .5)
 
 		self.attack = c.attack(25, 2, 3, 2, true)
 		self.range = c.range(space, x, y, 330, true)

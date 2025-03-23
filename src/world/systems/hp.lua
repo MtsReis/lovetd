@@ -25,6 +25,7 @@ function DrawHpSystem:process(e, dt)
 		or { 241 / 255, 24 / 255, 45 / 255, 1 }
 	local width = e.sprite and e.sprite.img:getWidth() or e.geometry.w
 	local height = e.sprite and e.sprite.img:getHeight() or e.geometry.h
+	height = height * e.sprite.sy
 
 	love.graphics.setCanvas(e.canvas)
 	local x, y = e.pos.x - CONTAINER_SIDE_W - maxHealthBar / 2, e.pos.y - height - CONTAINER_H / 2

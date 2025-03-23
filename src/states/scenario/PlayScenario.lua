@@ -307,7 +307,7 @@ function PlayScenario:load(scenarioName)
 		onEndScenario = function(isWin, endScenarioIn)
 			world.player.results = { isWin = isWin, endScenarioIn = endScenarioIn }
 
-			local text = isWin and "Level Complete! Well done!" or "Defeated this time, but you'll get it next time!"
+			local text = isWin and "Level Complete! Well done!" or "Defeated, but you'll get it next time!"
 			world:add(entitiesClasses.message(text, HUD_canvas))
 		end,
 	}

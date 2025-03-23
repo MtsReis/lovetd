@@ -37,7 +37,7 @@ function Unit:initialize(x, y, space, type, canvas, options)
 
 		self.range = c.range(space, x, y, 25, false)
 		self.sightRange = c.sightRange(space, x, y, 60)
-		self.attack = c.attack(15, 2, 3, 1.5)
+		self.attack = c.attack(50, 2, 3, 1.5)
 		self.stance = c.stance("aggressive")
 
 		self.hp = c.hp(100, 100)
@@ -58,10 +58,10 @@ function Unit:initialize(x, y, space, type, canvas, options)
 
 		self.range = c.range(space, x, y, 25, false)
 		self.sightRange = c.sightRange(space, x, y, 100)
-		self.attack = c.attack(20, 2, 5, 2)
+		self.attack = c.attack(70, 2, 3, 1.5)
 		self.stance = c.stance("aggressive")
 
-		self.hp = c.hp(120, 120)
+		self.hp = c.hp(150, 150)
 		self.team = c.team(1)
 	elseif type == "elf" then
 		self.geometry = c.geometry("square", W, H, "fill", { 96 / 255, 153 / 255, 181 / 255, 1 })
@@ -76,10 +76,10 @@ function Unit:initialize(x, y, space, type, canvas, options)
 
 		self.range = c.range(space, x, y, 100, false)
 		self.sightRange = c.sightRange(space, x, y, 150)
-		self.attack = c.attack(4, 2, 3, .5, true)
+		self.attack = c.attack(15, 2, 5, 1, true)
 		self.stance = c.stance("aggressive")
 
-		self.hp = c.hp(45, 45)
+		self.hp = c.hp(60, 60)
 		self.team = c.team(2)
 
 		self.path = c.path(options.path)
