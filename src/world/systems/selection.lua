@@ -12,7 +12,7 @@ end
 function selectionSystem:process(e, dt)
 	e.selectionbox.shape:moveTo(e.pos.x, e.pos.y)
 
-	if e.selectionbox.shape:collidesWith(selectionSystem.world.properties.mouse) then
+	if e.selectionbox.shape:collidesWith(selectionSystem.world.properties.mouse) and not selectionSystem.world.properties._construction then
 		if love.mouse.isDown(1) then
 			if e.selectionbox.hover then -- Prevent pressing while holding w/o collision in past frames
 				e.selectionbox.pressed = true

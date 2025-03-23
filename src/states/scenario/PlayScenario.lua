@@ -168,10 +168,10 @@ function PlayScenario:load(scenarioName)
 		world.resources[k] = love.graphics.newImage(ASSETS_DIR .. v .. ASSETS_EXT)
 	end
 
-	world.resources.statsFont = love.graphics.newImageFont("assets/font/love.png",
-	" abcdefghijklmnopqrstuvwxyz" ..
-	"ABCDEFGHIJKLMNOPQRSTUVWXYZ0" ..
-	"123456789.,!?-+/():;%&`'*#=[]\"")
+	world.resources.statsFont = love.graphics.newImageFont(
+		"assets/font/love.png",
+		" abcdefghijklmnopqrstuvwxyz" .. "ABCDEFGHIJKLMNOPQRSTUVWXYZ0" .. "123456789.,!?-+/():;%&`'*#=[]\""
+	)
 
 	world.resources.sounds = {}
 	for k, v in pairs(_sounds) do
@@ -417,20 +417,23 @@ function PlayScenario.keyreleased(command)
 			-- Make construction
 			if world.properties._construction then
 				if world.player.coins >= world.properties._construction.construction.cost then
-					world:add(
-						entitiesClasses.tower(
-							world.properties._construction.pos.x,
-							world.properties._construction.pos.y,
-							world.space,
-							world.properties._construction.construction.type,
-							canvas
+					-- If there are collisions
+					if next(world.space.bump:collisions(world.properties._construction.collisionbox.shape)) == nil then
+						world:add(
+							entitiesClasses.tower(
+								world.properties._construction.pos.x,
+								world.properties._construction.pos.y,
+								world.space,
+								world.properties._construction.construction.type,
+								canvas
+							)
 						)
-					)
 
-					world.player.coins = world.player.coins - world.properties._construction.construction.cost
+						world.player.coins = world.player.coins - world.properties._construction.construction.cost
 
-					world.properties._construction.lifespan = 0
-					world.properties._construction = nil
+						world.properties._construction.lifespan = 0
+						world.properties._construction = nil
+					end
 				end
 			end
 		end
@@ -499,13 +502,13 @@ function PlayScenario:wheelmoved(x, y)
 	-- Top
 	local moveY = -math.min(mapRenderer.cam.y - amora.settings.video.h / mapRenderer.cam.scale / 2, 0)
 
-	 -- Bottom
-	 if moveY == 0 then
-	 	moveY = math.min(
-	 		world.properties.height - (mapRenderer.cam.y + amora.settings.video.h / mapRenderer.cam.scale / 2),
-	 		0
-	 	)
-	 end
+	-- Bottom
+	if moveY == 0 then
+		moveY = math.min(
+			world.properties.height - (mapRenderer.cam.y + amora.settings.video.h / mapRenderer.cam.scale / 2),
+			0
+		)
+	end
 
 	mapRenderer.cam:move(moveX, moveY)
 end
