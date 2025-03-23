@@ -8,6 +8,7 @@ DrawHpSystem.filter = tiny.requireAll("hp", "canvas", "pos", "geometry")
 
 function DrawHpSystem:process(e, dt)
 	local font = DrawHpSystem.world.resources.statsFont
+	local textH = font:getHeight()
 
 	local container_img_s = DrawHpSystem.world.resources.hp_container_s
 	local container_img_c = DrawHpSystem.world.resources.hp_container_c
@@ -53,10 +54,23 @@ function DrawHpSystem:process(e, dt)
 		love.graphics.setFont(font)
 		local min, max =
 			e.attack.baseDamage - e.attack.minDamageDecrement, e.attack.baseDamage + e.attack.maxDamageIncrement
+
 		local text = "%(min)d - %(max)d" % { min = min, max = max }
 		local textW = font:getWidth(text)
-
 		love.graphics.print(text, e.pos.x - textW / 2, y + CONTAINER_H + 1)
+
+		if e.attack.cooldownTime % 1 == 0 then
+			text = "%(dps)d"
+		elseif e.attack.cooldownTime * 10 % 1 == 0 then
+			text = "%(dps).1f"
+		else
+			text = "%(dps).2f"
+		end
+
+		text = text % { dps = e.attack.cooldownTime }
+
+		textW = font:getWidth(text)
+		love.graphics.print(text, e.pos.x - textW / 2, y + CONTAINER_H + textH + 1)
 	end
 
 	love.graphics.setCanvas()
