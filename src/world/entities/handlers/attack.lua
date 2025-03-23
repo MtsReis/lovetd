@@ -19,6 +19,12 @@ local handlers = {
 				e[CONDITION.dead] = nil
 				e[CONDITION.cursed] = nil
 				e.lifespan = nil
+
+				e.state = c.state("idle")
+				e.path = nil
+
+				e.movement.vel.speed = 0
+				e.movement.accel.magnitude = 0
 				
 				if e.hp then
 					e.hp.curr = e.hp.max

@@ -70,6 +70,7 @@ function stateSystem:process(e, dt)
 				end
 			end
 		else
+			e.movement.vel.speed = 0
 			e.movement.accel.magnitude = 0
 			e.state = STATE.idle
 		end
