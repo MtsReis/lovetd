@@ -13,6 +13,7 @@ function Construction:initialize(x, y, space, type, canvas, options)
 		cost = 20
 		self.sprite = c.sprite("tower1")
 
+		self.attack = c.attack(1, 2, 3, 0.08, true)
 		self.range = c.range(space, x, y, 130, true)
 
 		W, H = 64, 64
@@ -21,6 +22,7 @@ function Construction:initialize(x, y, space, type, canvas, options)
 		cost = 35
 		self.sprite = c.sprite("tower2")
 
+		self.attack = c.attack(25, 2, 3, 2, true)
 		self.range = c.range(space, x, y, 330, true)
 
 		W, H = 64, 64
@@ -29,6 +31,7 @@ function Construction:initialize(x, y, space, type, canvas, options)
 		cost = 40
 		self.sprite = c.sprite("tower3")
 
+		self.attack = c.attack(25, 2, 3, 2, true)
 		self.range = c.range(space, x, y, 200, true)
 
 		W, H = 48, 48

@@ -9,17 +9,22 @@ function drawObjSystem:process(e, dt)
 	-- Pre drawing
 	-- Range circle
 	if e.sightRange and e.sightRange.visible then
-		love.graphics.setColor({ 1, .5, .3, 1 })
+		love.graphics.setColor({ 1, 0.5, 0.3, 1 })
 		love.graphics.setLineWidth(LINE_WIDTH)
 
 		if e.target and e.target.targetEntity then
-			love.graphics.setColor({ 1, .7, .5, 1 })
+			love.graphics.setColor({ 1, 0.7, 0.5, 1 })
 		end
 
 		love.graphics.circle("line", e.pos.x, e.pos.y, e.sightRange.value)
 	end
 
-	if e.range and (e.range.visible or drawObjSystem.world.properties.selectedEntity == e) then
+	if
+		e.range
+		and e.attack
+		and e.attack.ranged
+		and (e.range.visible or drawObjSystem.world.properties.selectedEntity == e)
+	then
 		love.graphics.setColor({ 1, 0, 1, 1 })
 		love.graphics.setLineWidth(LINE_WIDTH)
 
@@ -34,7 +39,7 @@ function drawObjSystem:process(e, dt)
 
 	if e.sprite then
 		if e.construction then
-			love.graphics.setColor(e.colour or { 1, 1, 1, .7 })
+			love.graphics.setColor(e.colour or { 1, 1, 1, 0.7 })
 		else
 			love.graphics.setColor(e.colour or { 1, 1, 1, 1 })
 		end

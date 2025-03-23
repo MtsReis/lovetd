@@ -168,6 +168,11 @@ function PlayScenario:load(scenarioName)
 		world.resources[k] = love.graphics.newImage(ASSETS_DIR .. v .. ASSETS_EXT)
 	end
 
+	world.resources.statsFont = love.graphics.newImageFont("assets/font/love.png",
+	" abcdefghijklmnopqrstuvwxyz" ..
+	"ABCDEFGHIJKLMNOPQRSTUVWXYZ0" ..
+	"123456789.,!?-+/():;%&`'*#=[]\"")
+
 	world.resources.sounds = {}
 	for k, v in pairs(_sounds) do
 		world.resources.sounds[k] = love.audio.newSource(SOUNDS_DIR .. v, "static")
@@ -403,6 +408,10 @@ function PlayScenario.keyreleased(command)
 			world.properties._construction = nil
 		end
 	elseif command == "mouse_command" then
+		if world.properties.selectedEntity then
+			world.properties.selectedEntity = nil
+		end
+
 		-- No world interaction when on sidebar
 		if love.mouse.getX() < amora.settings.video.w - UI.presentations.PlayScenario._attr.sidebar.width then
 			-- Make construction

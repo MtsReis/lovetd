@@ -42,7 +42,7 @@ function Tower:initialize(x, y, space, type, canvas, options)
 		self.collisionbox = c.collisionbox(space, x, y, W, H, -W / 2, -H / 2)
 		self.hurtbox = c.hurtbox(space, x, y, W - 20, H - 20, -W / 2, -H / 2)
 
-		self.attack = c.attack(1, 2, 3, 0.08, true)
+		self.attack = c.attack(3, 2, 3, 0.08, true)
 		self.range = c.range(space, x, y, 130)
 	elseif type == "tall" then
 		W, H = 64, 64
