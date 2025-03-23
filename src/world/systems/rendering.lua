@@ -1,7 +1,11 @@
 local LINE_WIDTH = 2
-local drawObjSystem = tiny.processingSystem()
+local drawObjSystem = tiny.sortedProcessingSystem()
 
 drawObjSystem.filter = tiny.requireAll("pos", "rotation", "canvas", "dPivot", "geometry")
+
+function drawObjSystem:compare(e1, e2)
+	return e1.pos.y < e2.pos.y
+end
 
 function drawObjSystem:process(e, dt)
 	love.graphics.setCanvas(e.canvas)
@@ -23,7 +27,7 @@ function drawObjSystem:process(e, dt)
 		e.range
 		and e.attack
 		and e.attack.ranged
-		and (e.range.visible or drawObjSystem.world.properties.selectedEntity == e)
+		and (e.range.visible or self.world.properties.selectedEntity == e)
 	then
 		love.graphics.setColor({ 1, 0, 1, 1 })
 		love.graphics.setLineWidth(LINE_WIDTH)
@@ -102,8 +106,8 @@ function drawObjSystem:process(e, dt)
 end
 
 function drawObjSystem:postProcess(dt)
-	if drawObjSystem.world.properties.selectedEntity and amora.debugMode then
-		local e = drawObjSystem.world.properties.selectedEntity
+	if self.world.properties.selectedEntity and amora.debugMode then
+		local e = self.world.properties.selectedEntity
 
 		love.graphics.setCanvas(e.canvas)
 		love.graphics.setColor({ 1, 0.75, 0, 1 })
