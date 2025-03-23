@@ -2,13 +2,28 @@ local h = require("world.entities.handlers.hit")
 local collisionSystem = tiny.processingSystem()
 
 --- collisionSystem ---
-collisionSystem.filter = tiny.requireAll("pos", "collisionbox")
+collisionSystem.filter = tiny.requireAll("pos", "collisionbox", "movement")
 
 function collisionSystem:process(e, dt)
 	e.collisionbox.shape:moveTo(e.pos.x, e.pos.y)
 
 	if e.rotation then
 		e.collisionbox.shape:setRotation(e.rotation)
+	end
+
+	for _, otherEntity in pairs(self.entities) do
+		if e ~= otherEntity then
+			if e.collisionbox.shape:collidesWith(otherEntity.collisionbox.shape) then
+				local sepx = e.pos.x - otherEntity.pos.x
+				local sepy = e.pos.y - otherEntity.pos.y
+
+				e.pos.x = e.pos.x + sepx / 2 * dt
+				e.pos.y = e.pos.y + sepy / 2 * dt
+
+				otherEntity.pos.x = otherEntity.pos.x - sepx / 2 * dt
+				otherEntity.pos.y = otherEntity.pos.y - sepy / 2 * dt
+			end
+		end
 	end
 end
 
@@ -23,14 +38,19 @@ function hitSystem:process(e, dt)
 		e.hitbox.shape:moveTo(e.pos.x, e.pos.y)
 		e.hitbox.shape:setRotation(e.rotation)
 
-        for _, otherEntity in pairs(self.entities) do
+		for _, otherEntity in pairs(self.entities) do
 			-- Only entities with hurtbox
 			if e ~= otherEntity and otherEntity.hurtbox then
 				if e.hitbox.shape:collidesWith(otherEntity.hurtbox.shape) then
-                    local invoker = e.invoker
+					local invoker = e.invoker
 
 					-- No self harm or FF
-					if not e.invoker or not e.invoker.team or not otherEntity.team or e.invoker.team ~= otherEntity.team then
+					if
+						not e.invoker
+						or not e.invoker.team
+						or not otherEntity.team
+						or e.invoker.team ~= otherEntity.team
+					then
 						h.onHit(invoker, e, otherEntity)
 					end
 				end
@@ -41,8 +61,6 @@ function hitSystem:process(e, dt)
 		e.hurtbox.shape:moveTo(e.pos.x, e.pos.y)
 		e.hurtbox.shape:setRotation(e.rotation)
 	end
-
-
 end
 
 --- worldBoundariesSystem ---
