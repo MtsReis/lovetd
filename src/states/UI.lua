@@ -23,6 +23,12 @@ local _resources = {
 
 	"coins",
 
+	"defeat_broken_rook",
+	"button_bg",
+	"try_again_btn",
+	"try_again_btn_pressed",
+	"try_again_btn_hover",
+
 	"pause",
 
 	"new_game_btn",
@@ -45,6 +51,7 @@ UI.eventListeners = {}
 UI.presentations = {
 	PlayScenario = {
 		_attr = {
+			defeat_window = false,
 			sidebar = { width = 118, towerSpots = 3 },
 			coins = { qty = 0, font = love.graphics.newFont(30) },
 			buttons = {
@@ -72,6 +79,15 @@ UI.presentations = {
 					state = "",
 					active = true,
 				},
+
+				ele_defeat = {
+					x = 0,
+					y = 0,
+					w = 0,
+					h = 0,
+					state = "",
+					active = true,
+				},
 			},
 		},
 		canvases = { sidebar_bg = love.graphics.newCanvas(), sidebar_fg = love.graphics.newCanvas() },
@@ -84,6 +100,8 @@ UI.presentations = {
 					triggerListener("onPressedTower2")
 				elseif element == "ele_sidebar_tower3" then
 					triggerListener("onPressedTower3")
+				elseif element == "ele_defeat" then
+					triggerListener("onTryAgain")
 				end
 			end,
 		},
@@ -140,7 +158,6 @@ function UI.load()
 		love.graphics.newCanvas(UI.presentations.PlayScenario._attr.sidebar.width, amora.settings.video.h)
 	UI.presentations.PlayScenario.canvases.sidebar_fg = love.graphics.newCanvas()
 	UI.presentations.PlayScenario._attr.coins.font = love.graphics.newFont(30)
-
 end
 
 function UI:enable(presentation, listeners)
@@ -311,10 +328,65 @@ function UI.presentations.PlayScenario:update(dt)
 	love.graphics.draw(_resources.topbar, 0, 0, 0, screenW, 1) -- y scaled
 
 	-------------------- Coins --------------------
-	love.graphics.draw(_resources.coins, 10, 10, 0, .2, .2)
+	love.graphics.draw(_resources.coins, 10, 10, 0, 0.2, 0.2)
 	love.graphics.setFont(self._attr.coins.font)
-	love.graphics.print(self._attr.coins.qty, 10 + _resources.coins:getWidth() * .2, _resources.coins:getHeight() * .1)
+	love.graphics.print(
+		self._attr.coins.qty,
+		10 + _resources.coins:getWidth() * 0.2,
+		_resources.coins:getHeight() * 0.1
+	)
 
+	-------------------- DEFEAT WINDOW --------------------
+	if self._attr.defeat_window then
+		--- Rook ---
+		local hookHScale = screenH / _resources.defeat_broken_rook:getHeight() * 0.75
+		local hookW = _resources.defeat_broken_rook:getWidth() * hookHScale
+		local hookH = _resources.defeat_broken_rook:getHeight() * hookHScale
+
+		love.graphics.draw(_resources.defeat_broken_rook, screenW / 2 - hookW / 2, 0, 0, hookHScale, hookHScale)
+
+		--- Button ---
+		local buttonYSpace = screenH - hookH
+		local buttonHScale = buttonYSpace / _resources.button_bg:getHeight() * 0.50
+
+		local buttonW = buttonHScale * _resources.button_bg:getWidth()
+		local buttonH = buttonHScale * _resources.button_bg:getHeight()
+
+		love.graphics.draw(
+			_resources.button_bg,
+			screenW / 2 - buttonW / 2,
+			screenH - buttonYSpace,
+			0,
+			buttonHScale,
+			buttonHScale
+		)
+
+		local resourceLabel = "try_again_btn"
+
+		self._attr.buttons.ele_defeat.x = screenW / 2 - buttonW / 2
+		self._attr.buttons.ele_defeat.y = screenH - buttonYSpace
+		self._attr.buttons.ele_defeat.w = self._attr.buttons.ele_defeat.x * buttonHScale
+		self._attr.buttons.ele_defeat.h = self._attr.buttons.ele_defeat.y * buttonHScale
+
+		if not self._attr.buttons.ele_defeat.active then
+			love.graphics.setColor(0.5, 0.5, 0.5, 1)
+		end
+
+		love.graphics.draw(
+			_resources[resourceLabel .. self._attr.buttons.ele_defeat.state] or _resources[resourceLabel],
+			self._attr.buttons.ele_defeat.x,
+			self._attr.buttons.ele_defeat.y,
+			0,
+			buttonHScale,
+			buttonHScale
+		)
+
+		--- Message ---
+		love.graphics.setColor(205 / 255, 37 / 255, 37 / 255, 0.5)
+		love.graphics.rectangle("fill", screenW * 0.40 / 2, hookH / 3, screenW * 0.60, hookW / 4)
+	end
+
+	love.graphics.setColor(1, 1, 1, 1)
 	love.graphics.setCanvas()
 end
 

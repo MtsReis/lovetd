@@ -408,6 +408,9 @@ function PlayScenario.enable()
 				world:add(world.properties._construction)
 			end
 		end,
+		onTryAgain = function()
+			print("Trying again")
+		end
 	})
 
 	world.resources.music.action:setLooping(true)
@@ -452,6 +455,7 @@ function PlayScenario.update(_, dt)
 	if world.player.results then
 		mapRenderer.applyShader = world.resources.shaders.blur
 		if world.player.results.endScenarioIn <= 0 then
+			UI.presentations.PlayScenario._attr.defeat_window = true
 			world.player.endScenario = true
 		else
 			world.player.results.endScenarioIn = world.player.results.endScenarioIn - dt
