@@ -10,11 +10,6 @@ function collisionSystem:process(e, dt)
 	if e.rotation then
 		e.collisionbox.shape:setRotation(e.rotation)
 	end
-
-	-- REMOVE THIS ;-;
-	if e.pos.x + e.collisionbox.w >= collisionSystem.world.properties.width then
-		e.pos.x = 0
-	end
 end
 
 --- hitSystem ---

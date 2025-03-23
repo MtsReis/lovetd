@@ -51,6 +51,31 @@ local ASSETS_EXT = ".png"
 local SOUNDS_DIR = "assets/sounds/"
 local MUSIC_DIR = "assets/music/"
 
+local BLOCKED_TILES = {
+	[4] = true,
+	[5] = true,
+	[6] = true,
+	[15] = true,
+	[16] = true,
+	[17] = true,
+	[19] = true,
+	--[26] = true,
+	--[27] = true,
+	--[28] = true,
+	--[32] = true,
+	[33] = true,
+	[34] = true,
+	[35] = true,
+	--[39] = true,
+	[40] = true,
+	[41] = true,
+	[42] = true,
+	[53] = true,
+	[54] = true,
+	[61] = true,
+	[62] = true,
+}
+
 local UI
 
 local PlayScenario = class("PlayScenario")
@@ -118,6 +143,7 @@ function PlayScenario:load(scenarioName)
 		spawner = require("world.entities.spawner"),
 		construction = require("world.entities.construction"),
 		message = require("world.entities.message"),
+		blocker = require("world.entities.blocker"),
 	}
 
 	-- Systems
@@ -220,6 +246,7 @@ function PlayScenario:load(scenarioName)
 		canvas,
 		{ path = world.properties.paths[2] }
 	)
+
 	world:add(
 		world.player.main_tower,
 		spawnerBottom,
@@ -227,24 +254,31 @@ function PlayScenario:load(scenarioName)
 		entitiesClasses.tower(world.properties.width / 3, 200, world.space, "tall", canvas),
 		entitiesClasses.tower(530, 630, world.space, "face", canvas),
 		entitiesClasses.tower(world.properties.width / 2, 400, world.space, "ritual", canvas),
+
 		entitiesClasses.unit(world.properties.width / 3, 300, world.space, "evil_elf", canvas, { label = "Evil Elf" }),
-		entitiesClasses.unit(
-			PREDEFINED_PATHS[1][1][1][1] + math.random(-130, 130),
-			PREDEFINED_PATHS[1][1][1][2] + math.random(-130, 130),
-			world.space,
-			"elf",
-			canvas,
-			{ label = "Elf", path = world.properties.paths[1] }
-		),
-		entitiesClasses.unit(
-			PREDEFINED_PATHS[1][1][1][1] + math.random(-130, 130),
-			PREDEFINED_PATHS[1][1][1][2] + math.random(-130, 130),
-			world.space,
-			"orc",
-			canvas,
-			{ label = "ToughOrc", path = world.properties.paths[1] }
-		)
+
+		entitiesClasses.unit(845, 165, world.space, "evil_elf", canvas, { label = "Evil Elf" }),
+		entitiesClasses.unit(910, 230, world.space, "evil_elf", canvas, { label = "Evil Elf" }),
+		entitiesClasses.unit(965, 165, world.space, "evil_elf", canvas, { label = "Evil Elf" })
 	)
+
+	-- Add collisionboxes to blockable tiles
+	local blockedCoords = {}
+	for _, layer in ipairs(PlayScenario.scenario.layers) do
+		for i, v in ipairs(layer) do
+			if BLOCKED_TILES[v] then
+				local yg = (math.ceil(i / PlayScenario.scenario.width) - 1)
+				local xg = (i - 1) - yg * PlayScenario.scenario.width
+
+				blockedCoords[yg .. "_" .. xg] =
+					{ x = xg, y = yg, w = PlayScenario.scenario.gridW, h = PlayScenario.scenario.gridH }
+			end
+		end
+	end
+	
+	for k, v in pairs(blockedCoords) do
+		world:add(entitiesClasses.blocker(v.x * v.w, v.y * v.h, world.space, v.w, v.h, {canvas = canvas}))
+	end
 
 	-- Events
 	world.handlers = {
