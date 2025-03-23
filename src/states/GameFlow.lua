@@ -29,7 +29,7 @@ function GameFlow.changeScene(newScene)
 	-- Default scene
 	newScene = _gameScenes[newScene] and newScene or "main_menu"
 
-	if newScene ~= scene then
+	if newScene ~= scene or newScene == "gameplay" then
 		log.debug("Ending scene '%(s)s'" % { s = scene })
 		local _ = _gameScenes[scene] and _gameScenes[scene].endScene and _gameScenes[scene]:endScene()
 
@@ -69,6 +69,13 @@ function _gameScenes.save_game:endScene() end
 --------= Gameplay =--------
 
 function _gameScenes.gameplay:startScene()
+	if scene == "gameplay" then
+		state.disable("PlayScenario")
+		state.destroy("PlayScenario")
+
+		state.add(require("states.scenario.PlayScenario"), "PlayScenario", 3)
+	end
+
 	state.enable("PlayScenario")
 end
 

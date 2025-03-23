@@ -16,7 +16,6 @@ include_files = {
 exclude_files = {
 	"lib/i18n/*",
 	"lib/pl/*",
-	"lib/lovebird.lua",
 	"lib/middleclass.lua",
 	"output/",
 	"spec/",

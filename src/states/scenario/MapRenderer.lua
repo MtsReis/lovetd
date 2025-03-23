@@ -2,14 +2,19 @@ local Camera = require("lib.camera")
 local I_TILESET_NAME = 3
 local MAP_BG_COLOUR = { 0.5, 0.5, 0.5, 1 }
 
-local mapCanvas = love.graphics.newCanvas()
+local mapCanvas
 
 local MapRenderer = class("MapRenderer")
 local gameTileSets, gameTiles = unpack(require("scenarios.maps"))
-local loadedTiles = {}
-MapRenderer.map = { layers = {}, w = 0, h = 0, gridW = 0, gridH = 0 }
+local loadedTiles
 
 function MapRenderer.load(layers, mapW, mapH, tileSize)
+	mapCanvas = love.graphics.newCanvas()
+	loadedTiles = {}
+	MapRenderer.map = { layers = {}, w = 0, h = 0, gridW = 0, gridH = 0 }
+
+	-----
+
 	local precache = { tiles = {}, tilesets = {} }
 	local hash = { tiles = {}, tilesets = {} }
 
@@ -133,6 +138,10 @@ end
 
 function MapRenderer.disable() end
 
-function MapRenderer.unload() end
+function MapRenderer.unload()
+	mapCanvas = nil
+	loadedTiles = nil
+	MapRenderer.map = nil
+end
 
 return MapRenderer

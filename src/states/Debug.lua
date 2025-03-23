@@ -1,5 +1,4 @@
 local DebugMode = class("DebugMode")
-lovebird = require("lib.lovebird")
 
 function DebugMode.load() end
 
@@ -12,8 +11,6 @@ function DebugMode.update()
 	if not amora.debugMode then
 		state.disable("Debug")
 	end
-
-	lovebird.update()
 end
 
 function DebugMode.keypressed(command)
@@ -30,7 +27,6 @@ function DebugMode.disable()
 end
 
 function DebugMode.unload()
-	lovebird = nil
 end
 
 return DebugMode

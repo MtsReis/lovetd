@@ -173,7 +173,7 @@ function StateManager.destroy(id)
 		if state._id == id then
 			if StateManager.disable(id) then -- Try to disable the state first
 				log.trace(string.format("Destroying state '%s'", id))
-				local _ = state.close and state:close() -- Run if exists
+				local _ = state.unload and state:unload() -- Run if exists
 				_slotState.states[iSet.k] = nil
 			end
 

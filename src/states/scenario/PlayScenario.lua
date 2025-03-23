@@ -80,17 +80,13 @@ local BLOCKED_TILES = {
 }
 
 local UI
+local GameFlow
 
 local PlayScenario = class("PlayScenario")
 
 local canvas = love.graphics.newCanvas()
 local HUD_canvas = love.graphics.newCanvas()
-local world = tiny.world()
-world.space = {
-	bump = HC.new(), -- Physical collisions
-	hit = HC.new(), -- Hit/hurt boxes interactions
-	selection = HC.new(), -- For mouse interaction
-}
+local world
 local entitiesClasses
 
 local mapRenderer = {}
@@ -127,6 +123,13 @@ local _shader = {
 }
 
 function PlayScenario:load(scenarioName)
+	world = tiny.world()
+	world.space = {
+		bump = HC.new(), -- Physical collisions
+		hit = HC.new(), -- Hit/hurt boxes interactions
+		selection = HC.new(), -- For mouse interaction
+	}
+
 	scenarioName = scenarioName or "ShoreBattle"
 
 	PlayScenario.scenario = Persistence.loadScenario(scenarioName)
@@ -196,7 +199,7 @@ function PlayScenario:load(scenarioName)
 
 		paths = PREDEFINED_PATHS[1],
 
-		showHP = true
+		showHP = true,
 	}
 
 	world.player = {
@@ -322,6 +325,8 @@ function PlayScenario.enable()
 
 	state.enable("MapRenderer")
 
+	GameFlow = state.get("GameFlow")
+
 	UI = state.get("UI")
 	UI:changePresentation("PlayScenario", {
 		onPressedTower1 = function()
@@ -409,8 +414,9 @@ function PlayScenario.enable()
 			end
 		end,
 		onTryAgain = function()
-			print("Trying again")
-		end
+			UI.presentations.PlayScenario._attr.defeat_window = false
+			GameFlow.changeScene("gameplay")
+		end,
 	})
 
 	world.resources.music.action:setLooping(true)
@@ -459,7 +465,10 @@ function PlayScenario.update(_, dt)
 			world.player.endScenario = true
 		else
 			world.player.results.endScenarioIn = world.player.results.endScenarioIn - dt
-			world.resources.shaders.blur:send("radius", math.max(0.001, BLUR_SHADER_RADIUS - world.player.results.endScenarioIn * 10))
+			world.resources.shaders.blur:send(
+				"radius",
+				math.max(0.001, BLUR_SHADER_RADIUS - world.player.results.endScenarioIn * 10)
+			)
 		end
 	elseif mapRenderer.applyShader then
 		mapRenderer.applyShader = nil
@@ -613,11 +622,41 @@ end
 
 function PlayScenario.disable()
 	state.disable("MapRenderer")
-	PlayScenario.scenario = nil
+
+	log.debug("Disabled: %(s)s" % { s = pw(world) })
 end
 
 function PlayScenario.unload()
 	state.destroy("MapRenderer")
+
+	UI = nil
+	GameFlow = nil
+
+	world.space.bump:resetHash()
+	world.space.hit:resetHash()
+	world.space.selection:resetHash()
+	world.space.bump = nil
+	world.space.hit = nil
+	world.space.selection = nil
+	world.space = nil
+
+	world.properties = nil
+	world.player = nil
+	world.resources = nil
+	world.handlers = nil
+
+	PlayScenario.scenario = nil
+	entitiesClasses = nil
+
+	mapRenderer = nil
+
+	world:clearEntities()
+	world:clearSystems()
+	world:refresh()
+
+	world = nil
+
+	log.debug("Destroyed: %(s)s" % { s = pw(world) })
 end
 
 function PlayScenario.resize()
