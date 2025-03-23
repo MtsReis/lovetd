@@ -215,7 +215,7 @@ function PlayScenario:load(scenarioName)
 	end
 
 	world.resources.statsFont = love.graphics.newImageFont(
-		"assets/font/love.png",
+		"assets/fonts/love.png",
 		" abcdefghijklmnopqrstuvwxyz" .. "ABCDEFGHIJKLMNOPQRSTUVWXYZ0" .. "123456789.,!?-+/():;%&`'*#=[]\""
 	)
 

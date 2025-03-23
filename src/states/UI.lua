@@ -1,6 +1,10 @@
 local UI = class("UI")
 local ASSETS_DIR = "assets/UI/"
 local ASSETS_EXT = ".png"
+local ALPHA_SLAB_ONE_FONT_PATH = "assets/fonts/AlfaSlabOne-Regular.ttf"
+local MAIN_FONT = love.graphics.newFont(ALPHA_SLAB_ONE_FONT_PATH, 46)
+local MAIN_FONT_H = MAIN_FONT:getHeight()
+
 
 local _resources = {
 	"sidebar_end",
@@ -24,7 +28,6 @@ local _resources = {
 	"coins",
 
 	"defeat_broken_rook",
-	"button_bg",
 	"try_again_btn",
 	"try_again_btn_pressed",
 	"try_again_btn_hover",
@@ -51,7 +54,7 @@ UI.eventListeners = {}
 UI.presentations = {
 	PlayScenario = {
 		_attr = {
-			defeat_window = false,
+			defeat_window = true,
 			sidebar = { width = 118, towerSpots = 3 },
 			coins = { qty = 0, font = love.graphics.newFont(30) },
 			buttons = {
@@ -347,26 +350,17 @@ function UI.presentations.PlayScenario:update(dt)
 
 		--- Button ---
 		local buttonYSpace = screenH - hookH
-		local buttonHScale = buttonYSpace / _resources.button_bg:getHeight() * 0.50
+		local buttonHScale = buttonYSpace / _resources.try_again_btn:getHeight() * 0.50
 
-		local buttonW = buttonHScale * _resources.button_bg:getWidth()
-		local buttonH = buttonHScale * _resources.button_bg:getHeight()
-
-		love.graphics.draw(
-			_resources.button_bg,
-			screenW / 2 - buttonW / 2,
-			screenH - buttonYSpace,
-			0,
-			buttonHScale,
-			buttonHScale
-		)
+		local buttonW = buttonHScale * _resources.try_again_btn:getWidth()
+		local buttonH = buttonHScale * _resources.try_again_btn:getHeight()
 
 		local resourceLabel = "try_again_btn"
 
 		self._attr.buttons.ele_defeat.x = screenW / 2 - buttonW / 2
 		self._attr.buttons.ele_defeat.y = screenH - buttonYSpace
-		self._attr.buttons.ele_defeat.w = self._attr.buttons.ele_defeat.x * buttonHScale
-		self._attr.buttons.ele_defeat.h = self._attr.buttons.ele_defeat.y * buttonHScale
+		self._attr.buttons.ele_defeat.w = buttonW
+		self._attr.buttons.ele_defeat.h = buttonH
 
 		if not self._attr.buttons.ele_defeat.active then
 			love.graphics.setColor(0.5, 0.5, 0.5, 1)
@@ -382,8 +376,18 @@ function UI.presentations.PlayScenario:update(dt)
 		)
 
 		--- Message ---
+		local bgX = screenW * 0.40 / 2
+		local bgY = hookH / 3
+		local bgW, bgH = screenW * 0.60, hookW / 4
+		local text = "Defeat"
+		local textW = MAIN_FONT:getWidth(text)
+
 		love.graphics.setColor(205 / 255, 37 / 255, 37 / 255, 0.5)
-		love.graphics.rectangle("fill", screenW * 0.40 / 2, hookH / 3, screenW * 0.60, hookW / 4)
+		love.graphics.rectangle("fill", bgX, bgY, bgW, bgH)
+
+		love.graphics.setFont(MAIN_FONT)
+		love.graphics.setColor(1, 1, 1, 1)
+		love.graphics.print(text, screenW / 2 - textW / 2, bgY + (bgH - MAIN_FONT_H) / 2)
 	end
 
 	love.graphics.setColor(1, 1, 1, 1)
