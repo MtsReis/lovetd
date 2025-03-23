@@ -56,6 +56,7 @@ local UI
 local PlayScenario = class("PlayScenario")
 
 local canvas = love.graphics.newCanvas()
+local HUD_canvas = love.graphics.newCanvas()
 local world = tiny.world()
 world.space = {
 	bump = HC.new(), -- Physical collisions
@@ -116,6 +117,7 @@ function PlayScenario:load(scenarioName)
 		projectile = require("world.entities.projectile"),
 		spawner = require("world.entities.spawner"),
 		construction = require("world.entities.construction"),
+		message = require("world.entities.message"),
 	}
 
 	-- Systems
@@ -139,6 +141,9 @@ function PlayScenario:load(scenarioName)
 
 		require("world/systems/state").state,
 		require("world/systems/death").death,
+
+		require("world/systems/message").message,
+
 		require("world/systems/lifespan").clearReferences,
 	}
 
@@ -350,10 +355,12 @@ function PlayScenario.update(_, dt)
 
 		if world.properties._construction then
 			love.mouse.setVisible(false)
-		else
+		elseif not mapRenderer.cam.dragging then
 			love.mouse.setVisible(true)
 		end
 
+		love.graphics.setCanvas(HUD_canvas)
+		love.graphics.clear()
 		love.graphics.setCanvas(canvas)
 		love.graphics.clear()
 		world:update(dt)
@@ -387,6 +394,8 @@ function PlayScenario.draw()
 	mapRenderer.cam:attach()
 	love.graphics.draw(canvas, 0, 0)
 	mapRenderer.cam:detach()
+
+	love.graphics.draw(HUD_canvas, 0, 0)
 end
 
 -- Camera control
@@ -435,6 +444,8 @@ function PlayScenario.keyreleased(command)
 						world.properties._construction.lifespan = 0
 						world.properties._construction = nil
 					end
+				else
+					world:add(entitiesClasses.message("Not enough coins!", HUD_canvas))
 				end
 			end
 		end
@@ -525,6 +536,7 @@ end
 
 function PlayScenario.resize()
 	updateCamZoomLimits()
+	HUD_canvas = love.graphics.newCanvas() -- Resize canvas
 end
 
 ---------------------------------------------------

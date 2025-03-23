@@ -7,14 +7,14 @@ local HEALTHBAR_CONTENT_H = 5
 DrawHpSystem.filter = tiny.requireAll("hp", "canvas", "pos", "geometry")
 
 function DrawHpSystem:process(e, dt)
-	local font = DrawHpSystem.world.resources.statsFont
+	local font = self.world.resources.statsFont
 	local textH = font:getHeight()
 
-	local container_img_s = DrawHpSystem.world.resources.hp_container_s
-	local container_img_c = DrawHpSystem.world.resources.hp_container_c
-	local hp_tower = DrawHpSystem.world.resources.hp_tower
+	local container_img_s = self.world.resources.hp_container_s
+	local container_img_c = self.world.resources.hp_container_c
+	local hp_tower = self.world.resources.hp_tower
 	local hp_tower_scale = 0.3
-	local content_img = DrawHpSystem.world.resources.hp_content
+	local content_img = self.world.resources.hp_content
 
 	local maxHealthBar = e.hp.max / 2
 	local healthContent = math.max(0, e.hp.curr / 2)
@@ -39,7 +39,7 @@ function DrawHpSystem:process(e, dt)
 
 	love.graphics.setColor(1, 1, 1)
 
-	if e == DrawHpSystem.world.player.main_tower then
+	if e == self.world.player.main_tower then
 		love.graphics.draw(
 			hp_tower,
 			x - hp_tower:getWidth() * hp_tower_scale / 2,
@@ -50,7 +50,7 @@ function DrawHpSystem:process(e, dt)
 		)
 	end
 
-	if DrawHpSystem.world.properties.selectedEntity == e and e.attack then
+	if self.world.properties.selectedEntity == e and e.attack then
 		love.graphics.setFont(font)
 		local min, max =
 			e.attack.baseDamage - e.attack.minDamageDecrement, e.attack.baseDamage + e.attack.maxDamageIncrement

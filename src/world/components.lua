@@ -249,6 +249,10 @@ return {
 		return {type = type, cost = cost, blocked = false}
 	end,
 
+	message = function(text)
+		return {text = text, when = os.clock()}
+	end,
+
 	-------------------
 	-- Especial values
 	-------------------
