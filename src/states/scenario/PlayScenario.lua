@@ -159,7 +159,7 @@ function PlayScenario:load(scenarioName)
 	world.player = {
 		coins = 50,
 		killed_enemies = 0,
-		main_tower = entitiesClasses.tower(910, 180, world.space, "main", canvas)
+		main_tower = entitiesClasses.tower(910, 180, world.space, "main", canvas),
 	}
 
 	-- Aditional assets
@@ -333,7 +333,7 @@ function PlayScenario.enable()
 	})
 
 	world.resources.music.action:setLooping(true)
-	world.resources.music.action:setVolume(amora.settings.sound.mVolume/100)
+	world.resources.music.action:setVolume(amora.settings.sound.mVolume / 100)
 	world.resources.music.action:play()
 end
 
@@ -430,6 +430,7 @@ end
 
 function PlayScenario:mousemoved(x, y, dx, dy, istouch)
 	if mapRenderer.cam.dragging then
+		local sidebarW = UI.presentations.PlayScenario._attr.sidebar.width / mapRenderer.cam.scale
 		dx = -dx * amora.settings.preferences.screenDragSensitivity / mapRenderer.cam.scale
 		dy = -dy * amora.settings.preferences.screenDragSensitivity / mapRenderer.cam.scale
 
@@ -439,7 +440,7 @@ function PlayScenario:mousemoved(x, y, dx, dy, istouch)
 			-- cam.x - screen.w/2 / scale (undo scale) + dx < 0 (negative dx will go further to the left that the left border of the camera should) and dx < 0 (only block negative X movement, A.K.A left)
 			if
 				mapRenderer.cam.x - amora.settings.video.w / mapRenderer.cam.scale / 2 + dx < 0 and dx < 0
-				or mapRenderer.cam.x + amora.settings.video.w / mapRenderer.cam.scale / 2 + dx
+				or mapRenderer.cam.x + amora.settings.video.w / mapRenderer.cam.scale / 2 - sidebarW + dx
 						> world.properties.width
 					and dx > 0
 			then
@@ -462,6 +463,42 @@ end
 
 function PlayScenario:wheelmoved(x, y)
 	mapRenderer.cam:zoom(1 + y * amora.settings.preferences.wheelSensitivity / 10)
+
+	if mapRenderer.cam.scale < mapRenderer.cam.minScale then
+		mapRenderer.cam.scale = mapRenderer.cam.minScale
+	end
+
+	-- Fix Camera position after zoom out
+	local sidebarW = UI.presentations.PlayScenario._attr.sidebar.width
+
+	-- Left border
+	local moveX = -math.min(mapRenderer.cam.x - amora.settings.video.w / mapRenderer.cam.scale / 2, 0)
+
+	-- Right border
+	if moveX == 0 then
+		moveX = math.min(
+			world.properties.width
+				- (
+					mapRenderer.cam.x
+					+ amora.settings.video.w / mapRenderer.cam.scale / 2
+					- sidebarW / mapRenderer.cam.scale
+				),
+			0
+		)
+	end
+
+	-- Top
+	local moveY = -math.min(mapRenderer.cam.y - amora.settings.video.h / mapRenderer.cam.scale / 2, 0)
+
+	 -- Bottom
+	 if moveY == 0 then
+	 	moveY = math.min(
+	 		world.properties.height - (mapRenderer.cam.y + amora.settings.video.h / mapRenderer.cam.scale / 2),
+	 		0
+	 	)
+	 end
+
+	mapRenderer.cam:move(moveX, moveY)
 end
 
 function PlayScenario.disable()
