@@ -195,6 +195,8 @@ function PlayScenario:load(scenarioName)
 		selectedEntity = nil,
 
 		paths = PREDEFINED_PATHS[1],
+
+		showHP = true
 	}
 
 	world.player = {
@@ -486,6 +488,8 @@ function PlayScenario.keypressed(command)
 		else
 			mapRenderer.cam.dragging = true
 		end
+	elseif command == "toggle_hp" then
+		world.properties.showHP = not world.properties.showHP
 	end
 end
 

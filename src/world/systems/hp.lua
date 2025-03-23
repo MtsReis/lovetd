@@ -34,26 +34,35 @@ function DrawHpSystem:process(e, dt)
 		y = 5
 	end
 
-	love.graphics.draw(container_img_s, x, y, 0, 1, 0.5)
-	love.graphics.draw(container_img_c, x + CONTAINER_SIDE_W, y, 0, maxHealthBar, 0.5)
-	love.graphics.draw(container_img_s, x + CONTAINER_SIDE_W + maxHealthBar, y, 0, 1, 0.5)
+	if self.world.properties.showHP or e == self.world.player.main_tower then
+		love.graphics.draw(container_img_s, x, y, 0, 1, 0.5)
+		love.graphics.draw(container_img_c, x + CONTAINER_SIDE_W, y, 0, maxHealthBar, 0.5)
+		love.graphics.draw(container_img_s, x + CONTAINER_SIDE_W + maxHealthBar, y, 0, 1, 0.5)
 
-	love.graphics.setColor(color)
-	love.graphics.rectangle("fill", x + CONTAINER_SIDE_W, y + CONTAINER_TOP_H / 2, healthContent, HEALTHBAR_CONTENT_H)
-
-	love.graphics.setColor(1, 1, 1)
-
-	if e == self.world.player.main_tower then
-		love.graphics.draw(
-			hp_tower,
-			x - hp_tower:getWidth() * hp_tower_scale / 2,
-			y - hp_tower:getHeight() * hp_tower_scale / 2,
-			0,
-			hp_tower_scale,
-			hp_tower_scale
+		love.graphics.setColor(color)
+		love.graphics.rectangle(
+			"fill",
+			x + CONTAINER_SIDE_W,
+			y + CONTAINER_TOP_H / 2,
+			healthContent,
+			HEALTHBAR_CONTENT_H
 		)
+
+		love.graphics.setColor(1, 1, 1)
+
+		if e == self.world.player.main_tower then
+			love.graphics.draw(
+				hp_tower,
+				x - hp_tower:getWidth() * hp_tower_scale / 2,
+				y - hp_tower:getHeight() * hp_tower_scale / 2,
+				0,
+				hp_tower_scale,
+				hp_tower_scale
+			)
+		end
 	end
 
+	-- Stats
 	if self.world.properties.selectedEntity == e and e.attack then
 		love.graphics.setFont(font)
 		local min, max =
@@ -62,7 +71,7 @@ function DrawHpSystem:process(e, dt)
 		local text = "%(min)d - %(max)d" % { min = min, max = max }
 		local textW = font:getWidth(text)
 		love.graphics.print(text, e.pos.x - textW / 2, y + CONTAINER_H + 1)
-		love.graphics.draw(atk_icon, e.pos.x - textW / 2 - 20, y + CONTAINER_H + 1, 0, .7, .7)
+		love.graphics.draw(atk_icon, e.pos.x - textW / 2 - 20, y + CONTAINER_H + 1, 0, 0.7, 0.7)
 
 		if e.attack.cooldownTime % 1 == 0 then
 			text = "%(dps)d"
@@ -76,7 +85,7 @@ function DrawHpSystem:process(e, dt)
 
 		textW = font:getWidth(text)
 		love.graphics.print(text, e.pos.x - textW / 2, y + CONTAINER_H + textH + 1)
-		love.graphics.draw(atk_spd_icon, e.pos.x - textW / 2 - 20, y + CONTAINER_H + textH + 1, 0, .7, .7)
+		love.graphics.draw(atk_spd_icon, e.pos.x - textW / 2 - 20, y + CONTAINER_H + textH + 1, 0, 0.7, 0.7)
 	end
 
 	love.graphics.setCanvas()
