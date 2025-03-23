@@ -623,6 +623,8 @@ end
 function PlayScenario.disable()
 	state.disable("MapRenderer")
 
+	world.resources.music.action:stop()
+
 	log.debug("Disabled: %(s)s" % { s = pw(world) })
 end
 

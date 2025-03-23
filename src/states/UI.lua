@@ -54,7 +54,7 @@ UI.eventListeners = {}
 UI.presentations = {
 	PlayScenario = {
 		_attr = {
-			defeat_window = true,
+			defeat_window = false,
 			sidebar = { width = 118, towerSpots = 3 },
 			coins = { qty = 0, font = love.graphics.newFont(30) },
 			buttons = {
