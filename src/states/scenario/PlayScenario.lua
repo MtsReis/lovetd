@@ -245,6 +245,16 @@ function PlayScenario:load(scenarioName)
 			{ label = "ToughOrc", path = world.properties.paths[1] }
 		)
 	)
+
+	-- Events
+	world.handlers = {
+		onEndScenario = function(isWin, endScenarioIn)
+			world.player.results = { isWin = isWin, endScenarioIn = endScenarioIn }
+
+			local text = isWin and "Level Complete! Well done!" or "Defeated this time, but you'll get it next time!"
+			world:add(entitiesClasses.message(text, HUD_canvas))
+		end,
+	}
 end
 
 function PlayScenario.enable()

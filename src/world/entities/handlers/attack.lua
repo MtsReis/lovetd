@@ -10,10 +10,7 @@ local handlers = {
 		end
 
 		if e == world.player.main_tower then
-			world.player.results = {
-				win = false,
-				endScenarioIn = 0.5,
-			}
+			world.handlers.onEndScenario(false, 0.5)
 		end
 	end,
 }
