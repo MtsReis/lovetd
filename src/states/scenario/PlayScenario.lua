@@ -100,6 +100,9 @@ local _images = {
 	hp_container_c = "UI/hp_container_c",
 	hp_tower = "UI/hp_tower",
 
+	atk = "sprites/atk",
+	atk_spd = "sprites/atk_spd",
+
 	elf = "sprites/elf",
 	elf_e = "sprites/elf_e",
 	org = "sprites/org",
