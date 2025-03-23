@@ -246,7 +246,7 @@ return {
 	end,
 
 	construction = function(type, cost)
-		return {type = type, cost = cost}
+		return {type = type, cost = cost, blocked = false}
 	end,
 
 	-------------------

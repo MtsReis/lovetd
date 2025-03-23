@@ -418,7 +418,7 @@ function PlayScenario.keyreleased(command)
 			if world.properties._construction then
 				if world.player.coins >= world.properties._construction.construction.cost then
 					-- If there are collisions
-					if next(world.space.bump:collisions(world.properties._construction.collisionbox.shape)) == nil then
+					if not world.properties._construction.construction.blocked then
 						world:add(
 							entitiesClasses.tower(
 								world.properties._construction.pos.x,
