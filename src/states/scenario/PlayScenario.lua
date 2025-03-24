@@ -114,8 +114,8 @@ local _sounds = {
 }
 
 local _music = {
-	thinking = "bgm1.mp3",
-	action = "bgm2.mp3",
+	plan = "plan.mp3",
+	action = "action.mp3",
 }
 
 local _shader = {
@@ -425,10 +425,15 @@ function PlayScenario.enable()
 			GameFlow.changeScene("main_menu")
 		end,
 	})
+	local bgm_name = PlayScenario.scenario.bgm
 
-	world.resources.music.action:setLooping(true)
-	world.resources.music.action:setVolume(amora.settings.sound.mVolume / 100)
-	world.resources.music.action:play()
+	if not world.resources.music[bgm_name] then
+		bgm_name = "action"
+	end
+
+	world.resources.music[bgm_name]:setLooping(true)
+	world.resources.music[bgm_name]:setVolume(amora.settings.sound.mVolume / 100)
+	world.resources.music[bgm_name]:play()
 end
 
 function PlayScenario.update(_, dt)

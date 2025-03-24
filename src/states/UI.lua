@@ -2,7 +2,8 @@ local UI = class("UI")
 local ASSETS_DIR = "assets/UI/"
 local ASSETS_EXT = ".png"
 local ALPHA_SLAB_ONE_FONT_PATH = "assets/fonts/AlfaSlabOne-Regular.ttf"
-local MAIN_FONT = love.graphics.newFont(ALPHA_SLAB_ONE_FONT_PATH, 46)
+local FONT_SCALE = 10
+local MAIN_FONT = love.graphics.newFont(ALPHA_SLAB_ONE_FONT_PATH, 60 * FONT_SCALE)
 local MAIN_FONT_H = MAIN_FONT:getHeight()
 
 local _resources = {
@@ -334,11 +335,11 @@ function UI.presentations.MainMenu:update(dt)
 	love.graphics.draw(_resources.red_ray, 0, 0, 0, rayWScale, rayWScale)
 
 	local text = "Defence of the Wicked Evil"
-	local textW = MAIN_FONT:getWidth(text)
+	local textW = MAIN_FONT:getWidth(text)/2
 
 	love.graphics.setFont(MAIN_FONT)
 	love.graphics.setColor(1, 1, 1, 1)
-	love.graphics.print(text, screenW * .02, rayH / 2, -0.07)
+	love.graphics.print(text, screenW * .02, rayH / 2, -0.07, screenW/(1366*FONT_SCALE), screenH/(768*FONT_SCALE))
 	
 	love.graphics.draw(self.canvases.upper_layer, 0, 0)
 	
