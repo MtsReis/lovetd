@@ -50,7 +50,7 @@ function DrawHpSystem:process(e, dt)
 
 		love.graphics.setColor(1, 1, 1)
 
-		if e == self.world.player.main_tower then
+		if e.main ~= nil and e.main == true then
 			love.graphics.draw(
 				hp_tower,
 				x - hp_tower:getWidth() * hp_tower_scale / 2,

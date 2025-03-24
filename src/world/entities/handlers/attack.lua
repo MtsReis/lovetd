@@ -33,7 +33,7 @@ local handlers = {
 		end
 
 		-- RIP
-		if e == world.player.main_tower then
+		if e.main ~= nil and e.main == true then
 			world.handlers.onEndScenario(false, 1)
 		end
 	end,

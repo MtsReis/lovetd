@@ -79,6 +79,8 @@ function Tower:initialize(x, y, space, type, canvas, options)
 	elseif type == "main" then
 		W, H = 48, 48
 
+		self.main = true
+
 		self.sprite = c.sprite("tower4")
 		self.dPivot = c.dPivot(self.sprite.img:getWidth() - W / 2 - 24, self.sprite.img:getHeight() - H / 2)
 
