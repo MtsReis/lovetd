@@ -45,7 +45,7 @@ function _gameScenes.main_menu:startScene()
 		onNewGame = function()
 			GameFlow.changeScene("gameplay")
 		end,
-		onOptions = function()
+		onSettings = function()
 			print("Check options!")
 		end,
 	})
@@ -73,7 +73,6 @@ function _gameScenes.gameplay:startScene()
 end
 
 function _gameScenes.gameplay:endScene()
-	print("Ending Scene gameplay")
 	state.disable("PlayScenario")
 	state.destroy("PlayScenario")
 end

@@ -42,12 +42,15 @@ local _resources = {
 	"main_menu_btn_hover",
 	"main_menu_btn_pressed",
 
-	"new_game_btn",
-	"new_game_btn_pressed",
-	"new_game_btn_hover",
-	"options_btn",
-	"options_btn_pressed",
-	"options_btn_hover",
+	"play_btn",
+	"play_btn_pressed",
+	"play_btn_hover",
+	"mm_settings_btn",
+	"mm_settings_btn_hover",
+	"mm_settings_btn_pressed",
+	"mm_tower",
+	"mm_bg",
+	"red_ray"
 }
 
 local function triggerListener(name, ...)
@@ -152,33 +155,33 @@ UI.presentations = {
 	MainMenu = {
 		_attr = {
 			buttons = {
-				ele_new_game_btn = {
+				ele_play = {
 					x = 0,
 					y = 0,
-					w = 200,
-					h = 50,
+					w = 0,
+					h = 0,
 					state = "",
+					active = true,
 				},
-				ele_options_btn = {
+
+				ele_settings = {
 					x = 0,
 					y = 0,
-					w = 200,
-					h = 50,
+					w = 0,
+					h = 0,
 					state = "",
+					active = true,
 				},
 			},
 		},
 		canvases = { upper_layer = love.graphics.newCanvas() },
 		_events = {
-			onPress = function(element)
-				if element == "ele_new_game_btn" then
-				end
-			end,
+			onPress = function(element) end,
 			onRelease = function(element)
-				if element == "ele_new_game_btn" then
+				if element == "ele_play" then
 					triggerListener("onNewGame")
-				elseif element == "ele_options_btn" then
-					triggerListener("onOptions")
+				elseif element == "ele_settings" then
+					triggerListener("onSettings")
 				end
 			end,
 		},
@@ -253,7 +256,6 @@ function UI:changePresentation(presentation, listeners)
 
 	self.eventListeners = listeners or self.eventListeners
 
-
 	love.graphics.setCanvas(UICanvas)
 	love.graphics.clear()
 
@@ -278,34 +280,68 @@ function UI.presentations.MainMenu:update(dt)
 	local screenW = amora.settings.video.w
 	local screenH = amora.settings.video.h
 
-	-- Update elements
-	local buttonsInitialPos = {
-		screenW / 2 - _resources.new_game_btn:getWidth() / 2,
-		screenH * 0.6 - _resources.new_game_btn:getHeight() / 2,
-	}
+	local buttonYSpace = screenH * 0.6 - _resources.play_btn:getHeight() / 2
+	local buttonHScale = buttonYSpace / _resources.play_btn:getHeight()
 
-	-------------------- Upper Layer --------------------
-	self._attr.buttons.ele_new_game_btn.x = buttonsInitialPos[1]
-	self._attr.buttons.ele_new_game_btn.y = buttonsInitialPos[2]
+	local buttonW = buttonHScale * _resources.play_btn:getWidth()
+	local buttonH = buttonHScale * _resources.play_btn:getHeight()
 
-	self._attr.buttons.ele_options_btn.x = buttonsInitialPos[1]
-	self._attr.buttons.ele_options_btn.y = buttonsInitialPos[2] + _resources.new_game_btn:getHeight() + 20
+	self._attr.buttons.ele_settings.x = screenW / 3 - buttonW / 2
+	self._attr.buttons.ele_settings.y = screenH - buttonYSpace * 1.2
+	self._attr.buttons.ele_settings.w = buttonW
+	self._attr.buttons.ele_settings.h = buttonH
+
+	self._attr.buttons.ele_play.x = self._attr.buttons.ele_settings.x
+	self._attr.buttons.ele_play.y = self._attr.buttons.ele_settings.y - buttonH * 1.2
+	self._attr.buttons.ele_play.w = self._attr.buttons.ele_settings.w
+	self._attr.buttons.ele_play.h = self._attr.buttons.ele_settings.h
 
 	love.graphics.setCanvas(self.canvases.upper_layer)
 	love.graphics.clear()
+
 	love.graphics.draw(
-		_resources["new_game_btn" .. self._attr.buttons.ele_new_game_btn.state],
-		self._attr.buttons.ele_new_game_btn.x,
-		self._attr.buttons.ele_new_game_btn.y
+		_resources["play_btn" .. self._attr.buttons.ele_play.state] or _resources[resourceLabel],
+		self._attr.buttons.ele_play.x,
+		self._attr.buttons.ele_play.y,
+		0,
+		buttonHScale,
+		buttonHScale
 	)
 	love.graphics.draw(
-		_resources["options_btn" .. self._attr.buttons.ele_options_btn.state],
-		self._attr.buttons.ele_options_btn.x,
-		self._attr.buttons.ele_options_btn.y
+		_resources["mm_settings_btn" .. self._attr.buttons.ele_settings.state] or _resources[resourceLabel],
+		self._attr.buttons.ele_settings.x,
+		self._attr.buttons.ele_settings.y,
+		0,
+		buttonHScale,
+		buttonHScale
 	)
 
+	--- Tower ---
+	local towerHScale = screenH / _resources.mm_tower:getHeight() * 0.9
+	local towerW = _resources.mm_tower:getWidth() * towerHScale
+	local towerH = _resources.mm_tower:getHeight() * towerHScale
+	local towerY = (screenH - towerH)/2 + (screenH - towerH)/2 * math.sin(love.timer.getTime() / 5)
+
+	love.graphics.draw(_resources.mm_tower, screenW - screenW * .2 - towerW / 2, towerY, 0, towerHScale, towerHScale)
+
 	love.graphics.setCanvas(UICanvas)
+	love.graphics.clear()
+
+	--- BG ---
+	local rayWScale = screenW / _resources.red_ray:getWidth() * 1.1
+	local rayH = _resources.red_ray:getHeight() * rayWScale
+	love.graphics.draw(_resources.mm_bg, 0, 0, 0, screenW / _resources.mm_bg:getWidth(), screenH / _resources.mm_bg:getHeight())
+	love.graphics.draw(_resources.red_ray, 0, 0, 0, rayWScale, rayWScale)
+
+	local text = "Defence of the Wicked Evil"
+	local textW = MAIN_FONT:getWidth(text)
+
+	love.graphics.setFont(MAIN_FONT)
+	love.graphics.setColor(1, 1, 1, 1)
+	love.graphics.print(text, screenW * .02, rayH / 2, -0.07)
+	
 	love.graphics.draw(self.canvases.upper_layer, 0, 0)
+	
 
 	love.graphics.setCanvas()
 end
