@@ -12,7 +12,7 @@ InputVerify.commandList = {
 	["f12"] = "toggle_debug",
 	["pause"] = "pause_game",
 
-	["esc"] = "pause_game"
+	["escape"] = "pause_game"
 }
 
 InputVerify.holdingKeys = {}
