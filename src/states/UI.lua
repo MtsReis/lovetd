@@ -4,7 +4,7 @@ local ASSETS_EXT = ".png"
 local ALPHA_SLAB_ONE_FONT_PATH = "assets/fonts/AlfaSlabOne-Regular.ttf"
 local FONT_SCALE = 10
 local MAIN_FONT = love.graphics.newFont(ALPHA_SLAB_ONE_FONT_PATH, 60 * FONT_SCALE)
-local MAIN_FONT_UNSCALED = love.graphics.newFont(ALPHA_SLAB_ONE_FONT_PATH, 60)
+local MAIN_FONT_UNSCALED = love.graphics.newFont(ALPHA_SLAB_ONE_FONT_PATH, 42)
 local MAIN_FONT_H = MAIN_FONT:getHeight()
 local MAIN_FONT_H_UNSCALED  = MAIN_FONT_UNSCALED:getHeight()
 
