@@ -44,6 +44,51 @@ local PREDEFINED_PATHS = {
 			832,
 			192,
 		}),
+
+		Path({ -- bigMap Path Left
+			0,
+			1152
+		}, {
+			384,
+			1152
+		}, {
+			384,
+			704
+		}, {
+			128,
+			704
+		}, {
+			128,
+			160
+		}),
+
+		Path({ -- bigMap Path Right
+			1568,
+			768
+		}, {
+			1248,
+			768
+		}, {
+			1248,
+			608
+		}, {
+			704,
+			608
+		}),
+
+		Path({ -- bigMap Path Bottom
+			864,
+			1568
+		}, {
+			864,
+			1376
+		}, {
+			1088,
+			1376
+		}, {
+			1088,
+			1120
+		}),
 	},
 }
 local ASSETS_DIR = "assets/"
@@ -133,7 +178,7 @@ function PlayScenario:load(scenarioName)
 		selection = HC.new(), -- For mouse interaction
 	}
 
-	scenarioName = scenarioName or "ShoreBattle"
+	scenarioName = scenarioName or "bigMap"
 
 	PlayScenario.scenario = Persistence.loadScenario(scenarioName)
 	state.add(
@@ -433,7 +478,7 @@ function PlayScenario.enable()
 
 	--- Additional stuff
 	world.properties._spawners = {
-		entitiesClasses.spawner(
+		--[[entitiesClasses.spawner(
 			world.properties.width / 2,
 			world.properties.height / 2,
 			2,
@@ -460,6 +505,93 @@ function PlayScenario.enable()
 			"orc",
 			canvas,
 			{ path = world.properties.paths[2] }
+		),]]
+		-- PATH 1 LEFT
+		entitiesClasses.spawner(
+			world.properties.width / 2,
+			world.properties.height / 2,
+			2,
+			50,
+			nil,
+			entitiesClasses.unit,
+			PREDEFINED_PATHS[1][3][1][1] - math.random(120, 900),
+			PREDEFINED_PATHS[1][3][1][2] - math.random(10, 20),
+			world.space,
+			"elf",
+			canvas,
+			{ path = world.properties.paths[3] }
+		),
+		entitiesClasses.spawner(
+			world.properties.width / 2,
+			world.properties.height / 2,
+			3,
+			30,
+			nil,
+			entitiesClasses.unit,
+			PREDEFINED_PATHS[1][3][1][1] - math.random(120, 900),
+			PREDEFINED_PATHS[1][3][1][2] - math.random(10, 20),
+			world.space,
+			"orc",
+			canvas,
+			{ path = world.properties.paths[3] }
+		),
+		-- PATH 2 RIGHT
+		entitiesClasses.spawner(
+			world.properties.width / 2,
+			world.properties.height / 2,
+			3,
+			40,
+			nil,
+			entitiesClasses.unit,
+			PREDEFINED_PATHS[1][4][1][1] + math.random(120, 900),
+			PREDEFINED_PATHS[1][4][1][2] + math.random(10, 20),
+			world.space,
+			"elf",
+			canvas,
+			{ path = world.properties.paths[4] }
+		),
+		entitiesClasses.spawner(
+			world.properties.width / 2,
+			world.properties.height / 2,
+			5,
+			25,
+			nil,
+			entitiesClasses.unit,
+			PREDEFINED_PATHS[1][4][1][1] + math.random(120, 900),
+			PREDEFINED_PATHS[1][4][1][2] + math.random(10, 20),
+			world.space,
+			"orc",
+			canvas,
+			{ path = world.properties.paths[4] }
+		),
+		-- PATH 3 BOTTOM
+		entitiesClasses.spawner(
+			world.properties.width / 2,
+			world.properties.height / 2,
+			4,
+			25,
+			nil,
+			entitiesClasses.unit,
+			PREDEFINED_PATHS[1][5][1][1] + math.random(10, 20),
+			PREDEFINED_PATHS[1][5][1][2] + math.random(120, 900),
+			world.space,
+			"elf",
+			canvas,
+			{ path = world.properties.paths[5] }
+		),
+		entitiesClasses.spawner(
+			world.properties.width / 2,
+			world.properties.height / 2,
+			6,
+			10,
+			nil,
+			entitiesClasses.unit,
+			PREDEFINED_PATHS[1][5][1][1] + math.random(10, 20),
+			PREDEFINED_PATHS[1][5][1][2] + math.random(120, 900),
+			world.space,
+			"orc",
+			canvas,
+			{ path = world.properties.paths[5] }
 		),
 	}
 end
