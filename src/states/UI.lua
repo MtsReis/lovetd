@@ -280,7 +280,7 @@ function UI.presentations.MainMenu:update(dt)
 	local screenW = amora.settings.video.w
 	local screenH = amora.settings.video.h
 
-	local buttonYSpace = screenH * 0.6 - _resources.play_btn:getHeight() / 2
+	local buttonYSpace = screenH / 6
 	local buttonHScale = buttonYSpace / _resources.play_btn:getHeight()
 
 	local buttonW = buttonHScale * _resources.play_btn:getWidth()
