@@ -443,14 +443,14 @@ function UI.presentations.PlayScenario:update(dt)
 		local bgY = hookH / 3
 		local bgW, bgH = screenW * 0.60, hookW / 4
 		local text = "Defeat"
-		local textW = MAIN_FONT:getWidth(text)
+		local textW = MAIN_FONT:getWidth(text)/FONT_SCALE
 
 		love.graphics.setColor(205 / 255, 37 / 255, 37 / 255, 0.5)
 		love.graphics.rectangle("fill", bgX, bgY, bgW, bgH)
 
 		love.graphics.setFont(MAIN_FONT)
 		love.graphics.setColor(1, 1, 1, 1)
-		love.graphics.print(text, screenW / 2 - textW / 2, bgY + (bgH - MAIN_FONT_H) / 2)
+		love.graphics.print(text, screenW / 2 - textW / 2, bgY + (bgH - MAIN_FONT_H / FONT_SCALE) / 2, 0, screenW/(1366*FONT_SCALE), screenH/(768*FONT_SCALE))
 	end
 
 	-- Pause Layer
