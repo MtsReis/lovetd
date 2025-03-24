@@ -253,7 +253,14 @@ function PlayScenario:load(scenarioName)
 	world.player = {
 		coins = 50,
 		killed_enemies = 0,
-		main_tower = entitiesClasses.tower(910, 180, world.space, "main", canvas),
+		-- main_tower = entitiesClasses.tower(910, 180, world.space, "main", canvas),
+		-- bigMap
+		-- Path 1
+		main_tower = entitiesClasses.tower(140, 170, world.space, "main", canvas),
+		-- Path 2
+		main_tower2 = entitiesClasses.tower(717, 618, world.space, "main", canvas),
+		-- Path 3
+		main_tower3 = entitiesClasses.tower(1100, 1130, world.space, "main", canvas),
 	}
 
 	-- Aditional assets
@@ -291,7 +298,9 @@ function PlayScenario:load(scenarioName)
 
 	world:add(
 		world.player.main_tower,
-		entitiesClasses.tower(world.properties.width / 3, 200, world.space, "tall", canvas),
+		world.player.main_tower2,
+		world.player.main_tower3,
+		--[[entitiesClasses.tower(world.properties.width / 3, 200, world.space, "tall", canvas),
 		entitiesClasses.tower(530, 630, world.space, "face", canvas),
 		entitiesClasses.tower(world.properties.width / 2, 400, world.space, "ritual", canvas),
 
@@ -301,7 +310,27 @@ function PlayScenario:load(scenarioName)
 		entitiesClasses.unit(910, 230, world.space, "evil_elf", canvas, { label = "Evil Elf 3" }),
 		entitiesClasses.unit(965, 165, world.space, "evil_elf", canvas, { label = "Evil Elf 4" }),
 		entitiesClasses.unit(870, 250, world.space, "evil_orc", canvas, { label = "Evil Orc" }),
-		entitiesClasses.unit(955, 250, world.space, "evil_orc", canvas, { label = "Evil Orc 2" })
+		entitiesClasses.unit(955, 250, world.space, "evil_orc", canvas, { label = "Evil Orc 2" })]]
+		-- Path 1 Left
+		entitiesClasses.unit(75, 155, world.space, "evil_elf", canvas, { label = "Evil Elf 2" }),
+		entitiesClasses.unit(140, 220, world.space, "evil_elf", canvas, { label = "Evil Elf 3" }),
+		entitiesClasses.unit(195, 155, world.space, "evil_elf", canvas, { label = "Evil Elf 4" }),
+		entitiesClasses.unit(100, 240, world.space, "evil_orc", canvas, { label = "Evil Orc" }),
+		entitiesClasses.unit(185, 240, world.space, "evil_orc", canvas, { label = "Evil Orc 2" }),
+
+		-- Path 2 Right
+		entitiesClasses.unit(652, 603, world.space, "evil_elf", canvas, { label = "Evil Elf 2" }),
+		entitiesClasses.unit(717, 668, world.space, "evil_elf", canvas, { label = "Evil Elf 3" }),
+		entitiesClasses.unit(772, 603, world.space, "evil_elf", canvas, { label = "Evil Elf 4" }),
+		entitiesClasses.unit(677, 688, world.space, "evil_orc", canvas, { label = "Evil Orc" }),
+		entitiesClasses.unit(762, 688, world.space, "evil_orc", canvas, { label = "Evil Orc 2" }),
+
+		-- Path 3 Bottom
+		entitiesClasses.unit(1035, 1115, world.space, "evil_elf", canvas, { label = "Evil Elf 2" }),
+		entitiesClasses.unit(1100, 1180, world.space, "evil_elf", canvas, { label = "Evil Elf 3" }),
+		entitiesClasses.unit(1155, 1115, world.space, "evil_elf", canvas, { label = "Evil Elf 4" }),
+		entitiesClasses.unit(1060, 1200, world.space, "evil_orc", canvas, { label = "Evil Orc" }),
+		entitiesClasses.unit(1145, 1200, world.space, "evil_orc", canvas, { label = "Evil Orc 2" })
 	)
 
 	-- Add collisionboxes to blockable tiles
