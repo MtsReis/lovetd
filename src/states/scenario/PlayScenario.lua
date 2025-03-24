@@ -417,6 +417,13 @@ function PlayScenario.enable()
 			UI.presentations.PlayScenario._attr.defeat_window = false
 			GameFlow.changeScene("gameplay")
 		end,
+		onResume = function()
+			amora.pause = false
+		end,
+		onForfeit = function()
+			amora.pause = false
+			GameFlow.changeScene("main_menu")
+		end,
 	})
 
 	world.resources.music.action:setLooping(true)

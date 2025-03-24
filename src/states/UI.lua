@@ -140,6 +140,10 @@ UI.presentations = {
 					triggerListener("onPressedTower3")
 				elseif element == "ele_defeat" then
 					triggerListener("onTryAgain")
+				elseif element == "ele_resume" then
+					triggerListener("onResume")
+				elseif element == "ele_main_menu" then
+					triggerListener("onForfeit")
 				end
 			end,
 		},
@@ -238,79 +242,6 @@ function UI:update(dt)
 
 		self.presentations[self.activeP]:update(dt)
 	end
-
-	-- Pause Layer
-	if amora.pause then
-		local screenW = amora.settings.video.w
-		local screenH = amora.settings.video.h
-
-		love.graphics.setCanvas(PauseCanvas)
-		love.graphics.clear()
-
-		--- BG Layer ---
-		local wizHScale = screenH / _resources.pause_wiz:getHeight()
-		local wizW = _resources.pause_wiz:getWidth() * wizHScale
-		local wizH = _resources.pause_wiz:getHeight() * wizHScale
-
-		love.graphics.draw(_resources.pause_wiz, screenH * 0.01, screenH - wizH, 0, wizHScale, wizHScale)
-
-		--- Buttons ---
-		local buttonYSpace = screenH / 6 -- 3 buttons for half screen
-		local buttonHScale = buttonYSpace / _resources.main_menu_btn:getHeight() * 0.50
-
-		local buttonW = buttonHScale * _resources.main_menu_btn:getWidth()
-		local buttonH = buttonHScale * _resources.main_menu_btn:getHeight()
-		local buttons = UI.presentations.PlayScenario._attr.buttons
-
-		buttons.ele_main_menu.x = screenW / 2 - buttonW / 2
-		buttons.ele_main_menu.y = screenH - buttonYSpace
-		buttons.ele_main_menu.w = buttonW
-		buttons.ele_main_menu.h = buttonH
-
-		buttons.ele_settings.x = buttons.ele_main_menu.x
-		buttons.ele_settings.y = buttons.ele_main_menu.y  - buttonH
-		buttons.ele_settings.w = buttons.ele_main_menu.w
-		buttons.ele_settings.h = buttons.ele_main_menu.h
-
-		buttons.ele_resume.x = buttons.ele_settings.x
-		buttons.ele_resume.y = buttons.ele_settings.y  - buttonH
-		buttons.ele_resume.w = buttons.ele_settings.w
-		buttons.ele_resume.h = buttons.ele_settings.h
-
-		if not buttons.ele_main_menu.active then
-			love.graphics.setColor(0.5, 0.5, 0.5, 1)
-		end
-
-
-		love.graphics.draw(
-			_resources["resume_btn" .. buttons.ele_resume.state] or _resources[resourceLabel],
-			buttons.ele_resume.x,
-			buttons.ele_resume.y,
-			0,
-			buttonHScale,
-			buttonHScale
-		)
-		love.graphics.draw(
-			_resources["settings_btn" .. buttons.ele_settings.state] or _resources[resourceLabel],
-			buttons.ele_settings.x,
-			buttons.ele_settings.y,
-			0,
-			buttonHScale,
-			buttonHScale
-		)
-		love.graphics.draw(
-			_resources["main_menu_btn" .. buttons.ele_main_menu.state] or _resources[resourceLabel],
-			buttons.ele_main_menu.x,
-			buttons.ele_main_menu.y,
-			0,
-			buttonHScale,
-			buttonHScale
-		)
-
-		love.graphics.setCanvas(UICanvas)
-		love.graphics.draw(PauseCanvas)
-		love.graphics.setCanvas()
-	end
 end
 
 function UI.draw()
@@ -321,6 +252,10 @@ function UI:changePresentation(presentation, listeners)
 	self.activeP = presentation
 
 	self.eventListeners = listeners or self.eventListeners
+
+
+	love.graphics.setCanvas(UICanvas)
+	love.graphics.clear()
 
 	-- Draw base canvases
 	self.presentations[self.activeP]:reload()
@@ -479,6 +414,80 @@ function UI.presentations.PlayScenario:update(dt)
 		love.graphics.setFont(MAIN_FONT)
 		love.graphics.setColor(1, 1, 1, 1)
 		love.graphics.print(text, screenW / 2 - textW / 2, bgY + (bgH - MAIN_FONT_H) / 2)
+	end
+
+	-- Pause Layer
+	if amora.pause then
+		local screenW = amora.settings.video.w
+		local screenH = amora.settings.video.h
+
+		love.graphics.setCanvas(PauseCanvas)
+		love.graphics.clear()
+
+		--- BG Layer ---
+		local wizHScale = screenH / _resources.pause_wiz:getHeight()
+		local wizWScale = screenW / _resources.pause_wiz:getWidth()
+
+		local wizH = _resources.pause_wiz:getHeight() * wizHScale
+		local wizW = _resources.pause_wiz:getWidth() * wizWScale
+
+		love.graphics.draw(_resources.pause_wiz, screenH * 0.01, screenH - wizH, 0, wizWScale, wizHScale)
+
+		--- Buttons ---
+		local buttonYSpace = screenH / 6 -- 3 buttons for half screen
+		local buttonHScale = buttonYSpace / _resources.main_menu_btn:getHeight()
+
+		local buttonW = buttonHScale * _resources.main_menu_btn:getWidth()
+		local buttonH = buttonHScale * _resources.main_menu_btn:getHeight()
+		local buttons = self._attr.buttons
+
+		buttons.ele_main_menu.x = screenW / 2 - buttonW / 2
+		buttons.ele_main_menu.y = screenH - buttonYSpace
+		buttons.ele_main_menu.w = buttonW
+		buttons.ele_main_menu.h = buttonH
+
+		buttons.ele_settings.x = buttons.ele_main_menu.x
+		buttons.ele_settings.y = buttons.ele_main_menu.y - buttonH
+		buttons.ele_settings.w = buttons.ele_main_menu.w
+		buttons.ele_settings.h = buttons.ele_main_menu.h
+
+		buttons.ele_resume.x = buttons.ele_settings.x
+		buttons.ele_resume.y = buttons.ele_settings.y - buttonH
+		buttons.ele_resume.w = buttons.ele_settings.w
+		buttons.ele_resume.h = buttons.ele_settings.h
+
+		if not buttons.ele_main_menu.active then
+			love.graphics.setColor(0.5, 0.5, 0.5, 1)
+		end
+
+		love.graphics.draw(
+			_resources["resume_btn" .. buttons.ele_resume.state] or _resources[resourceLabel],
+			buttons.ele_resume.x,
+			buttons.ele_resume.y,
+			0,
+			buttonHScale,
+			buttonHScale
+		)
+		love.graphics.draw(
+			_resources["settings_btn" .. buttons.ele_settings.state] or _resources[resourceLabel],
+			buttons.ele_settings.x,
+			buttons.ele_settings.y,
+			0,
+			buttonHScale,
+			buttonHScale
+		)
+		love.graphics.draw(
+			_resources["main_menu_btn" .. buttons.ele_main_menu.state] or _resources[resourceLabel],
+			buttons.ele_main_menu.x,
+			buttons.ele_main_menu.y,
+			0,
+			buttonHScale,
+			buttonHScale
+		)
+
+		love.graphics.setCanvas(UICanvas)
+		love.graphics.draw(PauseCanvas)
+		love.graphics.setCanvas()
 	end
 
 	love.graphics.setColor(1, 1, 1, 1)

@@ -15,7 +15,6 @@ local _gameScenes = {
 }
 
 function GameFlow.load()
-	state.add(require("states.scenario.PlayScenario"), "PlayScenario", 3)
 end
 
 function GameFlow:enable()
@@ -70,16 +69,17 @@ function _gameScenes.save_game:endScene() end
 
 function _gameScenes.gameplay:startScene()
 	if scene == "gameplay" then
-		state.disable("PlayScenario")
-		state.destroy("PlayScenario")
-
-		state.add(require("states.scenario.PlayScenario"), "PlayScenario", 3)
+		self.endScene()
 	end
 
+	state.add(require("states.scenario.PlayScenario"), "PlayScenario", 3)
 	state.enable("PlayScenario")
 end
 
-function _gameScenes.gameplay:endScene() end
+function _gameScenes.gameplay:endScene()
+	state.disable("PlayScenario")
+	state.destroy("PlayScenario")
+end
 
 --------= Level Selection =--------
 
