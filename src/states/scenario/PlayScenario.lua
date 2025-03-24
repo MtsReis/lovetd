@@ -529,6 +529,8 @@ function PlayScenario.enable()
 
 	world.resources.music[curr_bgm_name]:setLooping(true)
 	world.resources.music[curr_bgm_name]:setVolume(amora.settings.sound.mVolume / 100)
+	world.resources.music.plan:setLooping(true)
+	world.resources.music.plan:setVolume(amora.settings.sound.mVolume / 100)
 	world.resources.music.plan:play()
 
 	UI.presentations.PlayScenario._attr.sidebar.showPlay = true

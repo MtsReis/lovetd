@@ -15,6 +15,13 @@ local handlers = {
 
 			-- Converted
 			if e[CONDITION.cursed] and e[CONDITION.cursed].cursedBy ~= e.team then
+				if e.team and e.team ~= 1 then
+					world.player.killed_enemies = world.player.killed_enemies + 1
+
+					if world.player.killed_enemies >= world.properties.nEnemies then
+						world.handlers.onEndScenario(true, 1)
+					end
+				end
 				e.team = c.team(e[CONDITION.cursed].cursedBy)
 				e[CONDITION.dead] = nil
 				e[CONDITION.cursed] = nil
@@ -25,7 +32,7 @@ local handlers = {
 
 				e.movement.vel.speed = 0
 				e.movement.accel.magnitude = 0
-				
+
 				if e.hp then
 					e.hp.curr = e.hp.max
 				end
