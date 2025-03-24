@@ -5,7 +5,6 @@ local ALPHA_SLAB_ONE_FONT_PATH = "assets/fonts/AlfaSlabOne-Regular.ttf"
 local MAIN_FONT = love.graphics.newFont(ALPHA_SLAB_ONE_FONT_PATH, 46)
 local MAIN_FONT_H = MAIN_FONT:getHeight()
 
-
 local _resources = {
 	"sidebar_end",
 	"sidebar_ext",
@@ -32,7 +31,16 @@ local _resources = {
 	"try_again_btn_pressed",
 	"try_again_btn_hover",
 
-	"pause",
+	"pause_wiz",
+	"resume_btn",
+	"resume_btn_hover",
+	"resume_btn_pressed",
+	"settings_btn",
+	"settings_btn_hover",
+	"settings_btn_pressed",
+	"main_menu_btn",
+	"main_menu_btn_hover",
+	"main_menu_btn_pressed",
 
 	"new_game_btn",
 	"new_game_btn_pressed",
@@ -84,6 +92,33 @@ UI.presentations = {
 				},
 
 				ele_defeat = {
+					x = 0,
+					y = 0,
+					w = 0,
+					h = 0,
+					state = "",
+					active = true,
+				},
+
+				ele_main_menu = {
+					x = 0,
+					y = 0,
+					w = 0,
+					h = 0,
+					state = "",
+					active = true,
+				},
+
+				ele_resume = {
+					x = 0,
+					y = 0,
+					w = 0,
+					h = 0,
+					state = "",
+					active = true,
+				},
+
+				ele_settings = {
 					x = 0,
 					y = 0,
 					w = 0,
@@ -206,14 +241,70 @@ function UI:update(dt)
 
 	-- Pause Layer
 	if amora.pause then
+		local screenW = amora.settings.video.w
+		local screenH = amora.settings.video.h
+
 		love.graphics.setCanvas(PauseCanvas)
 		love.graphics.clear()
 
-		--- Upper Layer ---
+		--- BG Layer ---
+		local wizHScale = screenH / _resources.pause_wiz:getHeight()
+		local wizW = _resources.pause_wiz:getWidth() * wizHScale
+		local wizH = _resources.pause_wiz:getHeight() * wizHScale
+
+		love.graphics.draw(_resources.pause_wiz, screenH * 0.01, screenH - wizH, 0, wizHScale, wizHScale)
+
+		--- Buttons ---
+		local buttonYSpace = screenH / 6 -- 3 buttons for half screen
+		local buttonHScale = buttonYSpace / _resources.main_menu_btn:getHeight() * 0.50
+
+		local buttonW = buttonHScale * _resources.main_menu_btn:getWidth()
+		local buttonH = buttonHScale * _resources.main_menu_btn:getHeight()
+		local buttons = UI.presentations.PlayScenario._attr.buttons
+
+		buttons.ele_main_menu.x = screenW / 2 - buttonW / 2
+		buttons.ele_main_menu.y = screenH - buttonYSpace
+		buttons.ele_main_menu.w = buttonW
+		buttons.ele_main_menu.h = buttonH
+
+		buttons.ele_settings.x = buttons.ele_main_menu.x
+		buttons.ele_settings.y = buttons.ele_main_menu.y  - buttonH
+		buttons.ele_settings.w = buttons.ele_main_menu.w
+		buttons.ele_settings.h = buttons.ele_main_menu.h
+
+		buttons.ele_resume.x = buttons.ele_settings.x
+		buttons.ele_resume.y = buttons.ele_settings.y  - buttonH
+		buttons.ele_resume.w = buttons.ele_settings.w
+		buttons.ele_resume.h = buttons.ele_settings.h
+
+		if not buttons.ele_main_menu.active then
+			love.graphics.setColor(0.5, 0.5, 0.5, 1)
+		end
+
+
 		love.graphics.draw(
-			_resources.pause,
-			amora.settings.video.w / 2 - _resources.pause:getWidth() / 2,
-			amora.settings.video.h / 2 - _resources.pause:getHeight() / 2
+			_resources["resume_btn" .. buttons.ele_resume.state] or _resources[resourceLabel],
+			buttons.ele_resume.x,
+			buttons.ele_resume.y,
+			0,
+			buttonHScale,
+			buttonHScale
+		)
+		love.graphics.draw(
+			_resources["settings_btn" .. buttons.ele_settings.state] or _resources[resourceLabel],
+			buttons.ele_settings.x,
+			buttons.ele_settings.y,
+			0,
+			buttonHScale,
+			buttonHScale
+		)
+		love.graphics.draw(
+			_resources["main_menu_btn" .. buttons.ele_main_menu.state] or _resources[resourceLabel],
+			buttons.ele_main_menu.x,
+			buttons.ele_main_menu.y,
+			0,
+			buttonHScale,
+			buttonHScale
 		)
 
 		love.graphics.setCanvas(UICanvas)

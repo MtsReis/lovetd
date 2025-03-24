@@ -21,8 +21,6 @@ function Root.keypressed(command)
 	elseif command == "toggle_fullscreen" then
 		amora.settings.video.fullscreen = not amora.settings.video.fullscreen
         amora:updateVideo()
-	elseif command == "pause_game" then
-		amora.pause = not amora.pause
 	end
 end
 

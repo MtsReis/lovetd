@@ -470,6 +470,9 @@ function PlayScenario.update(_, dt)
 				math.max(0.001, BLUR_SHADER_RADIUS - world.player.results.endScenarioIn * 10)
 			)
 		end
+	elseif amora.pause then
+		mapRenderer.applyShader = world.resources.shaders.blur
+		world.resources.shaders.blur:send("radius", 10)
 	elseif mapRenderer.applyShader then
 		mapRenderer.applyShader = nil
 	end
@@ -503,6 +506,8 @@ function PlayScenario.keypressed(command)
 		end
 	elseif command == "toggle_hp" then
 		world.properties.showHP = not world.properties.showHP
+	elseif command == "pause_game" and not world.player.results then
+		amora.pause = not amora.pause
 	end
 end
 
