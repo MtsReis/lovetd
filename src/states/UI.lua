@@ -4,14 +4,16 @@ local ASSETS_EXT = ".png"
 local ALPHA_SLAB_ONE_FONT_PATH = "assets/fonts/AlfaSlabOne-Regular.ttf"
 local FONT_SCALE = 10
 local MAIN_FONT = love.graphics.newFont(ALPHA_SLAB_ONE_FONT_PATH, 60 * FONT_SCALE)
-local MAIN_FONT_UNSCALED = love.graphics.newFont(ALPHA_SLAB_ONE_FONT_PATH, 42)
+local MAIN_FONT_UNSCALED = love.graphics.newFont(ALPHA_SLAB_ONE_FONT_PATH, 62)
 local MAIN_FONT_H = MAIN_FONT:getHeight()
-local MAIN_FONT_H_UNSCALED  = MAIN_FONT_UNSCALED:getHeight()
+local MAIN_FONT_H_UNSCALED = MAIN_FONT_UNSCALED:getHeight()
 
 local _resources = {
 	"sidebar_end",
 	"sidebar_ext",
 	"sidebar_start_btn",
+	"sidebar_start_btn_hover",
+	"sidebar_start_btn_pressed",
 	"sidebar_towers",
 
 	"sidebar_t1",
@@ -53,7 +55,7 @@ local _resources = {
 	"mm_settings_btn_pressed",
 	"mm_tower",
 	"mm_bg",
-	"red_ray"
+	"red_ray",
 }
 
 local function triggerListener(name, ...)
@@ -68,8 +70,8 @@ UI.eventListeners = {}
 UI.presentations = {
 	PlayScenario = {
 		_attr = {
-			defeat_window = true,
-			sidebar = { width = 118, towerSpots = 3 },
+			defeat_window = false,
+			sidebar = { width = 118, towerSpots = 3, showPlay = true },
 			coins = { qty = 0, font = love.graphics.newFont(30) },
 			buttons = {
 				ele_sidebar_tower1 = {
@@ -89,6 +91,15 @@ UI.presentations = {
 					active = true,
 				},
 				ele_sidebar_tower3 = {
+					x = 0,
+					y = 0,
+					w = 64,
+					h = 62,
+					state = "",
+					active = true,
+				},
+
+				ele_sidebar_play = {
 					x = 0,
 					y = 0,
 					w = 64,
@@ -148,6 +159,8 @@ UI.presentations = {
 					triggerListener("onTryAgain")
 				elseif element == "ele_resume" then
 					triggerListener("onResume")
+				elseif element == "ele_sidebar_play" then
+					triggerListener("onStartAction")
 				elseif element == "ele_main_menu" then
 					triggerListener("onForfeit")
 				end
@@ -323,9 +336,9 @@ function UI.presentations.MainMenu:update(dt)
 	local towerHScale = screenH / _resources.mm_tower:getHeight() * 0.9
 	local towerW = _resources.mm_tower:getWidth() * towerHScale
 	local towerH = _resources.mm_tower:getHeight() * towerHScale
-	local towerY = (screenH - towerH)/2 + (screenH - towerH)/2 * math.sin(love.timer.getTime() / 5)
+	local towerY = (screenH - towerH) / 2 + (screenH - towerH) / 2 * math.sin(love.timer.getTime() / 5)
 
-	love.graphics.draw(_resources.mm_tower, screenW - screenW * .2 - towerW / 2, towerY, 0, towerHScale, towerHScale)
+	love.graphics.draw(_resources.mm_tower, screenW - screenW * 0.2 - towerW / 2, towerY, 0, towerHScale, towerHScale)
 
 	love.graphics.setCanvas(UICanvas)
 	love.graphics.clear()
@@ -333,18 +346,31 @@ function UI.presentations.MainMenu:update(dt)
 	--- BG ---
 	local rayWScale = screenW / _resources.red_ray:getWidth() * 1.1
 	local rayH = _resources.red_ray:getHeight() * rayWScale
-	love.graphics.draw(_resources.mm_bg, 0, 0, 0, screenW / _resources.mm_bg:getWidth(), screenH / _resources.mm_bg:getHeight())
+	love.graphics.draw(
+		_resources.mm_bg,
+		0,
+		0,
+		0,
+		screenW / _resources.mm_bg:getWidth(),
+		screenH / _resources.mm_bg:getHeight()
+	)
 	love.graphics.draw(_resources.red_ray, 0, 0, 0, rayWScale, rayWScale)
 
 	local text = "Defence of the Wicked Evil"
-	local textW = MAIN_FONT:getWidth(text)/FONT_SCALE
+	local textW = MAIN_FONT:getWidth(text) / FONT_SCALE
 
 	love.graphics.setFont(MAIN_FONT)
 	love.graphics.setColor(1, 1, 1, 1)
-	love.graphics.print(text, screenW * .02, rayH / 2, -0.07, screenW/(1366*FONT_SCALE), screenH/(768*FONT_SCALE))
-	
+	love.graphics.print(
+		text,
+		screenW * 0.02,
+		rayH / 2,
+		-0.07,
+		screenW / (1366 * FONT_SCALE),
+		screenH / (768 * FONT_SCALE)
+	)
+
 	love.graphics.draw(self.canvases.upper_layer, 0, 0)
-	
 
 	love.graphics.setCanvas()
 end
@@ -382,6 +408,19 @@ function UI.presentations.PlayScenario:update(dt)
 			_resources[resourceLabel .. self._attr.buttons[buttonLabel].state] or _resources[resourceLabel],
 			self._attr.buttons[buttonLabel].x,
 			self._attr.buttons[buttonLabel].y
+		)
+		love.graphics.setColor(1, 1, 1, 1)
+	end
+
+	if self._attr.sidebar.showPlay then
+		if not self._attr.buttons.ele_sidebar_play.active then
+			love.graphics.setColor(0.5, 0.5, 0.5, 1)
+		end
+
+		love.graphics.draw(
+			_resources["sidebar_start_btn" .. self._attr.buttons.ele_sidebar_play.state],
+			self._attr.buttons.ele_sidebar_play.x,
+			self._attr.buttons.ele_sidebar_play.y
 		)
 		love.graphics.setColor(1, 1, 1, 1)
 	end
@@ -452,7 +491,14 @@ function UI.presentations.PlayScenario:update(dt)
 
 		love.graphics.setFont(MAIN_FONT)
 		love.graphics.setColor(1, 1, 1, 1)
-		love.graphics.print(text, screenW / 2 - textW / 2, bgY + (bgH - MAIN_FONT_H_UNSCALED) / 2, 0, screenW/(1366*FONT_SCALE), screenH/(768*FONT_SCALE))
+		love.graphics.print(
+			text,
+			screenW / 2 - textW / 2,
+			bgY + (bgH - MAIN_FONT_H_UNSCALED) / 2,
+			0,
+			screenW / (1366 * FONT_SCALE),
+			screenH / (768 * FONT_SCALE)
+		)
 	end
 
 	-- Pause Layer
@@ -553,9 +599,11 @@ function UI.presentations.PlayScenario:reload(dt)
 		sb_endH
 	) -- Tower text
 
+	local totalSpots = self._attr.sidebar.showPlay and self._attr.sidebar.towerSpots + 1
+		or self._attr.sidebar.towerSpots
 	local towerSectionInitialy = sb_endH + _resources.sidebar_towers:getHeight() + 3
 	local towerSectionH = screenH - towerSectionInitialy - sb_endH
-	local towerSpotMaxH = towerSectionH / self._attr.sidebar.towerSpots
+	local towerSpotMaxH = towerSectionH / totalSpots
 
 	for i = 1, self._attr.sidebar.towerSpots, 1 do
 		-- 🫣
@@ -570,7 +618,22 @@ function UI.presentations.PlayScenario:reload(dt)
 			_resources["sidebar_t" .. i],
 			self._attr.buttons["ele_sidebar_tower" .. i].x - sidebarX,
 			self._attr.buttons["ele_sidebar_tower" .. i].y
-		) -- Tower text
+		)
+	end
+
+	if self._attr.sidebar.showPlay then
+		self._attr.buttons.ele_sidebar_play.x = sidebarX
+			+ (self._attr.sidebar.width - _resources.sidebar_start_btn:getWidth()) / 2
+
+		self._attr.buttons.ele_sidebar_play.y = towerSectionInitialy
+			+ towerSpotMaxH * 3
+			+ (towerSpotMaxH - _resources.sidebar_start_btn:getHeight()) / 2
+
+		love.graphics.draw(
+			_resources["sidebar_start_btn" .. self._attr.buttons.ele_sidebar_play.state],
+			self._attr.buttons.ele_sidebar_play.x - sidebarX,
+			self._attr.buttons.ele_sidebar_play.y
+		)
 	end
 
 	love.graphics.setCanvas()

@@ -241,41 +241,8 @@ function PlayScenario:load(scenarioName)
 
 	world:add(table.unpack(precachedSystems))
 
-	-- Entities
-	local spawnerBottom = entitiesClasses.spawner(
-		world.properties.width / 2,
-		world.properties.height / 2,
-		2,
-		40,
-		nil,
-		entitiesClasses.unit,
-		PREDEFINED_PATHS[1][1][1][1] - math.random(120, 900),
-		PREDEFINED_PATHS[1][1][1][2] - math.random(10, 20),
-		world.space,
-		"elf",
-		canvas,
-		{ path = world.properties.paths[1] }
-	)
-
-	local spawnerSide = entitiesClasses.spawner(
-		world.properties.width / 2,
-		world.properties.height / 2,
-		2,
-		40,
-		nil,
-		entitiesClasses.unit,
-		PREDEFINED_PATHS[1][2][1][1] - math.random(120, 900),
-		PREDEFINED_PATHS[1][2][1][2] - math.random(10, 20),
-		world.space,
-		"orc",
-		canvas,
-		{ path = world.properties.paths[2] }
-	)
-
 	world:add(
 		world.player.main_tower,
-		spawnerBottom,
-		spawnerSide,
 		entitiesClasses.tower(world.properties.width / 3, 200, world.space, "tall", canvas),
 		entitiesClasses.tower(530, 630, world.space, "face", canvas),
 		entitiesClasses.tower(world.properties.width / 2, 400, world.space, "ritual", canvas),
@@ -319,6 +286,12 @@ function PlayScenario:load(scenarioName)
 end
 
 function PlayScenario.enable()
+	local bgm_name = PlayScenario.scenario.bgm
+
+	if not world.resources.music[bgm_name] then
+		bgm_name = "action"
+	end
+
 	mapRenderer.cam:lookAt(world.properties.width / 2, world.properties.height / 2)
 
 	updateCamZoomLimits()
@@ -424,16 +397,57 @@ function PlayScenario.enable()
 			amora.pause = false
 			GameFlow.changeScene("main_menu")
 		end,
-	})
-	local bgm_name = PlayScenario.scenario.bgm
+		onStartAction = function()
+			for _, v in ipairs(world.properties._spawners) do
+				world:add(v)
+			end
 
-	if not world.resources.music[bgm_name] then
-		bgm_name = "action"
-	end
+			world.resources.music.plan:stop()
+
+			world.resources.music[bgm_name]:setLooping(true)
+	world.resources.music[bgm_name]:setVolume(amora.settings.sound.mVolume / 100)
+			world.resources.music[bgm_name]:play()
+
+			UI.presentations.PlayScenario._attr.sidebar.showPlay = false
+			UI.presentations.PlayScenario:reload()
+		end,
+	})
 
 	world.resources.music[bgm_name]:setLooping(true)
 	world.resources.music[bgm_name]:setVolume(amora.settings.sound.mVolume / 100)
-	world.resources.music[bgm_name]:play()
+	world.resources.music.plan:play()
+
+	--- Additional stuff
+	world.properties._spawners = {
+		entitiesClasses.spawner(
+			world.properties.width / 2,
+			world.properties.height / 2,
+			2,
+			40,
+			nil,
+			entitiesClasses.unit,
+			PREDEFINED_PATHS[1][1][1][1] - math.random(120, 900),
+			PREDEFINED_PATHS[1][1][1][2] - math.random(10, 20),
+			world.space,
+			"elf",
+			canvas,
+			{ path = world.properties.paths[1] }
+		),
+		entitiesClasses.spawner(
+			world.properties.width / 2,
+			world.properties.height / 2,
+			2,
+			40,
+			nil,
+			entitiesClasses.unit,
+			PREDEFINED_PATHS[1][2][1][1] - math.random(120, 900),
+			PREDEFINED_PATHS[1][2][1][2] - math.random(10, 20),
+			world.space,
+			"orc",
+			canvas,
+			{ path = world.properties.paths[2] }
+		),
+	}
 end
 
 function PlayScenario.update(_, dt)
@@ -656,6 +670,7 @@ function PlayScenario.unload()
 	world.space.hit = nil
 	world.space.selection = nil
 	world.space = nil
+	world.properties._spawners = nil
 
 	world.properties = nil
 	world.player = nil
