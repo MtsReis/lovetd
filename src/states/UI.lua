@@ -175,11 +175,11 @@ UI.presentations = {
 				elseif element == "ele_sidebar_tower3" then
 					triggerListener("onPressedTower3")
 				elseif element == "ele_defeat" then
-					if UI.presentations._attr.defeat_window then
+					if UI.presentations.PlayScenario._attr.defeat_window then
 						triggerListener("onTryAgain")
 					end
 				elseif element == "ele_victory" then
-					if UI.presentations._attr.victory_window then
+					if UI.presentations.PlayScenario._attr.victory_window then
 						triggerListener("onNextLevel")
 					end
 				elseif element == "ele_resume" then
