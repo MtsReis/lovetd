@@ -28,15 +28,12 @@ end
 function GameFlow.changeScene(newScene)
 	-- Default scene
 	newScene = _gameScenes[newScene] and newScene or "main_menu"
-
-	if newScene ~= scene or newScene == "gameplay" then
 		log.debug("Ending scene '%(s)s'" % { s = scene })
 		local _ = _gameScenes[scene] and _gameScenes[scene].endScene and _gameScenes[scene]:endScene()
 
 		log.debug("Starting scene '%(s)s'" % { s = newScene })
 		_ = _gameScenes[newScene].startScene and _gameScenes[newScene]:startScene()
 		scene = newScene
-	end
 end
 
 --------= Main Menu =--------
@@ -47,7 +44,13 @@ function _gameScenes.main_menu:startScene()
 			GameFlow.changeScene("gameplay")
 		end,
 		onSettings = function()
-			print("Check options!")
+			-- DANGER --
+			UI:changePresentation("Settings", {
+				onOk = function()
+					GameFlow.changeScene("main_menu")
+				end
+			})
+
 		end,
 	})
 
@@ -87,7 +90,6 @@ end
 --------= Level Selection =--------
 
 function _gameScenes.level_selection:startScene()
-	print("Escolha level")
 end
 
 function _gameScenes.level_selection:endScene() end

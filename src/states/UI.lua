@@ -56,6 +56,11 @@ local _resources = {
 	"mm_tower",
 	"mm_bg",
 	"red_ray",
+
+	"ok_btn",
+	"ok_btn_hover",
+	"ok_btn_pressed",
+	"settings_tower",
 }
 
 local function triggerListener(name, ...)
@@ -141,7 +146,7 @@ UI.presentations = {
 					w = 0,
 					h = 0,
 					state = "",
-					active = true,
+					active = false,
 				},
 			},
 		},
@@ -190,7 +195,7 @@ UI.presentations = {
 					w = 0,
 					h = 0,
 					state = "",
-					active = true,
+					active = false,
 				},
 			},
 		},
@@ -202,6 +207,46 @@ UI.presentations = {
 					triggerListener("onNewGame")
 				elseif element == "ele_settings" then
 					triggerListener("onSettings")
+				end
+			end,
+		},
+	},
+
+	Settings = {
+		_attr = {
+			buttons = {
+				ele_ok = {
+					x = 0,
+					y = 0,
+					w = 0,
+					h = 0,
+					state = "",
+					active = true,
+				},
+				ele_slider_music = {
+					x = 0,
+					y = 0,
+					w = 0,
+					h = 0,
+					state = "",
+					active = true,
+				},
+				ele_slider_sfx = {
+					x = 0,
+					y = 0,
+					w = 0,
+					h = 0,
+					state = "",
+					active = true,
+				},
+			},
+		},
+		canvases = { upper_layer = love.graphics.newCanvas() },
+		_events = {
+			onPress = function(element) end,
+			onRelease = function(element)
+				if element == "ele_ok" then
+					triggerListener("onOk")
 				end
 			end,
 		},
@@ -320,21 +365,26 @@ function UI.presentations.MainMenu:update(dt)
 	love.graphics.clear()
 
 	love.graphics.draw(
-		_resources["play_btn" .. self._attr.buttons.ele_play.state] or _resources[resourceLabel],
+		_resources["play_btn" .. self._attr.buttons.ele_play.state] or _resources["play_btn"],
 		self._attr.buttons.ele_play.x,
 		self._attr.buttons.ele_play.y,
 		0,
 		buttonHScale,
 		buttonHScale
 	)
+
+	if not self._attr.buttons.ele_settings.active then
+		love.graphics.setColor(0.5, 0.5, 0.5, 1)
+	end
 	love.graphics.draw(
-		_resources["mm_settings_btn" .. self._attr.buttons.ele_settings.state] or _resources[resourceLabel],
+		_resources["mm_settings_btn" .. self._attr.buttons.ele_settings.state] or _resources["mm_settings_btn"],
 		self._attr.buttons.ele_settings.x,
 		self._attr.buttons.ele_settings.y,
 		0,
 		buttonHScale,
 		buttonHScale
 	)
+	love.graphics.setColor(1, 1, 1, 1)
 
 	--- Tower ---
 	local towerHScale = screenH / _resources.mm_tower:getHeight() * 0.9
@@ -550,23 +600,28 @@ function UI.presentations.PlayScenario:update(dt)
 		end
 
 		love.graphics.draw(
-			_resources["resume_btn" .. buttons.ele_resume.state] or _resources[resourceLabel],
+			_resources["resume_btn" .. buttons.ele_resume.state] or _resources["resume_btn"],
 			buttons.ele_resume.x,
 			buttons.ele_resume.y,
 			0,
 			buttonHScale,
 			buttonHScale
 		)
+
+		if not self._attr.buttons.ele_settings.active then
+			love.graphics.setColor(0.5, 0.5, 0.5, 1)
+		end
 		love.graphics.draw(
-			_resources["settings_btn" .. buttons.ele_settings.state] or _resources[resourceLabel],
+			_resources["settings_btn" .. buttons.ele_settings.state] or _resources["resume_btn"],
 			buttons.ele_settings.x,
 			buttons.ele_settings.y,
 			0,
 			buttonHScale,
 			buttonHScale
 		)
+		love.graphics.setColor(1, 1, 1, 1)
 		love.graphics.draw(
-			_resources["main_menu_btn" .. buttons.ele_main_menu.state] or _resources[resourceLabel],
+			_resources["main_menu_btn" .. buttons.ele_main_menu.state] or _resources["resume_btn"],
 			buttons.ele_main_menu.x,
 			buttons.ele_main_menu.y,
 			0,
@@ -639,6 +694,141 @@ function UI.presentations.PlayScenario:reload(dt)
 			self._attr.buttons.ele_sidebar_play.y
 		)
 	end
+
+	love.graphics.setCanvas()
+end
+
+--------------------= Settings =--------------------
+function UI.presentations.Settings:update(dt)
+	local screenW = amora.settings.video.w
+	local screenH = amora.settings.video.h
+
+	local buttonYSpace = screenH / 6
+	local buttonHScale = buttonYSpace / _resources.ok_btn:getHeight()
+
+	local buttonW = buttonHScale * _resources.ok_btn:getWidth()
+	local buttonH = buttonHScale * _resources.ok_btn:getHeight()
+
+	self._attr.buttons.ele_ok.x = screenW / 2 - buttonW / 2
+	self._attr.buttons.ele_ok.y = screenH - buttonYSpace * 1.2
+	self._attr.buttons.ele_ok.w = buttonW
+	self._attr.buttons.ele_ok.h = buttonH
+
+	love.graphics.setCanvas(UICanvas)
+	love.graphics.clear()
+
+	-- --- BG ---
+	local rayWScale = screenW / _resources.red_ray:getWidth() * 1.1
+	local rayH = _resources.red_ray:getHeight() * rayWScale
+	love.graphics.setColor(127 / 255, 31 / 255, 31 / 255, 1)
+	love.graphics.rectangle("fill", 0, 0, amora.settings.video.w, amora.settings.video.h)
+	love.graphics.setColor(1, 1, 1, 1)
+
+	love.graphics.draw(_resources.red_ray, 0, 0, 0, rayWScale, rayWScale)
+
+	local text = "Settings"
+	local textW = MAIN_FONT:getWidth(text) / FONT_SCALE
+
+	love.graphics.setFont(MAIN_FONT)
+	love.graphics.setColor(1, 1, 1, 1)
+	love.graphics.print(
+		text,
+		screenW / 3 - textW / 2,
+		rayH / 2,
+		-0.07,
+		screenW / (1366 * FONT_SCALE),
+		screenH / (768 * FONT_SCALE)
+	)
+
+	local LOCALSCALE = 2
+	text = "Music"
+	textW = MAIN_FONT:getWidth(text) / FONT_SCALE
+	local textX = screenW / 4 - textW / LOCALSCALE
+	local textY = rayH + MAIN_FONT_H_UNSCALED / LOCALSCALE
+
+	love.graphics.print(
+		text,
+		screenW / 4 - textW / 2,
+		textY,
+		0,
+		screenW / (1366 * FONT_SCALE) / LOCALSCALE,
+		screenH / (768 * FONT_SCALE) / LOCALSCALE
+	)
+
+	local text2 = "SFX"
+	local text2Y = rayH + MAIN_FONT_H_UNSCALED / LOCALSCALE * 3
+
+	love.graphics.print(
+		text2,
+		screenW / 4 - textW / 2,
+		text2Y,
+		0,
+		screenW / (1366 * FONT_SCALE) / LOCALSCALE,
+		screenH / (768 * FONT_SCALE) / LOCALSCALE
+	)
+
+	local text3 = "Full Screen"
+	local text3Y = rayH + MAIN_FONT_H_UNSCALED / LOCALSCALE * 5
+
+	love.graphics.print(
+		text3,
+		screenW / 4 - textW / 2,
+		text3Y,
+		0,
+		screenW / (1366 * FONT_SCALE) / LOCALSCALE,
+		screenH / (768 * FONT_SCALE) / LOCALSCALE
+	)
+
+	--- Upper ---
+	love.graphics.setCanvas(self.canvases.upper_layer)
+	love.graphics.clear()
+
+	love.graphics.draw(
+		_resources["ok_btn" .. self._attr.buttons.ele_ok.state] or _resources.ok_btn,
+		self._attr.buttons.ele_ok.x,
+		self._attr.buttons.ele_ok.y,
+		0,
+		buttonHScale,
+		buttonHScale
+	)
+
+	love.graphics.rectangle("fill", screenW / 4 + textW / 2, textY + MAIN_FONT_H_UNSCALED / 4, 400, 5)
+
+	love.graphics.rectangle(
+		"fill",
+		screenW / 4 + textW / 2 + self._attr.buttons.ele_slider_music.x,
+		textY + MAIN_FONT_H_UNSCALED / 15,
+		40,
+		40
+	)
+
+	love.graphics.rectangle("fill", screenW / 4 + textW / 2, text2Y + MAIN_FONT_H_UNSCALED / 4, 400, 5)
+
+	--- Tower ---
+	local towerHScale = screenH / _resources.settings_tower:getHeight() * 0.9
+	local towerW = _resources.settings_tower:getWidth() * towerHScale
+	local towerH = _resources.settings_tower:getHeight() * towerHScale
+	local towerY = (screenH - towerH) / 2 + (screenH - towerH) / 2 * math.sin(love.timer.getTime() / 5)
+
+	love.graphics.draw(
+		_resources.settings_tower,
+		screenW - screenW * 0.2 - towerW / 2,
+		towerY,
+		0,
+		towerHScale,
+		towerHScale
+	)
+
+	love.graphics.setCanvas(UICanvas)
+	love.graphics.draw(self.canvases.upper_layer, 0, 0)
+	love.graphics.setCanvas()
+end
+
+function UI.presentations.Settings:reload(dt)
+	local screenW = amora.settings.video.w
+	local screenH = amora.settings.video.h
+
+	self.canvases.upper_layer = love.graphics.newCanvas()
 
 	love.graphics.setCanvas()
 end
