@@ -34,7 +34,7 @@ function DrawHpSystem:process(e, dt)
 		y = 5
 	end
 
-	if self.world.properties.showHP or e == self.world.player.main_tower then
+	if self.world.properties.showHP or e.main ~= nil and e.main == true then
 		love.graphics.draw(container_img_s, x, y, 0, 1, 0.5)
 		love.graphics.draw(container_img_c, x + CONTAINER_SIDE_W, y, 0, maxHealthBar, 0.5)
 		love.graphics.draw(container_img_s, x + CONTAINER_SIDE_W + maxHealthBar, y, 0, 1, 0.5)

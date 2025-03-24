@@ -44,50 +44,51 @@ local PREDEFINED_PATHS = {
 			832,
 			192,
 		}),
-
+	},
+	{
 		Path({ -- bigMap Path Left
 			0,
-			1152
+			1152,
 		}, {
 			384,
-			1152
+			1152,
 		}, {
 			384,
-			704
+			704,
 		}, {
 			128,
-			704
+			704,
 		}, {
 			128,
-			160
+			160,
 		}),
 
 		Path({ -- bigMap Path Right
 			1568,
-			768
+			768,
 		}, {
 			1248,
-			768
+			768,
 		}, {
 			1248,
-			608
+			608,
 		}, {
 			704,
-			608
+			608,
 		}),
 
 		Path({ -- bigMap Path Bottom
 			864,
-			1568
+			1568,
 		}, {
 			864,
-			1376
+			1376,
 		}, {
 			1088,
-			1376
+			1376,
 		}, {
 			1088,
-			1120
+			1120,
 		}),
 	},
 }
@@ -169,8 +170,10 @@ local _shader = {
 }
 
 local curr_bgm_name
+local curr_scenario
 
-function PlayScenario:load(scenarioName)
+function PlayScenario:load(scenarioName, scenarioNumber)
+	scenarioNumber = 2
 	world = tiny.world()
 	world.space = {
 		bump = HC.new(), -- Physical collisions
@@ -178,7 +181,15 @@ function PlayScenario:load(scenarioName)
 		selection = HC.new(), -- For mouse interaction
 	}
 
-	scenarioName = scenarioName or "bigMap"
+	if scenarioNumber and scenarioNumber == 1 then
+		curr_scenario = 1
+		scenarioName = "ShoreBattle"
+	elseif scenarioNumber and scenarioNumber == 2 then
+		curr_scenario = 2
+		scenarioName = "bigMap"
+	else
+		scenarioName = scenarioName or "bigMap"
+	end
 
 	PlayScenario.scenario = Persistence.loadScenario(scenarioName)
 	state.add(
@@ -245,7 +256,7 @@ function PlayScenario:load(scenarioName)
 		mouse = world.space.selection:point(mapRenderer.cam:worldCoords(love.mouse.getPosition())),
 		selectedEntity = nil,
 
-		paths = PREDEFINED_PATHS[1],
+		paths = PREDEFINED_PATHS[curr_scenario],
 
 		showHP = true,
 	}
@@ -253,14 +264,6 @@ function PlayScenario:load(scenarioName)
 	world.player = {
 		coins = 50,
 		killed_enemies = 0,
-		-- main_tower = entitiesClasses.tower(910, 180, world.space, "main", canvas),
-		-- bigMap
-		-- Path 1
-		main_tower = entitiesClasses.tower(140, 170, world.space, "main", canvas),
-		-- Path 2
-		main_tower2 = entitiesClasses.tower(717, 618, world.space, "main", canvas),
-		-- Path 3
-		main_tower3 = entitiesClasses.tower(1100, 1130, world.space, "main", canvas),
 	}
 
 	-- Aditional assets
@@ -296,42 +299,58 @@ function PlayScenario:load(scenarioName)
 
 	world:add(table.unpack(precachedSystems))
 
-	world:add(
-		world.player.main_tower,
-		world.player.main_tower2,
-		world.player.main_tower3,
-		--[[entitiesClasses.tower(world.properties.width / 3, 200, world.space, "tall", canvas),
-		entitiesClasses.tower(530, 630, world.space, "face", canvas),
-		entitiesClasses.tower(world.properties.width / 2, 400, world.space, "ritual", canvas),
+	if curr_scenario == 1 then
+		world:add(
+			entitiesClasses.tower(910, 180, world.space, "main", canvas),
+			entitiesClasses.tower(world.properties.width / 3, 200, world.space, "tall", canvas),
+			entitiesClasses.tower(530, 630, world.space, "face", canvas),
+			entitiesClasses.tower(world.properties.width / 2, 400, world.space, "ritual", canvas),
 
-		entitiesClasses.unit(world.properties.width / 3, 300, world.space, "evil_elf", canvas, { label = "Evil Elf" }),
+			entitiesClasses.unit(
+				world.properties.width / 3,
+				300,
+				world.space,
+				"evil_elf",
+				canvas,
+				{ label = "Evil Elf" }
+			),
 
-		entitiesClasses.unit(845, 165, world.space, "evil_elf", canvas, { label = "Evil Elf 2" }),
-		entitiesClasses.unit(910, 230, world.space, "evil_elf", canvas, { label = "Evil Elf 3" }),
-		entitiesClasses.unit(965, 165, world.space, "evil_elf", canvas, { label = "Evil Elf 4" }),
-		entitiesClasses.unit(870, 250, world.space, "evil_orc", canvas, { label = "Evil Orc" }),
-		entitiesClasses.unit(955, 250, world.space, "evil_orc", canvas, { label = "Evil Orc 2" })]]
-		-- Path 1 Left
-		entitiesClasses.unit(75, 155, world.space, "evil_elf", canvas, { label = "Evil Elf 2" }),
-		entitiesClasses.unit(140, 220, world.space, "evil_elf", canvas, { label = "Evil Elf 3" }),
-		entitiesClasses.unit(195, 155, world.space, "evil_elf", canvas, { label = "Evil Elf 4" }),
-		entitiesClasses.unit(100, 240, world.space, "evil_orc", canvas, { label = "Evil Orc" }),
-		entitiesClasses.unit(185, 240, world.space, "evil_orc", canvas, { label = "Evil Orc 2" }),
+			entitiesClasses.unit(845, 165, world.space, "evil_elf", canvas, { label = "Evil Elf 2" }),
+			entitiesClasses.unit(910, 230, world.space, "evil_elf", canvas, { label = "Evil Elf 3" }),
+			entitiesClasses.unit(965, 165, world.space, "evil_elf", canvas, { label = "Evil Elf 4" }),
+			entitiesClasses.unit(870, 250, world.space, "evil_orc", canvas, { label = "Evil Orc" }),
+			entitiesClasses.unit(955, 250, world.space, "evil_orc", canvas, { label = "Evil Orc 2" })
+		)
+	elseif curr_scenario == 2 then
+		world:add(
+			entitiesClasses.tower(140, 170, world.space, "main", canvas),
+			entitiesClasses.tower(717, 618, world.space, "main", canvas),
+			entitiesClasses.tower(1100, 1130, world.space, "main", canvas)
+		)
 
-		-- Path 2 Right
-		entitiesClasses.unit(652, 603, world.space, "evil_elf", canvas, { label = "Evil Elf 2" }),
-		entitiesClasses.unit(717, 668, world.space, "evil_elf", canvas, { label = "Evil Elf 3" }),
-		entitiesClasses.unit(772, 603, world.space, "evil_elf", canvas, { label = "Evil Elf 4" }),
-		entitiesClasses.unit(677, 688, world.space, "evil_orc", canvas, { label = "Evil Orc" }),
-		entitiesClasses.unit(762, 688, world.space, "evil_orc", canvas, { label = "Evil Orc 2" }),
+		world:add(
+			-- Path 1 Left
+			entitiesClasses.unit(75, 155, world.space, "evil_elf", canvas, { label = "Evil Elf 2" }),
+			entitiesClasses.unit(140, 220, world.space, "evil_elf", canvas, { label = "Evil Elf 3" }),
+			entitiesClasses.unit(195, 155, world.space, "evil_elf", canvas, { label = "Evil Elf 4" }),
+			entitiesClasses.unit(100, 240, world.space, "evil_orc", canvas, { label = "Evil Orc" }),
+			entitiesClasses.unit(185, 240, world.space, "evil_orc", canvas, { label = "Evil Orc 2" }),
 
-		-- Path 3 Bottom
-		entitiesClasses.unit(1035, 1115, world.space, "evil_elf", canvas, { label = "Evil Elf 2" }),
-		entitiesClasses.unit(1100, 1180, world.space, "evil_elf", canvas, { label = "Evil Elf 3" }),
-		entitiesClasses.unit(1155, 1115, world.space, "evil_elf", canvas, { label = "Evil Elf 4" }),
-		entitiesClasses.unit(1060, 1200, world.space, "evil_orc", canvas, { label = "Evil Orc" }),
-		entitiesClasses.unit(1145, 1200, world.space, "evil_orc", canvas, { label = "Evil Orc 2" })
-	)
+			-- Path 2 Right
+			entitiesClasses.unit(652, 603, world.space, "evil_elf", canvas, { label = "Evil Elf 2" }),
+			entitiesClasses.unit(717, 668, world.space, "evil_elf", canvas, { label = "Evil Elf 3" }),
+			entitiesClasses.unit(772, 603, world.space, "evil_elf", canvas, { label = "Evil Elf 4" }),
+			entitiesClasses.unit(677, 688, world.space, "evil_orc", canvas, { label = "Evil Orc" }),
+			entitiesClasses.unit(762, 688, world.space, "evil_orc", canvas, { label = "Evil Orc 2" }),
+
+			-- Path 3 Bottom
+			entitiesClasses.unit(1035, 1115, world.space, "evil_elf", canvas, { label = "Evil Elf 2" }),
+			entitiesClasses.unit(1100, 1180, world.space, "evil_elf", canvas, { label = "Evil Elf 3" }),
+			entitiesClasses.unit(1155, 1115, world.space, "evil_elf", canvas, { label = "Evil Elf 4" }),
+			entitiesClasses.unit(1060, 1200, world.space, "evil_orc", canvas, { label = "Evil Orc" }),
+			entitiesClasses.unit(1145, 1200, world.space, "evil_orc", canvas, { label = "Evil Orc 2" })
+		)
+	end
 
 	-- Add collisionboxes to blockable tiles
 	local blockedCoords = {}
@@ -483,7 +502,7 @@ function PlayScenario.enable()
 			GameFlow.changeScene("main_menu")
 		end,
 		onStartAction = function()
-			for _, v in ipairs(world.properties._spawners) do
+			for _, v in ipairs(world.properties._spawners[2]) do
 				world:add(v)
 			end
 
@@ -507,121 +526,125 @@ function PlayScenario.enable()
 
 	--- Additional stuff
 	world.properties._spawners = {
-		--[[entitiesClasses.spawner(
-			world.properties.width / 2,
-			world.properties.height / 2,
-			2,
-			40,
-			nil,
-			entitiesClasses.unit,
-			PREDEFINED_PATHS[1][1][1][1] - math.random(120, 900),
-			PREDEFINED_PATHS[1][1][1][2] - math.random(10, 20),
-			world.space,
-			"elf",
-			canvas,
-			{ path = world.properties.paths[1] }
-		),
-		entitiesClasses.spawner(
-			world.properties.width / 2,
-			world.properties.height / 2,
-			2,
-			40,
-			nil,
-			entitiesClasses.unit,
-			PREDEFINED_PATHS[1][2][1][1] - math.random(120, 900),
-			PREDEFINED_PATHS[1][2][1][2] - math.random(10, 20),
-			world.space,
-			"orc",
-			canvas,
-			{ path = world.properties.paths[2] }
-		),]]
-		-- PATH 1 LEFT
-		entitiesClasses.spawner(
-			world.properties.width / 2,
-			world.properties.height / 2,
-			2,
-			50,
-			nil,
-			entitiesClasses.unit,
-			PREDEFINED_PATHS[1][3][1][1] - math.random(120, 900),
-			PREDEFINED_PATHS[1][3][1][2] - math.random(10, 20),
-			world.space,
-			"elf",
-			canvas,
-			{ path = world.properties.paths[3] }
-		),
-		entitiesClasses.spawner(
-			world.properties.width / 2,
-			world.properties.height / 2,
-			3,
-			30,
-			nil,
-			entitiesClasses.unit,
-			PREDEFINED_PATHS[1][3][1][1] - math.random(120, 900),
-			PREDEFINED_PATHS[1][3][1][2] - math.random(10, 20),
-			world.space,
-			"orc",
-			canvas,
-			{ path = world.properties.paths[3] }
-		),
-		-- PATH 2 RIGHT
-		entitiesClasses.spawner(
-			world.properties.width / 2,
-			world.properties.height / 2,
-			3,
-			40,
-			nil,
-			entitiesClasses.unit,
-			PREDEFINED_PATHS[1][4][1][1] + math.random(120, 900),
-			PREDEFINED_PATHS[1][4][1][2] + math.random(10, 20),
-			world.space,
-			"elf",
-			canvas,
-			{ path = world.properties.paths[4] }
-		),
-		entitiesClasses.spawner(
-			world.properties.width / 2,
-			world.properties.height / 2,
-			5,
-			25,
-			nil,
-			entitiesClasses.unit,
-			PREDEFINED_PATHS[1][4][1][1] + math.random(120, 900),
-			PREDEFINED_PATHS[1][4][1][2] + math.random(10, 20),
-			world.space,
-			"orc",
-			canvas,
-			{ path = world.properties.paths[4] }
-		),
-		-- PATH 3 BOTTOM
-		entitiesClasses.spawner(
-			world.properties.width / 2,
-			world.properties.height / 2,
-			4,
-			25,
-			nil,
-			entitiesClasses.unit,
-			PREDEFINED_PATHS[1][5][1][1] + math.random(10, 20),
-			PREDEFINED_PATHS[1][5][1][2] + math.random(120, 900),
-			world.space,
-			"elf",
-			canvas,
-			{ path = world.properties.paths[5] }
-		),
-		entitiesClasses.spawner(
-			world.properties.width / 2,
-			world.properties.height / 2,
-			6,
-			10,
-			nil,
-			entitiesClasses.unit,
-			PREDEFINED_PATHS[1][5][1][1] + math.random(10, 20),
-			PREDEFINED_PATHS[1][5][1][2] + math.random(120, 900),
-			world.space,
-			"orc",
-			canvas,
-			{ path = world.properties.paths[5] }
-		),
+		{
+			entitiesClasses.spawner(
+				world.properties.width / 2,
+				world.properties.height / 2,
+				2,
+				40,
+				nil,
+				entitiesClasses.unit,
+				PREDEFINED_PATHS[1][1][1][1] - math.random(120, 900),
+				PREDEFINED_PATHS[1][1][1][2] - math.random(10, 20),
+				world.space,
+				"elf",
+				canvas,
+				{ path = world.properties.paths[1] }
+			),
+			entitiesClasses.spawner(
+				world.properties.width / 2,
+				world.properties.height / 2,
+				2,
+				40,
+				nil,
+				entitiesClasses.unit,
+				PREDEFINED_PATHS[1][2][1][1] - math.random(120, 900),
+				PREDEFINED_PATHS[1][2][1][2] - math.random(10, 20),
+				world.space,
+				"orc",
+				canvas,
+				{ path = world.properties.paths[2] }
+			),
+		},
+		{
+			-- PATH 1 LEFT
+			entitiesClasses.spawner(
+				world.properties.width / 2,
+				world.properties.height / 2,
+				2,
+				50,
+				nil,
+				entitiesClasses.unit,
+				PREDEFINED_PATHS[2][1][1][1] - math.random(120, 900),
+				PREDEFINED_PATHS[2][1][1][2] - math.random(10, 20),
+				world.space,
+				"elf",
+				canvas,
+				{ path = world.properties.paths[1] }
+			),
+			entitiesClasses.spawner(
+				world.properties.width / 2,
+				world.properties.height / 2,
+				3,
+				30,
+				nil,
+				entitiesClasses.unit,
+				PREDEFINED_PATHS[2][1][1][1] - math.random(120, 900),
+				PREDEFINED_PATHS[2][1][1][2] - math.random(10, 20),
+				world.space,
+				"orc",
+				canvas,
+				{ path = world.properties.paths[1] }
+			),
+			-- PATH 2 RIGHT
+			entitiesClasses.spawner(
+				world.properties.width / 2,
+				world.properties.height / 2,
+				3,
+				40,
+				nil,
+				entitiesClasses.unit,
+				PREDEFINED_PATHS[2][2][1][1] + math.random(120, 900),
+				PREDEFINED_PATHS[2][2][1][2] + math.random(10, 20),
+				world.space,
+				"elf",
+				canvas,
+				{ path = world.properties.paths[2] }
+			),
+			entitiesClasses.spawner(
+				world.properties.width / 2,
+				world.properties.height / 2,
+				5,
+				25,
+				nil,
+				entitiesClasses.unit,
+				PREDEFINED_PATHS[2][2][1][1] + math.random(120, 900),
+				PREDEFINED_PATHS[2][2][1][2] + math.random(10, 20),
+				world.space,
+				"orc",
+				canvas,
+				{ path = world.properties.paths[2] }
+			),
+			-- PATH 3 BOTTOM
+			entitiesClasses.spawner(
+				world.properties.width / 2,
+				world.properties.height / 2,
+				4,
+				25,
+				nil,
+				entitiesClasses.unit,
+				PREDEFINED_PATHS[2][3][1][1] + math.random(10, 20),
+				PREDEFINED_PATHS[2][3][1][2] + math.random(120, 900),
+				world.space,
+				"elf",
+				canvas,
+				{ path = world.properties.paths[3] }
+			),
+			entitiesClasses.spawner(
+				world.properties.width / 2,
+				world.properties.height / 2,
+				6,
+				10,
+				nil,
+				entitiesClasses.unit,
+				PREDEFINED_PATHS[2][3][1][1] + math.random(10, 20),
+				PREDEFINED_PATHS[2][3][1][2] + math.random(120, 900),
+				world.space,
+				"orc",
+				canvas,
+				{ path = world.properties.paths[3] }
+			),
+		},
 	}
 end
 
