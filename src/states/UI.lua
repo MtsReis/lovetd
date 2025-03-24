@@ -71,7 +71,7 @@ UI.presentations = {
 	PlayScenario = {
 		_attr = {
 			defeat_window = false,
-			sidebar = { width = 118, towerSpots = 3, showPlay = true },
+			sidebar = { width = 118, towerSpots = 3, showPlay = false },
 			coins = { qty = 0, font = love.graphics.newFont(30) },
 			buttons = {
 				ele_sidebar_tower1 = {

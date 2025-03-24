@@ -10,7 +10,9 @@ InputVerify.commandList = {
 	["f1"] = "toggle_hp",
 	["f11"] = "toggle_fullscreen",
 	["f12"] = "toggle_debug",
-	["pause"] = "pause_game"
+	["pause"] = "pause_game",
+
+	["esc"] = "pause_game"
 }
 
 InputVerify.holdingKeys = {}

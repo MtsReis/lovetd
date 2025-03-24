@@ -116,11 +116,14 @@ local _sounds = {
 local _music = {
 	plan = "plan.mp3",
 	action = "action.mp3",
+	game_over = "game_over.mp3",
 }
 
 local _shader = {
 	blur = "blur",
 }
+
+local curr_bgm_name
 
 function PlayScenario:load(scenarioName)
 	world = tiny.world()
@@ -279,6 +282,14 @@ function PlayScenario:load(scenarioName)
 		onEndScenario = function(isWin, endScenarioIn)
 			world.player.results = { isWin = isWin, endScenarioIn = endScenarioIn }
 
+			if not isWin then
+				world.resources.music[curr_bgm_name]:stop()
+
+				world.resources.music.game_over:setLooping(false)
+				world.resources.music.game_over:setVolume(amora.settings.sound.mVolume / 100)
+				world.resources.music.game_over:play()
+			end
+
 			local text = isWin and "Level Complete! Well done!" or "Defeated, but you'll get it next time!"
 			world:add(entitiesClasses.message(text, HUD_canvas))
 		end,
@@ -286,10 +297,10 @@ function PlayScenario:load(scenarioName)
 end
 
 function PlayScenario.enable()
-	local bgm_name = PlayScenario.scenario.bgm
+	curr_bgm_name = PlayScenario.scenario.bgm
 
-	if not world.resources.music[bgm_name] then
-		bgm_name = "action"
+	if not world.resources.music[curr_bgm_name] then
+		curr_bgm_name = "action"
 	end
 
 	mapRenderer.cam:lookAt(world.properties.width / 2, world.properties.height / 2)
@@ -404,18 +415,21 @@ function PlayScenario.enable()
 
 			world.resources.music.plan:stop()
 
-			world.resources.music[bgm_name]:setLooping(true)
-	world.resources.music[bgm_name]:setVolume(amora.settings.sound.mVolume / 100)
-			world.resources.music[bgm_name]:play()
+			world.resources.music[curr_bgm_name]:setLooping(true)
+			world.resources.music[curr_bgm_name]:setVolume(amora.settings.sound.mVolume / 100)
+			world.resources.music[curr_bgm_name]:play()
 
 			UI.presentations.PlayScenario._attr.sidebar.showPlay = false
 			UI.presentations.PlayScenario:reload()
 		end,
 	})
 
-	world.resources.music[bgm_name]:setLooping(true)
-	world.resources.music[bgm_name]:setVolume(amora.settings.sound.mVolume / 100)
+	world.resources.music[curr_bgm_name]:setLooping(true)
+	world.resources.music[curr_bgm_name]:setVolume(amora.settings.sound.mVolume / 100)
 	world.resources.music.plan:play()
+
+	UI.presentations.PlayScenario._attr.sidebar.showPlay = true
+	UI.presentations.PlayScenario:reload()
 
 	--- Additional stuff
 	world.properties._spawners = {
@@ -654,7 +668,8 @@ end
 function PlayScenario.disable()
 	state.disable("MapRenderer")
 
-	world.resources.music.action:stop()
+	world.resources.music.plan:stop()
+	world.resources.music[curr_bgm_name]:stop()
 end
 
 function PlayScenario.unload()
@@ -662,6 +677,7 @@ function PlayScenario.unload()
 
 	UI = nil
 	GameFlow = nil
+	curr_bgm_name = nil
 
 	world.space.bump:resetHash()
 	world.space.hit:resetHash()

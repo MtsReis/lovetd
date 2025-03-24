@@ -4,6 +4,8 @@ local UI
 
 local scene = ""
 
+local mm_music = love.audio.newSource("assets/music/mm.mp3", "stream")
+
 local _player = {}
 local _gameScenes = {
 	main_menu = {},
@@ -14,8 +16,7 @@ local _gameScenes = {
 	game_results = {},
 }
 
-function GameFlow.load()
-end
+function GameFlow.load() end
 
 function GameFlow:enable()
 	state.enable("UI", "MainMenu")
@@ -49,9 +50,15 @@ function _gameScenes.main_menu:startScene()
 			print("Check options!")
 		end,
 	})
+
+	mm_music:setLooping(false)
+	mm_music:setVolume(amora.settings.sound.mVolume / 100)
+	mm_music:play()
 end
 
-function _gameScenes.main_menu:endScene() end
+function _gameScenes.main_menu:endScene()
+	mm_music:stop()
+end
 
 --------= Load Game =--------
 
