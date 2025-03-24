@@ -158,11 +158,15 @@ UI.presentations = {
 				elseif element == "ele_defeat" then
 					triggerListener("onTryAgain")
 				elseif element == "ele_resume" then
-					triggerListener("onResume")
+					if amora.pause then
+						triggerListener("onResume")
+					end
 				elseif element == "ele_sidebar_play" then
 					triggerListener("onStartAction")
 				elseif element == "ele_main_menu" then
-					triggerListener("onForfeit")
+					if amora.pause then
+						triggerListener("onForfeit")
+					end
 				end
 			end,
 		},
