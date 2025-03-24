@@ -43,7 +43,7 @@ local PREDEFINED_PATHS = {
 		}, {
 			832,
 			192,
-		}),
+		})
 	},
 	{
 		Path({ -- bigMap Path Left
@@ -263,6 +263,7 @@ function PlayScenario:load(scenarioName, scenarioNumber)
 		paths = PREDEFINED_PATHS[curr_scenario],
 
 		showHP = true,
+		nEnemies = curr_scenario == 1 and 80 or 180
 	}
 
 	world.player = {
@@ -511,7 +512,7 @@ function PlayScenario.enable()
 			GameFlow.changeScene("main_menu")
 		end,
 		onStartAction = function()
-			for _, v in ipairs(world.properties._spawners[2]) do
+			for _, v in ipairs(world.properties._spawners[curr_scenario]) do
 				world:add(v)
 			end
 
@@ -694,7 +695,13 @@ function PlayScenario.update(_, dt)
 	if world.player.results then
 		mapRenderer.applyShader = world.resources.shaders.blur
 		if world.player.results.endScenarioIn <= 0 then
-			UI.presentations.PlayScenario._attr.defeat_window = true
+			if (world.player.results.isWin) then
+				UI.presentations.PlayScenario._attr.defeat_window = false
+				UI.presentations.PlayScenario._attr.victory_window = true
+			else
+				UI.presentations.PlayScenario._attr.victory_window = false
+				UI.presentations.PlayScenario._attr.defeat_window = true
+			end
 			world.player.endScenario = true
 		else
 			world.player.results.endScenarioIn = world.player.results.endScenarioIn - dt

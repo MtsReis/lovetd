@@ -16,6 +16,9 @@ local _gameScenes = {
 	game_results = {},
 }
 
+
+GameFlow.playerLevel = 1
+
 function GameFlow.load() end
 
 function GameFlow:enable()

@@ -80,7 +80,7 @@ UI.presentations = {
 	PlayScenario = {
 		_attr = {
 			defeat_window = false,
-			victory_window = true,
+			victory_window = false,
 			sidebar = { width = 118, towerSpots = 3, showPlay = false },
 			coins = { qty = 0, font = love.graphics.newFont(30) },
 			buttons = {

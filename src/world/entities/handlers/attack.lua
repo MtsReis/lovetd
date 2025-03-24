@@ -36,6 +36,14 @@ local handlers = {
 		if e.main ~= nil and e.main == true then
 			world.handlers.onEndScenario(false, 1)
 		end
+
+		if e.team and e.team ~= 1 then
+			world.player.killed_enemies = world.player.killed_enemies + 1
+
+			if world.player.killed_enemies >= world.properties.nEnemies then
+				world.handlers.onEndScenario(true, 1)
+			end
+		end
 	end,
 }
 
