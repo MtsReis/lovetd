@@ -4,7 +4,9 @@ local ASSETS_EXT = ".png"
 local ALPHA_SLAB_ONE_FONT_PATH = "assets/fonts/AlfaSlabOne-Regular.ttf"
 local FONT_SCALE = 10
 local MAIN_FONT = love.graphics.newFont(ALPHA_SLAB_ONE_FONT_PATH, 60 * FONT_SCALE)
+local MAIN_FONT_UNSCALED = love.graphics.newFont(ALPHA_SLAB_ONE_FONT_PATH, 60)
 local MAIN_FONT_H = MAIN_FONT:getHeight()
+local MAIN_FONT_H_UNSCALED  = MAIN_FONT_UNSCALED:getHeight()
 
 local _resources = {
 	"sidebar_end",
@@ -66,7 +68,7 @@ UI.eventListeners = {}
 UI.presentations = {
 	PlayScenario = {
 		_attr = {
-			defeat_window = false,
+			defeat_window = true,
 			sidebar = { width = 118, towerSpots = 3 },
 			coins = { qty = 0, font = love.graphics.newFont(30) },
 			buttons = {
@@ -335,7 +337,7 @@ function UI.presentations.MainMenu:update(dt)
 	love.graphics.draw(_resources.red_ray, 0, 0, 0, rayWScale, rayWScale)
 
 	local text = "Defence of the Wicked Evil"
-	local textW = MAIN_FONT:getWidth(text)/2
+	local textW = MAIN_FONT:getWidth(text)/FONT_SCALE
 
 	love.graphics.setFont(MAIN_FONT)
 	love.graphics.setColor(1, 1, 1, 1)
@@ -443,14 +445,14 @@ function UI.presentations.PlayScenario:update(dt)
 		local bgY = hookH / 3
 		local bgW, bgH = screenW * 0.60, hookW / 4
 		local text = "Defeat"
-		local textW = MAIN_FONT:getWidth(text)/FONT_SCALE
+		local textW = MAIN_FONT_UNSCALED:getWidth(text)
 
 		love.graphics.setColor(205 / 255, 37 / 255, 37 / 255, 0.5)
 		love.graphics.rectangle("fill", bgX, bgY, bgW, bgH)
 
 		love.graphics.setFont(MAIN_FONT)
 		love.graphics.setColor(1, 1, 1, 1)
-		love.graphics.print(text, screenW / 2 - textW / 2, bgY + (bgH - MAIN_FONT_H / FONT_SCALE) / 2, 0, screenW/(1366*FONT_SCALE), screenH/(768*FONT_SCALE))
+		love.graphics.print(text, screenW / 2 - textW / 2, bgY + (bgH - MAIN_FONT_H_UNSCALED) / 2, 0, screenW/(1366*FONT_SCALE), screenH/(768*FONT_SCALE))
 	end
 
 	-- Pause Layer
