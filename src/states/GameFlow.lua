@@ -23,6 +23,7 @@ function GameFlow:enable()
 	UI = state.get("UI")
 
 	self.changeScene("main_menu")
+	GameFlow.playerLevel = 1
 end
 
 function GameFlow.changeScene(newScene)

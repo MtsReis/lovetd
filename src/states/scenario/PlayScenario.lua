@@ -173,7 +173,10 @@ local curr_bgm_name
 local curr_scenario
 
 function PlayScenario:load(scenarioName, scenarioNumber)
-	scenarioNumber = 2
+	-- Remove this ;3;
+	GameFlow = state.get("GameFlow")
+	scenarioNumber = GameFlow.playerLevel
+
 	world = tiny.world()
 	world.space = {
 		bump = HC.new(), -- Physical collisions
@@ -188,6 +191,7 @@ function PlayScenario:load(scenarioName, scenarioNumber)
 		curr_scenario = 2
 		scenarioName = "bigMap"
 	else
+		curr_scenario = 1
 		scenarioName = scenarioName or "bigMap"
 	end
 
@@ -492,6 +496,11 @@ function PlayScenario.enable()
 		end,
 		onTryAgain = function()
 			UI.presentations.PlayScenario._attr.defeat_window = false
+			GameFlow.changeScene("gameplay")
+		end,
+		onNextLevel = function()
+			UI.presentations.PlayScenario._attr.victory_window = false
+			GameFlow.playerLevel = GameFlow.playerLevel == 1 and 2 or 1
 			GameFlow.changeScene("gameplay")
 		end,
 		onResume = function()

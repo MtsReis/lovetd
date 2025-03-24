@@ -36,6 +36,10 @@ local _resources = {
 	"try_again_btn_pressed",
 	"try_again_btn_hover",
 
+	"next_level_btn",
+	"next_level_btn_pressed",
+	"next_level_btn_hover",
+
 	"pause_wiz",
 	"resume_btn",
 	"resume_btn_hover",
@@ -76,6 +80,7 @@ UI.presentations = {
 	PlayScenario = {
 		_attr = {
 			defeat_window = false,
+			victory_window = true,
 			sidebar = { width = 118, towerSpots = 3, showPlay = false },
 			coins = { qty = 0, font = love.graphics.newFont(30) },
 			buttons = {
@@ -114,6 +119,15 @@ UI.presentations = {
 				},
 
 				ele_defeat = {
+					x = 0,
+					y = 0,
+					w = 0,
+					h = 0,
+					state = "",
+					active = true,
+				},
+
+				ele_victory = {
 					x = 0,
 					y = 0,
 					w = 0,
@@ -162,6 +176,8 @@ UI.presentations = {
 					triggerListener("onPressedTower3")
 				elseif element == "ele_defeat" then
 					triggerListener("onTryAgain")
+				elseif element == "ele_victory" then
+					triggerListener("onNextLevel")
 				elseif element == "ele_resume" then
 					if amora.pause then
 						triggerListener("onResume")
@@ -538,6 +554,52 @@ function UI.presentations.PlayScenario:update(dt)
 		local bgY = hookH / 3
 		local bgW, bgH = screenW * 0.60, hookW / 4
 		local text = "Defeat"
+		local textW = MAIN_FONT_UNSCALED:getWidth(text)
+
+		love.graphics.setColor(205 / 255, 37 / 255, 37 / 255, 0.5)
+		love.graphics.rectangle("fill", bgX, bgY, bgW, bgH)
+
+		love.graphics.setFont(MAIN_FONT)
+		love.graphics.setColor(1, 1, 1, 1)
+		love.graphics.print(
+			text,
+			screenW / 2 - textW / 2,
+			bgY + (bgH - MAIN_FONT_H_UNSCALED) / 2,
+			0,
+			screenW / (1366 * FONT_SCALE),
+			screenH / (768 * FONT_SCALE)
+		)
+	elseif self._attr.victory_window then
+		--- Button ---
+		local buttonYSpace = screenH / 6
+		local buttonHScale = buttonYSpace / _resources.try_again_btn:getHeight() * 0.50
+
+		local buttonW = buttonHScale * _resources.try_again_btn:getWidth()
+		local buttonH = buttonHScale * _resources.try_again_btn:getHeight()
+
+		self._attr.buttons.ele_victory.x = screenW / 2 - buttonW / 2
+		self._attr.buttons.ele_victory.y = screenH - buttonYSpace
+		self._attr.buttons.ele_victory.w = buttonW
+		self._attr.buttons.ele_victory.h = buttonH
+
+		if not self._attr.buttons.ele_victory.active then
+			love.graphics.setColor(0.5, 0.5, 0.5, 1)
+		end
+
+		love.graphics.draw(
+			_resources["next_level_btn" .. self._attr.buttons.ele_victory.state] or _resources.next_level_btn,
+			self._attr.buttons.ele_victory.x,
+			self._attr.buttons.ele_victory.y,
+			0,
+			buttonHScale,
+			buttonHScale
+		)
+
+		--- Message ---
+		local bgX = screenW * 0.40 / 2
+		local bgY = screenH / 3
+		local bgW, bgH = screenW * 0.60, screenH / 4
+		local text = "Victory"
 		local textW = MAIN_FONT_UNSCALED:getWidth(text)
 
 		love.graphics.setColor(205 / 255, 37 / 255, 37 / 255, 0.5)
