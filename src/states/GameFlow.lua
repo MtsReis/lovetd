@@ -68,15 +68,12 @@ function _gameScenes.save_game:endScene() end
 --------= Gameplay =--------
 
 function _gameScenes.gameplay:startScene()
-	if scene == "gameplay" then
-		self.endScene()
-	end
-
 	state.add(require("states.scenario.PlayScenario"), "PlayScenario", 3)
 	state.enable("PlayScenario")
 end
 
 function _gameScenes.gameplay:endScene()
+	print("Ending Scene gameplay")
 	state.disable("PlayScenario")
 	state.destroy("PlayScenario")
 end
