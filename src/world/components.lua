@@ -1,6 +1,7 @@
 local STATE_ENUM = { idle = "IDLE", movingAlongPath = "MOVING_PATH", chasing = "CHASING", attacking = "ATTACKING" }
 local CONDITION_ENUM = { dead = "COND_DEAD", cursed = "COND_CURSED" }
 local EFFECT_ENUM = { slow = "EFF_SLOW", pierce = "EFF_PIERCE", curse = "EFF_CURSE" }
+local MODIFIER_ENUM = { speed = "MOD_SPEED" }
 
 local ASSETS_DIR = "assets/sprites/"
 local ASSETS_EXT = ".png"
@@ -191,9 +192,9 @@ return {
 		return { cursedBy = cursedBy }
 	end,
 
-	----------------
-	-- EFFECTS --
-	----------------
+	-----------------
+	--   EFFECTS   --
+	-----------------
 	EFF_SLOW = function(percentage)
 		return percentage
 	end,
@@ -206,6 +207,12 @@ return {
 		return chance
 	end,
 
+	-----------------
+	--  MODIFIERS  --
+	-----------------
+	MOD_SPEED = function(speed)
+		return speed
+	end,
 	--------
 
 	invoker = function(invoker)
@@ -274,4 +281,5 @@ return {
 	STATE_ENUM = STATE_ENUM,
 	CONDITION_ENUM = CONDITION_ENUM,
 	EFFECT_ENUM = EFFECT_ENUM,
+	MODIFIER_ENUM = MODIFIER_ENUM,
 }

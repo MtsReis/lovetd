@@ -253,7 +253,7 @@ function PlayScenario:load(scenarioName, scenarioNumber)
 	world.properties = {
 		width = mapRenderer.map.w * PlayScenario.scenario.gridW,
 		height = mapRenderer.map.h * PlayScenario.scenario.gridH,
-		COINS_PER_KILL = 5,
+		COINS_PER_KILL = 2,
 
 		cam = mapRenderer.cam,
 		mousePos = { x = mwx, y = mwy },

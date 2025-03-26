@@ -2,6 +2,7 @@ local MELEE_TIMESPAN = 0.8
 local c = require("world.components")
 local Entity = require("world.entities.entity")
 local EFFECT = c.EFFECT_ENUM
+local MOD = c.MODIFIER_ENUM
 
 local Projectile = class("Projectile", Entity)
 
@@ -35,6 +36,15 @@ function Projectile:initialize(invoker, type, space, target, options)
 
 	self.lifespan = lifespan
 	self[EFFECT.pierce] = 0
+
+	if self.invoker[EFFECT.pierce] and self.invoker[EFFECT.pierce] > 0 then
+		self[EFFECT.pierce] = self.invoker[EFFECT.pierce]
+	end
+	
+	if self.invoker[MOD.speed] then
+		self.movement.vel.speed = self.invoker[MOD.speed]
+		self.movement.maxSpeed = self.invoker[MOD.speed]
+	end
 
 	if type == "melee" then
 		self.lifespan = c.lifespan(MELEE_TIMESPAN)

@@ -1,6 +1,7 @@
 local c = require("world.components")
 local Entity = require("world.entities.entity")
 local EFFECT = c.EFFECT_ENUM
+local MOD = c.MODIFIER_ENUM
 
 local Tower = class("Tower", Entity)
 
@@ -59,7 +60,8 @@ function Tower:initialize(x, y, space, type, canvas, options)
 		self.attack = c.attack(25, 2, 3, 2, true)
 		self.range = c.range(space, x, y, 330)
 
-		self[EFFECT.pierce] = c[EFFECT.pierce](5)
+		self[EFFECT.pierce] = c[EFFECT.pierce](3)
+		self[MOD.speed] = c[MOD.speed](1000)
 	elseif type == "ritual" then
 		W, H = 48, 48
 
@@ -75,7 +77,7 @@ function Tower:initialize(x, y, space, type, canvas, options)
 		self.attack = c.attack(25, 2, 3, 2, true)
 		self.range = c.range(space, x, y, 200)
 
-		self[EFFECT.curse] = c[EFFECT.curse](5)
+		self[EFFECT.curse] = c[EFFECT.curse](20)
 	elseif type == "main" then
 		W, H = 48, 48
 
